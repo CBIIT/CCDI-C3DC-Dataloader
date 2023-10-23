@@ -44,7 +44,7 @@ class TestPropertyTypes(unittest.TestCase):
                 participant_id = 'FOO-BAR-123',
                 race = 'Asian'
             )
-        with self.assertRaisesRegex(TypeError, "Ethnicity `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(ValueError, 'Ethnicity `3` must be one of the specified values'):
             value = 3
             print(test_msg.format(value))
             Participant(
@@ -89,7 +89,7 @@ class TestPropertyTypes(unittest.TestCase):
                 participant_id = 'FOO-BAR-123',
                 race = 'Asian'
             )
-        with self.assertRaisesRegex(TypeError, "Gender `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(ValueError, 'Gender `3` must be one of the specified values'):
             value = 3
             print(test_msg.format(value))
             Participant(
@@ -169,7 +169,7 @@ class TestPropertyTypes(unittest.TestCase):
                 participant_id = 'FOO-BAR-123',
                 race = value
             )
-        with self.assertRaisesRegex(TypeError, "Race `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(ValueError, 'Race `3` must be one of the specified values'):
             value = 3
             print(test_msg.format(value))
             Participant(

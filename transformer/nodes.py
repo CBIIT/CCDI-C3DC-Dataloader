@@ -16,26 +16,19 @@ class Node:
     }
 
     def _determine_attr_type(yaml_node):
-        print(yaml_node)
         if not 'Type' in yaml_node.keys():
             raise ValueError(f'Invalid typing in Model Description YAML')
         else:
             type_desc = yaml_node['Type']
-            print(type_desc)
-            print(type(type_desc))
-            # print(isinstance(type_desc, dict))
-            isDict = isinstance(type_desc, dict)
-            print(isDict)
 
             if isinstance(type_desc, str):
-                print('Foo')
                 if not type_desc in Node._TYPE_MAP:
                     raise LookupError(f'Unexpected type')
                 else:
                     return Node._TYPE_MAP[type_desc]
             # From here on, we expect to be working with a dict
             # elif not isinstance(type_desc, dict):
-            elif not isDict:
+            elif not isinstance(type_desc, dict):
                 raise ValueError(f'Invalid typing in Model Description YAML')
             elif not 'enum' in (item.lower() for item in type_desc.keys()):
                 raise ValueError(f'Invalid typing in Model Description YAML')
@@ -65,7 +58,8 @@ class Node:
         if is_required and type == str and value == '':
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
-        if not isinstance(value, type) and not value is None:
+        # We don't have to check the type of an enum, because it must match one of the prescribed values anyway
+        if type != 'enum' and not isinstance(value, type) and not value is None:
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
 
         if not enum is None and value not in enum:
