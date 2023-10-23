@@ -14,4 +14,6 @@ config/es_loader_*
 backup/
 .vscode/
 **.DS_Store
+config/c3dc-model.yml
+config/c3dc-model-props.yml
 data/
