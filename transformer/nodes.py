@@ -1,4 +1,3 @@
-import os
 import yaml
 
 class Node:
@@ -17,18 +16,26 @@ class Node:
     }
 
     def _determine_attr_type(yaml_node):
+        print(yaml_node)
         if not 'Type' in yaml_node.keys():
             raise ValueError(f'Invalid typing in Model Description YAML')
         else:
-            type_desc = yaml_node['Type'].lower()
+            type_desc = yaml_node['Type']
+            print(type_desc)
+            print(type(type_desc))
+            # print(isinstance(type_desc, dict))
+            isDict = isinstance(type_desc, dict)
+            print(isDict)
 
             if isinstance(type_desc, str):
+                print('Foo')
                 if not type_desc in Node._TYPE_MAP:
                     raise LookupError(f'Unexpected type')
                 else:
                     return Node._TYPE_MAP[type_desc]
             # From here on, we expect to be working with a dict
-            elif not isinstance(type_desc, dict):
+            # elif not isinstance(type_desc, dict):
+            elif not isDict:
                 raise ValueError(f'Invalid typing in Model Description YAML')
             elif not 'enum' in (item.lower() for item in type_desc.keys()):
                 raise ValueError(f'Invalid typing in Model Description YAML')
@@ -49,7 +56,8 @@ class Node:
     def _validate_attr(self, attr_name, value):
         enum = self._ENUMS.get(attr_name, False) or None
         is_required = self._REQS[attr_name]
-        type = Node._TYPE_MAP[self._TYPES[attr_name]]
+        # type = Node._TYPE_MAP[self._TYPES[attr_name]]
+        type = Node._determine_attr_type(self._PROPDEFS[attr_name])
 
         if is_required and value is None:
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
