@@ -1,6 +1,3 @@
 [submodule "bento"]
 	path = bento
 	url = https://github.com/CBIIT/bento-common.git
-[submodule "c3dc-model"]
-	path = c3dc-model
-	url = https://github.com/CBIIT/c3dc-model.git
