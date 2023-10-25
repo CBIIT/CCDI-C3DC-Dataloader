@@ -20,10 +20,10 @@ class Node:
             type_desc = yaml_node['Type']
 
             if isinstance(type_desc, str):
-                if not type_desc in Node._TYPE_MAP:
+                if not type_desc in self._TYPE_MAP:
                     raise LookupError(f'Unexpected type')
                 else:
-                    return Node._TYPE_MAP[type_desc]
+                    return self._TYPE_MAP[type_desc]
             # From here on, we expect to be working with a dict
             # elif not isinstance(type_desc, dict):
             elif not isinstance(type_desc, dict):
@@ -161,6 +161,18 @@ class Participant(Node):
         ]
 
 class Study(Node):
+    _PROPER_NAMES = {
+        'acl': 'ACL',
+        'consent': 'Consent',
+        'consent_number': 'Consent Number',
+        'external_url': 'External URL',
+        'phs_accession': 'PHS Accession',
+        'study_acronym': 'Study Acronym',
+        'study_description': 'Study Description',
+        'study_id': 'Study ID',
+        'study_name': 'Study Name',
+        'study_short_title': 'Study Short Title',
+    }
     _REQS = {
         'acl': Node._PROPDEFS['acl']['Req'],
         'consent': Node._PROPDEFS['consent']['Req'],
