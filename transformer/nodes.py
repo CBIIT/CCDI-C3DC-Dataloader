@@ -6,16 +6,14 @@ class Node:
     with open('config/c3dc-model-props.yml', 'r') as file:
         _PROPDEFS = yaml.safe_load(file)['PropDefinitions']
 
-    _ENUMS = {}
     _PROPER_NAMES = {}
     _REQS = {}
-    _TYPES = {}
     _TYPE_MAP = {
         'integer': int,
         'string': str,
     }
 
-    def _determine_attr_type(yaml_node):
+    def _determine_attr_type(self, yaml_node):
         if not 'Type' in yaml_node.keys():
             raise ValueError(f'Invalid typing in Model Description YAML')
         else:
@@ -47,10 +45,12 @@ class Node:
             return yaml_node['Type']['Enum']
 
     def _validate_attr(self, attr_name, value):
-        enum = self._ENUMS.get(attr_name, False) or None
+        enum = None
         is_required = self._REQS[attr_name]
-        # type = Node._TYPE_MAP[self._TYPES[attr_name]]
-        type = Node._determine_attr_type(self._PROPDEFS[attr_name])
+        type = self._determine_attr_type(self._PROPDEFS[attr_name])
+
+        if type == 'enum':
+            enum = self._determine_attr_enum(self._PROPDEFS[attr_name])
 
         if is_required and value is None:
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
@@ -66,11 +66,6 @@ class Node:
             raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be one of the specified values')
 
 class Participant(Node):
-    _ENUMS = {
-        'ethnicity': Node._PROPDEFS['ethnicity']['Type']['Enum'],
-        'gender': Node._PROPDEFS['gender']['Type']['Enum'],
-        'race': Node._PROPDEFS['race']['Type']['Enum'],
-    }
     _PROPER_NAMES = {
         'alternate_participant_id': 'Alternate Participant ID',
         'ethnicity': 'Ethnicity',
@@ -84,13 +79,6 @@ class Participant(Node):
         'gender': Node._PROPDEFS['gender']['Req'],
         'participant_id': Node._PROPDEFS['participant_id']['Req'],
         'race': Node._PROPDEFS['race']['Req'],
-    }
-    _TYPES = {
-        'alternate_participant_id': Node._PROPDEFS['alternate_participant_id']['Type'],
-        'ethnicity': 'string',
-        'gender': 'string',
-        'participant_id': 'string',
-        'race': 'string',
     }
 
     def __init__(self, alternate_participant_id, ethnicity, gender, participant_id, race, model_file_path=None, props_file_path=None):
@@ -173,12 +161,6 @@ class Participant(Node):
         ]
 
 class Study(Node):
-    _ENUMS = {
-
-        'ethnicity': Node._PROPDEFS['ethnicity']['Type']['Enum'],
-        'gender': Node._PROPDEFS['gender']['Type']['Enum'],
-        'race': Node._PROPDEFS['race']['Type']['Enum'],
-    }
     _REQS = {
         'acl': Node._PROPDEFS['acl']['Req'],
         'consent': Node._PROPDEFS['consent']['Req'],
@@ -190,18 +172,6 @@ class Study(Node):
         'study_id': Node._PROPDEFS['study_id']['Req'],
         'study_name': Node._PROPDEFS['study_name']['Req'],
         'study_short_title': Node._PROPDEFS['study_short_title']['Req'],
-    }
-    _TYPES = {
-        'acl': Node._PROPDEFS['acl']['Type'],
-        'consent': Node._PROPDEFS['consent']['Type'],
-        'consent_number': Node._PROPDEFS['consent_number']['Type'],
-        'external_url': Node._PROPDEFS['external_url']['Type'],
-        'phs_accession': Node._PROPDEFS['phs_accession']['Type'],
-        'study_acronym': Node._PROPDEFS['study_acronym']['Type'],
-        'study_description': Node._PROPDEFS['study_description']['Type'],
-        'study_id': Node._PROPDEFS['study_id']['Type'],
-        'study_name': Node._PROPDEFS['study_name']['Type'],
-        'study_short_title': Node._PROPDEFS['study_short_title']['Type'],
     }
 
     def __init__(self, acl, consent, consent_number, external_url,
@@ -238,15 +208,8 @@ class Study(Node):
 
     @acl.setter
     def acl(self, value):
-        is_required = self._REQS['acl']
-        type = Node._TYPE_MAP[self._TYPES['acl']]
-
-        if is_required and value is None:
-            raise TypeError(f'ACL is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'ACL `{value}` must be of type <{type}>')
-        else:
-            self._acl = value
+        self._validate_attr('acl', value)
+        self._acl = value
 
     @property
     def consent(self):
@@ -254,31 +217,17 @@ class Study(Node):
 
     @consent.setter
     def consent(self, value):
-        is_required = self._REQS['consent']
-        type = Node._TYPE_MAP[self._TYPES['consent']]
-
-        if is_required and value is None:
-            raise TypeError(f'Consent is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Consent `{value}` must be of type <{type}>')
-        else:
-            self._consent = value
+        self._validate_attr('consent', value)
+        self._consent = value
 
     @property
     def consent_number(self):
-        return self._consent
+        return self._consent_number
 
     @consent_number.setter
     def consent_number(self, value):
-        is_required = self._REQS['consent_number']
-        type = Node._TYPE_MAP[self._TYPES['consent_number']]
-
-        if is_required and value is None:
-            raise TypeError(f'Consent Number is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Consent Number `{value}` must be of type <{type}>')
-        else:
-            self._consent_number = value
+        self._validate_attr('consent_number', value)
+        self._consent_number = value
 
     @property
     def external_url(self):
@@ -286,15 +235,8 @@ class Study(Node):
 
     @external_url.setter
     def external_url(self, value):
-        is_required = self._REQS['external_url']
-        type = Node._TYPE_MAP[self._TYPES['external_url']]
-
-        if is_required and value is None:
-            raise TypeError(f'External URL is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'External URL `{value}` must be of type <{type}>')
-        else:
-            self._external_url = value
+        self._validate_attr('external_url', value)
+        self._external_url = value
 
     @property
     def phs_accession(self):
@@ -302,15 +244,8 @@ class Study(Node):
 
     @phs_accession.setter
     def phs_accession(self, value):
-        is_required = self._REQS['phs_accession']
-        type = Node._TYPE_MAP[self._TYPES['phs_accession']]
-
-        if is_required and value is None:
-            raise TypeError(f'PHS Accession is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'PHS Accession `{value}` must be of type <{type}>')
-        else:
-            self._phs_accession = value
+        self._validate_attr('phs_accession', value)
+        self._phs_accession = value
 
     @property
     def study_acronym(self):
@@ -318,15 +253,8 @@ class Study(Node):
 
     @study_acronym.setter
     def study_acronym(self, value):
-        is_required = self._REQS['study_acronym']
-        type = Node._TYPE_MAP[self._TYPES['study_acronym']]
-
-        if is_required and value is None:
-            raise TypeError(f'Study Acronym is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Study Acronym `{value}` must be of type <{type}>')
-        else:
-            self._study_acronym = value
+        self._validate_attr('study_acronym', value)
+        self._study_acronym = value
 
     @property
     def study_description(self):
@@ -334,15 +262,8 @@ class Study(Node):
 
     @study_description.setter
     def study_description(self, value):
-        is_required = self._REQS['study_description']
-        type = Node._TYPE_MAP[self._TYPES['study_description']]
-
-        if is_required and value is None:
-            raise TypeError(f'Study Description is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Study Description `{value}` must be of type <{type}>')
-        else:
-            self._study_description = value
+        self._validate_attr('study_description', value)
+        self._study_description = value
 
     @property
     def study_id(self):
@@ -350,15 +271,8 @@ class Study(Node):
 
     @study_id.setter
     def study_id(self, value):
-        is_required = self._REQS['study_id']
-        type = Node._TYPE_MAP[self._TYPES['study_id']]
-
-        if is_required and value is None:
-            raise TypeError(f'Study ID is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Study ID `{value}` must be of type <{type}>')
-        else:
-            self._study_id = value
+        self._validate_attr('study_id', value)
+        self._study_id = value
 
     @property
     def study_name(self):
@@ -366,15 +280,8 @@ class Study(Node):
 
     @study_name.setter
     def study_name(self, value):
-        is_required = self._REQS['study_name']
-        type = Node._TYPE_MAP[self._TYPES['study_name']]
-
-        if is_required and value is None:
-            raise TypeError(f'Study Name is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Study Name `{value}` must be of type <{type}>')
-        else:
-            self._study_name = value
+        self._validate_attr('study_name', value)
+        self._study_name = value
 
     @property
     def study_short_title(self):
@@ -382,15 +289,8 @@ class Study(Node):
 
     @study_short_title.setter
     def study_short_title(self, value):
-        is_required = self._REQS['study_short_title']
-        type = Node._TYPE_MAP[self._TYPES['study_short_title']]
-
-        if is_required and value is None:
-            raise TypeError(f'Study Short Title is missing')
-        elif not isinstance(value, type):
-            raise TypeError(f'Study Short Title `{value}` must be of type <{type}>')
-        else:
-            self._study_short_title = value
+        self._validate_attr('study_short_title', value)
+        self._study_short_title = value
 
     def to_list(self):
         return [
