@@ -7,31 +7,10 @@ class Node:
         _PROPDEFS = yaml.safe_load(file)['PropDefinitions']
 
     _PROPER_NAMES = {}
-    _REQS = {}
     _TYPE_MAP = {
         'integer': int,
         'string': str,
     }
-
-    def _determine_attr_type(self, yaml_node):
-        if not 'Type' in yaml_node.keys():
-            raise ValueError(f'Invalid typing in Model Description YAML')
-        else:
-            type_desc = yaml_node['Type']
-
-            if isinstance(type_desc, str):
-                if not type_desc in self._TYPE_MAP:
-                    raise LookupError(f'Unexpected type')
-                else:
-                    return self._TYPE_MAP[type_desc]
-            # From here on, we expect to be working with a dict
-            # elif not isinstance(type_desc, dict):
-            elif not isinstance(type_desc, dict):
-                raise ValueError(f'Invalid typing in Model Description YAML')
-            elif not 'enum' in (item.lower() for item in type_desc.keys()):
-                raise ValueError(f'Invalid typing in Model Description YAML')
-            else:
-                return 'enum'
 
     # Figures out whether an attribute has prescribed values
     # If so, then returns the list of prescribed values
@@ -40,13 +19,43 @@ class Node:
         type = self._determine_attr_type(yaml_node)
 
         if type != 'enum':
-            raise TypeError(f'Attribute is not an enum')
+            raise TypeError('Attribute is not an enum')
         else:
             return yaml_node['Type']['Enum']
+    
+    # Returns a boolean indicating whether the attribute is required
+    def _determine_attr_req(self, yaml_node):
+        if not 'Req' in yaml_node.keys():
+            raise ValueError('Missing `Req` field in Model Description YAML')
+        else:
+            return yaml_node['Req']
+
+    # Figures out the type of an attribute
+    # If it's not an enum, then returns a Python type
+    # If it's an enum, then returns the string 'enum'
+    def _determine_attr_type(self, yaml_node):
+        if not 'Type' in yaml_node.keys():
+            raise ValueError('Invalid typing in Model Description YAML')
+        else:
+            type_desc = yaml_node['Type']
+
+            if isinstance(type_desc, str):
+                if not type_desc in self._TYPE_MAP:
+                    raise LookupError('Unexpected type')
+                else:
+                    return self._TYPE_MAP[type_desc]
+            # From here on, we expect to be working with a dict
+            # elif not isinstance(type_desc, dict):
+            elif not isinstance(type_desc, dict):
+                raise ValueError('Invalid typing in Model Description YAML')
+            elif not 'enum' in (item.lower() for item in type_desc.keys()):
+                raise ValueError('Invalid typing in Model Description YAML')
+            else:
+                return 'enum'
 
     def _validate_attr(self, attr_name, value):
         enum = None
-        is_required = self._REQS[attr_name]
+        is_required = self._determine_attr_req(self._PROPDEFS[attr_name])
         type = self._determine_attr_type(self._PROPDEFS[attr_name])
 
         if type == 'enum':
@@ -65,6 +74,10 @@ class Node:
         if not enum is None and value not in enum:
             raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be one of the specified values')
 
+    # Combine data with an existing Node
+    def merge(other_node):
+        pass
+
 class Participant(Node):
     _PROPER_NAMES = {
         'alternate_participant_id': 'Alternate Participant ID',
@@ -72,13 +85,6 @@ class Participant(Node):
         'gender': 'Gender',
         'participant_id': 'Participant ID',
         'race': 'Race',
-    }
-    _REQS = {
-        'alternate_participant_id': Node._PROPDEFS['alternate_participant_id']['Req'],
-        'ethnicity': Node._PROPDEFS['ethnicity']['Req'],
-        'gender': Node._PROPDEFS['gender']['Req'],
-        'participant_id': Node._PROPDEFS['participant_id']['Req'],
-        'race': Node._PROPDEFS['race']['Req'],
     }
 
     def __init__(self, alternate_participant_id, ethnicity, gender, participant_id, race, model_file_path=None, props_file_path=None):
@@ -173,18 +179,6 @@ class Study(Node):
         'study_name': 'Study Name',
         'study_short_title': 'Study Short Title',
     }
-    _REQS = {
-        'acl': Node._PROPDEFS['acl']['Req'],
-        'consent': Node._PROPDEFS['consent']['Req'],
-        'consent_number': Node._PROPDEFS['consent_number']['Req'],
-        'external_url': Node._PROPDEFS['external_url']['Req'],
-        'phs_accession': Node._PROPDEFS['phs_accession']['Req'],
-        'study_acronym': Node._PROPDEFS['study_acronym']['Req'],
-        'study_description': Node._PROPDEFS['study_description']['Req'],
-        'study_id': Node._PROPDEFS['study_id']['Req'],
-        'study_name': Node._PROPDEFS['study_name']['Req'],
-        'study_short_title': Node._PROPDEFS['study_short_title']['Req'],
-    }
 
     def __init__(self, acl, consent, consent_number, external_url,
             phs_accession, study_acronym, study_description,
@@ -202,16 +196,16 @@ class Study(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.acl,
-            self.consent,
-            self.consent_number,
-            self.external_url,
-            self.phs_accession,
-            self.study_acronym,
-            self.study_description,
-            self.study_id,
-            self.study_name,
-            self.study_short_title,
+            self._acl,
+            self._consent,
+            self._consent_number,
+            self._external_url,
+            self._phs_accession,
+            self._study_acronym,
+            self._study_description,
+            self._study_id,
+            self._study_name,
+            self._study_short_title,
         ])
 
     @property
@@ -304,17 +298,26 @@ class Study(Node):
         self._validate_attr('study_short_title', value)
         self._study_short_title = value
 
+    def merge(self, other_study):
+        # Make sure that they share identifiers
+        if (self.study_id != other_study.study_id):
+            raise ValueError("Studies have different ID's")
+        
+        for participant_id in other_study._participant_ids:
+            if participant_id not in self._participant_ids:
+                self._participant_ids.append(participant_id)
+
     def to_list(self):
         return [
             'study',
-            self.study_id,
-            self.phs_accession,
-            self.acl,
-            self.study_name,
-            self.study_short_title,
-            self.study_acronym,
-            self.study_description,
-            self.consent,
-            self.consent_number,
-            self.external_url,
+            self._study_id,
+            self._phs_accession,
+            self._acl,
+            self._study_name,
+            self._study_short_title,
+            self._study_acronym,
+            self._study_description,
+            self._consent,
+            self._consent_number,
+            self._external_url,
         ]
