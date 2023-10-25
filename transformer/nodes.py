@@ -183,16 +183,16 @@ class Study(Node):
     def __init__(self, acl, consent, consent_number, external_url,
             phs_accession, study_acronym, study_description,
             study_id, study_name, study_short_title):
-        self.acl = acl or ''
-        self.consent = consent or ''
-        self.consent_number = consent_number or ''
-        self.external_url = external_url or ''
-        self.phs_accession = phs_accession or ''
-        self.study_acronym = study_acronym or ''
-        self.study_description = study_description or ''
-        self.study_id = study_id or ''
-        self.study_name = study_name or ''
-        self.study_short_title = study_short_title or ''
+        self.acl = acl or None
+        self.consent = consent or None
+        self.consent_number = consent_number or None
+        self.external_url = external_url or None
+        self.phs_accession = phs_accession or None
+        self.study_acronym = study_acronym or None
+        self.study_description = study_description or None
+        self.study_id = study_id or None
+        self.study_name = study_name or None
+        self.study_short_title = study_short_title or None
 
     def __str__(self):
         return ' | '.join([

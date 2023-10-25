@@ -1,7 +1,7 @@
 import unittest
 from transformer.nodes import Participant
 
-class TestPropertyTypes(unittest.TestCase):
+class TestParticipantProps(unittest.TestCase):
     def setUp(self):
         pass
 
