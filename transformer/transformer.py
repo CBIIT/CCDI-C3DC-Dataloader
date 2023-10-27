@@ -106,7 +106,13 @@ def write_participants():
         for participant in participants.values():
             participant_row = participant.to_list()
             for study_id in participants_to_studies[participant.participant_id]:
-                row = participant_row + [study_id]
+                row = participant_row + [
+                    '::'.join([
+                        participant.participant_id,
+                        study_id,
+                    ]),
+                    study_id,
+                ]
                 tsv_writer.writerow(row)
 
         participants_file.close()
