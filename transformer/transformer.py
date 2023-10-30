@@ -163,7 +163,10 @@ def write_studies():
         tsv_writer.writerow(STUDY_HEADERS)
 
         for study in studies.values():
-            tsv_writer.writerow(study.to_list())
+            row = study.to_list() + [
+                study.study_id,
+            ]
+            tsv_writer.writerow(row)
 
         studies_file.close()
 
