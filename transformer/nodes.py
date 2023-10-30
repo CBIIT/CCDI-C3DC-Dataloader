@@ -9,57 +9,70 @@ class Node:
     _PROPER_NAMES = {}
     _TYPE_MAP = {
         'integer': int,
+        'list': list,
         'string': str,
     }
 
-    # Figures out whether an attribute has prescribed values
-    # If so, then returns the list of prescribed values
-    # If not, then returns false
+    # Figures out an attribute's list of prescribed values
     def _determine_attr_enum(self, yaml_node):
-        type = self._determine_attr_type(yaml_node)
+        # Early error to catch not being an enum
+        if not self._determine_attr_is_enum(yaml_node):
+            raise ValueError('Trying to get prescribed values of a non-enum')
 
-        if type != 'enum':
-            raise TypeError('Attribute is not an enum')
-        else:
-            return yaml_node['Type']['Enum']
-    
+        return yaml_node['Type']['Enum']
+
+    # Determines whether an attribute is an enum/list
+    def _determine_attr_is_enum(self, yaml_node):
+        type_desc = None
+
+        # Early error to catch invalid YAML
+        if not 'Type' in yaml_node.keys():
+            raise ValueError('Missing `Type` key in Model Description YAML')
+
+        type_desc = yaml_node['Type']
+
+        # Not en enum, because the type is expressed with a string literal
+        if isinstance(type_desc, str):
+            return False
+
+        # Error if it should be enum but doesn't have an Enum key
+        if 'Enum' not in (key for key in type_desc.keys()):
+            raise ValueError('Missing `Enum` field in Model Description YAML')
+
+        return True
+
     # Returns a boolean indicating whether the attribute is required
     def _determine_attr_req(self, yaml_node):
+        # Early error to catch invalid YAML
         if not 'Req' in yaml_node.keys():
-            raise ValueError('Missing `Req` field in Model Description YAML')
-        else:
-            return yaml_node['Req']
+            raise ValueError('Missing `Req` key in Model Description YAML')
 
-    # Figures out the type of an attribute
-    # If it's not an enum, then returns a Python type
-    # If it's an enum, then returns the string 'enum'
+        return yaml_node['Req']
+
+    # Figures out the Python type that an attribute should be
     def _determine_attr_type(self, yaml_node):
-        if not 'Type' in yaml_node.keys():
-            raise ValueError('Invalid typing in Model Description YAML')
-        else:
-            type_desc = yaml_node['Type']
+        type_literal = None
 
-            if isinstance(type_desc, str):
-                if not type_desc in self._TYPE_MAP:
-                    raise LookupError('Unexpected type')
-                else:
-                    return self._TYPE_MAP[type_desc]
-            # From here on, we expect to be working with a dict
-            # elif not isinstance(type_desc, dict):
-            elif not isinstance(type_desc, dict):
-                raise ValueError('Invalid typing in Model Description YAML')
-            elif not 'enum' in (item.lower() for item in type_desc.keys()):
-                raise ValueError('Invalid typing in Model Description YAML')
-            else:
-                return 'enum'
+        # Is not an enum or list
+        if not self._determine_attr_is_enum(yaml_node):
+            type_literal = yaml_node['Type']
+        elif 'value_type' not in (key for key in yaml_node['Type'].keys()):
+            raise ValueError('Missing `value_type` field in Model Description YAML')
+        elif yaml_node['Type']['value_type'] == 'list':
+            type_literal = 'list'
+        else:
+            type_literal = yaml_node['Type']['value_type']
+
+        # Handle undefined type mapping
+        if type_literal not in self._TYPE_MAP.keys():
+            raise LookupError(f'No type mapped to string literal {type_literal}')
+
+        return self._TYPE_MAP[type_literal]
 
     def _validate_attr(self, attr_name, value):
-        enum = None
-        is_required = self._determine_attr_req(self._PROPDEFS[attr_name])
-        type = self._determine_attr_type(self._PROPDEFS[attr_name])
-
-        if type == 'enum':
-            enum = self._determine_attr_enum(self._PROPDEFS[attr_name])
+        prop_def = self._PROPDEFS[attr_name]
+        is_required = self._determine_attr_req(prop_def)
+        type = self._determine_attr_type(prop_def)
 
         if is_required and value is None:
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
@@ -67,12 +80,21 @@ class Node:
         if is_required and type == str and value == '':
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
-        # We don't have to check the type of an enum, because it must match one of the prescribed values anyway
-        if type != 'enum' and not isinstance(value, type) and not value is None:
+        # Check that the value is the right type
+        if value is not None and not isinstance(value, type):
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
 
-        if not enum is None and value not in enum:
-            raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be one of the specified values')
+        # Checks for enum/list
+        if self._determine_attr_is_enum(prop_def):
+            enum = self._determine_attr_enum(prop_def)
+
+            # For list
+            if type == list and not all(item in enum for item in value):
+                raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be a subset of the specified values')
+
+            # For enum
+            if type != list and value not in enum:
+                raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be one of the specified values')
 
     # Combine data with an existing Node
     def merge(other_node):

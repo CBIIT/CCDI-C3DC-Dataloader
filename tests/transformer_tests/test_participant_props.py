@@ -14,10 +14,10 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = value,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
 
     # Participant.ethnicity
@@ -32,7 +32,7 @@ class TestParticipantProps(unittest.TestCase):
                 ethnicity = value,
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
         with self.assertRaisesRegex(TypeError, 'Ethnicity is missing'):
             value = ''
@@ -42,9 +42,9 @@ class TestParticipantProps(unittest.TestCase):
                 ethnicity = '',
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
-        with self.assertRaisesRegex(ValueError, 'Ethnicity `3` must be one of the specified values'):
+        with self.assertRaisesRegex(TypeError, "Ethnicity `3` must be of type <class 'list'>"):
             value = 3
             print(test_msg.format(value))
             Participant(
@@ -52,17 +52,17 @@ class TestParticipantProps(unittest.TestCase):
                 ethnicity = value,
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
-        with self.assertRaisesRegex(ValueError, 'Ethnicity `Foo` must be one of the specified values'):
-            value = 'Foo'
+        with self.assertRaisesRegex(ValueError, "Ethnicity `\['Foo'\]` must be a subset of the specified values"):
+            value = ['Foo']
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
                 ethnicity = value,
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
 
     # Participant.gender
@@ -74,40 +74,40 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = value,
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
         with self.assertRaisesRegex(TypeError, 'Gender is missing'):
             value = ''
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = value,
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
-        with self.assertRaisesRegex(ValueError, 'Gender `3` must be one of the specified values'):
+        with self.assertRaisesRegex(TypeError, "Gender `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = value,
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
         with self.assertRaisesRegex(ValueError, 'Gender `Foo` must be one of the specified values'):
             value = 'Foo'
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = value,
                 participant_id = 'FOO-BAR-123',
-                race = 'Asian'
+                race = ['Asian']
             )
 
     # Participant.participant_id
@@ -119,30 +119,30 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = None,
-                race = 'Asian'
+                race = ['Asian']
             )
         with self.assertRaisesRegex(TypeError, 'Participant ID is missing'):
             value = ''
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = None,
-                race = 'Asian'
+                race = ['Asian']
             )
         with self.assertRaisesRegex(TypeError, "Participant ID `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = 3,
-                race = 'Asian'
+                race = ['Asian']
             )
 
     # Participant.race
@@ -154,7 +154,7 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
                 race = value
@@ -164,27 +164,37 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
                 race = value
             )
-        with self.assertRaisesRegex(ValueError, 'Race `3` must be one of the specified values'):
+        with self.assertRaisesRegex(TypeError, "Race `3` must be of type <class 'list'>"):
             value = 3
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
                 race = value
             )
-        with self.assertRaisesRegex(ValueError, 'Race `Foo` must be one of the specified values'):
+        with self.assertRaisesRegex(TypeError, "Race `Foo` must be of type <class 'list'>"):
             value = 'Foo'
             print(test_msg.format(value))
             Participant(
                 alternate_participant_id = None,
-                ethnicity = 'Not Hispanic or Latino',
+                ethnicity = ['Not Hispanic or Latino'],
+                gender = 'Male',
+                participant_id = 'FOO-BAR-123',
+                race = value
+            )
+        with self.assertRaisesRegex(ValueError, "Race `\['Foo'\]` must be a subset of the specified values"):
+            value = ['Foo']
+            print(test_msg.format(value))
+            Participant(
+                alternate_participant_id = None,
+                ethnicity = ['Not Hispanic or Latino'],
                 gender = 'Male',
                 participant_id = 'FOO-BAR-123',
                 race = value
