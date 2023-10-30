@@ -25,9 +25,6 @@ STUDY_HEADERS = [
     'consent',
     'consent_number',
     'external_url',
-    'experimental_strategy_and_data_subtype',
-    'study_data_types',
-    'size_of_data_being_uploaded',
     'id',
 ]
 
@@ -75,10 +72,10 @@ def parse_participants():
         try:
             participant = Participant(
                 alternate_participant_id = None,
-                ethnicity = participant_data['ethnicity'][0],
+                ethnicity = participant_data['ethnicity'],
                 gender = participant_data['gender'],
                 participant_id = participant_data['participant_id'],
-                race = participant_data['race'][0]
+                race = participant_data['race']
             )
             participants[participant_id] = participant
         except TypeError as e:
