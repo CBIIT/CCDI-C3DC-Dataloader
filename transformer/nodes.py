@@ -80,6 +80,9 @@ class Node:
         if is_required and type == str and value == '':
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
+        if not is_required and value is None:
+            return
+
         # Check that the value is the right type
         if value is not None and not isinstance(value, type):
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
@@ -182,9 +185,9 @@ class Participant(Node):
         return [
             'participant',
             self._participant_id,
-            self._race,
+            ';'.join(self._race),
             self._gender,
-            self._ethnicity,
+            ';'.join(self._ethnicity),
             self._alternate_participant_id,
         ]
 
@@ -342,4 +345,180 @@ class Study(Node):
             self._consent,
             self._consent_number,
             self._external_url,
+        ]
+
+class Diagnosis(Node):
+    _PROPER_NAMES = {
+        'age_at_diagnosis': 'Age at Diagnosis',
+        'anatomic_site': 'Anatomic Site',
+        'diagnosis_finer_resolution': 'Diagnosis Finer Resolution',
+        'diagnosis_id': 'Diagnosis ID',
+        'diagnosis_icd_cm': 'Diagnosis ICD-10-CM',
+        'diagnosis_icd_o': 'Diagnosis ICD-O',
+        'disease_phase': 'Disease Phase',
+        'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
+        'tumor_grade': 'Tumor Grade',
+        'tumor_stage_clinical_m': 'Tumor Clinical M Stage',
+        'tumor_stage_clinical_n': 'Tumor Clinical N Stage',
+        'tumor_stage_clinical_t': 'Tumor Clinical T Stage',
+    }
+
+    def __init__(self, age_at_diagnosis, anatomic_site,
+            diagnosis_finer_resolution, diagnosis_icd_cm,
+            diagnosis_icd_o, diagnosis_id, disease_phase,
+            toronto_childhood_cancer_staging, tumor_grade,
+            tumor_stage_clinical_m, tumor_stage_clinical_n,
+            tumor_stage_clinical_t):
+        self.age_at_diagnosis = age_at_diagnosis or None
+        self.anatomic_site = anatomic_site or None
+        self.diagnosis_finer_resolution = diagnosis_finer_resolution or None
+        self.diagnosis_icd_cm = diagnosis_icd_cm or None
+        self.diagnosis_icd_o = diagnosis_icd_o or None
+        self.diagnosis_id = diagnosis_id or None
+        self.disease_phase = disease_phase or None
+        self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging or None
+        self.tumor_grade = tumor_grade or None
+        self.tumor_stage_clinical_m = tumor_stage_clinical_m or None
+        self.tumor_stage_clinical_n = tumor_stage_clinical_n or None
+        self.tumor_stage_clinical_t = tumor_stage_clinical_t or None
+
+    def __str__(self):
+        return ' | '.join([
+            self._age_at_diagnosis,
+            self._anatomic_site,
+            self._diagnosis_finer_resolution,
+            self._diagnosis_icd_cm,
+            self._diagnosis_icd_o,
+            self._diagnosis_id,
+            self._disease_phase,
+            self._toronto_childhood_cancer_staging,
+            self._tumor_grade,
+            self._tumor_stage_clinical_m,
+            self._tumor_stage_clinical_n,
+            self._tumor_stage_clinical_t,
+        ])
+
+    @property
+    def age_at_diagnosis(self):
+        return self._age_at_diagnosis
+
+    @age_at_diagnosis.setter
+    def age_at_diagnosis(self, value):
+        self._validate_attr('age_at_diagnosis', value)
+        self._age_at_diagnosis = value
+
+    @property
+    def anatomic_site(self):
+        return self._anatomic_site
+
+    @anatomic_site.setter
+    def anatomic_site(self, value):
+        self._validate_attr('anatomic_site', value)
+        self._anatomic_site = value
+
+    @property
+    def diagnosis_finer_resolution(self):
+        return self._diagnosis_finer_resolution
+
+    @diagnosis_finer_resolution.setter
+    def diagnosis_finer_resolution(self, value):
+        self._validate_attr('diagnosis_finer_resolution', value)
+        self._diagnosis_finer_resolution = value
+
+    @property
+    def diagnosis_icd_cm(self):
+        return self._diagnosis_icd_cm
+
+    @diagnosis_icd_cm.setter
+    def diagnosis_icd_cm(self, value):
+        self._validate_attr('diagnosis_icd_cm', value)
+        self._diagnosis_icd_cm = value
+
+    @property
+    def diagnosis_icd_o(self):
+        return self._diagnosis_icd_o
+
+    @diagnosis_icd_o.setter
+    def diagnosis_icd_o(self, value):
+        self._validate_attr('diagnosis_icd_o', value)
+        self._diagnosis_icd_o = value
+
+    @property
+    def diagnosis_id(self):
+        return self._diagnosis_id
+
+    @diagnosis_id.setter
+    def diagnosis_id(self, value):
+        self._validate_attr('diagnosis_id', value)
+        self._diagnosis_id = value
+
+    @property
+    def disease_phase(self):
+        return self._disease_phase
+
+    @disease_phase.setter
+    def disease_phase(self, value):
+        self._validate_attr('disease_phase', value)
+        self._disease_phase = value
+
+    @property
+    def toronto_childhood_cancer_staging(self):
+        return self._toronto_childhood_cancer_staging
+
+    @toronto_childhood_cancer_staging.setter
+    def toronto_childhood_cancer_staging(self, value):
+        self._validate_attr('toronto_childhood_cancer_staging', value)
+        self._toronto_childhood_cancer_staging = value
+
+    @property
+    def tumor_grade(self):
+        return self._tumor_grade
+
+    @tumor_grade.setter
+    def tumor_grade(self, value):
+        self._validate_attr('tumor_grade', value)
+        self._tumor_grade = value
+
+    @property
+    def tumor_stage_clinical_m(self):
+        return self._tumor_stage_clinical_m
+
+    @tumor_stage_clinical_m.setter
+    def tumor_stage_clinical_m(self, value):
+        self._validate_attr('tumor_stage_clinical_m', value)
+        self._tumor_stage_clinical_m = value
+
+    @property
+    def tumor_stage_clinical_n(self):
+        return self._tumor_stage_clinical_n
+
+    @tumor_stage_clinical_n.setter
+    def tumor_stage_clinical_n(self, value):
+        self._validate_attr('tumor_stage_clinical_n', value)
+        self._tumor_stage_clinical_n = value
+
+    @property
+    def tumor_stage_clinical_t(self):
+        return self._tumor_stage_clinical_t
+
+    @tumor_stage_clinical_t.setter
+    def tumor_stage_clinical_t(self, value):
+        self._validate_attr('tumor_stage_clinical_t', value)
+        self._tumor_stage_clinical_t = value
+
+    def to_list(self):
+        return [
+            'diagnosis',
+            self._age_at_diagnosis,
+            self._anatomic_site,
+            self._diagnosis_finer_resolution,
+            self._diagnosis_icd_cm,
+            ';'.join(self._diagnosis_icd_o),
+            self._diagnosis_id,
+            self._disease_phase,
+            self._toronto_childhood_cancer_staging,
+            self._tumor_grade,
+            self._tumor_stage_clinical_m,
+            self._tumor_stage_clinical_n,
+            self._tumor_stage_clinical_t,
         ]
