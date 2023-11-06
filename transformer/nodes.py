@@ -509,16 +509,176 @@ class Diagnosis(Node):
     def to_list(self):
         return [
             'diagnosis',
-            self._age_at_diagnosis,
-            self._anatomic_site,
-            self._diagnosis_finer_resolution,
-            self._diagnosis_icd_cm,
-            ';'.join(self._diagnosis_icd_o),
             self._diagnosis_id,
+            ';'.join(self._diagnosis_icd_o),
+            self._diagnosis_icd_cm,
+            self._diagnosis_finer_resolution,
             self._disease_phase,
+            self._anatomic_site,
+            self._age_at_diagnosis,
             self._toronto_childhood_cancer_staging,
             self._tumor_grade,
-            self._tumor_stage_clinical_m,
-            self._tumor_stage_clinical_n,
             self._tumor_stage_clinical_t,
+            self._tumor_stage_clinical_n,
+            self._tumor_stage_clinical_m,
+        ]
+
+class ReferenceFile(Node):
+    _PROPER_NAMES = {
+        'checksum_algorithm': 'Checksum Algorithm',
+        'checksum_value': 'Checksum Value',
+        'dcf_indexd_guid': 'DCF Index GUID',
+        'file_category': 'File Category',
+        'file_description': 'File Description',
+        'file_name': 'Filename',
+        'file_size': 'File Size',
+        'file_type': 'File Type',
+        'md5sum': 'MD5 Checksum',
+        'reference_file_id': 'Reference File ID',
+        'reference_file_url': 'Reference File URL',
+    }
+
+    def __init__(self, checksum_algorithm, checksum_value, dcf_indexd_guid,
+            file_category, file_description, file_name, file_size, file_type,
+            md5sum, reference_file_id, reference_file_url):
+        self.checksum_algorithm = checksum_algorithm or None
+        self.checksum_value = checksum_value or None
+        self.dcf_indexd_guid = dcf_indexd_guid or None
+        self.file_category = file_category or None
+        self.file_description = file_description or None
+        self.file_name = file_name or None
+        self.file_size = file_size or None
+        self.file_type = file_type or None
+        self.md5sum = md5sum or None
+        self.reference_file_id = reference_file_id or None
+        self.reference_file_url = reference_file_url or None
+
+    def __str__(self):
+        return ' | '.join([
+            self.checksum_algorithm,
+            self.checksum_value,
+            self.dcf_indexd_guid,
+            self.file_category,
+            self.file_description,
+            self.file_name,
+            self.file_size,
+            self.file_type,
+            self.md5sum,
+            self.reference_file_id,
+            self.reference_file_url,
+        ])
+
+    @property
+    def checksum_algorithm(self):
+        return self._checksum_algorithm
+
+    @checksum_algorithm.setter
+    def checksum_algorithm(self, value):
+        self._validate_attr('checksum_algorithm', value)
+        self._checksum_algorithm = value
+
+    @property
+    def checksum_value(self):
+        return self._checksum_value
+
+    @checksum_value.setter
+    def checksum_value(self, value):
+        self._validate_attr('checksum_value', value)
+        self._checksum_value = value
+
+    @property
+    def dcf_indexd_guid(self):
+        return self._dcf_indexd_guid
+
+    @dcf_indexd_guid.setter
+    def dcf_indexd_guid(self, value):
+        self._validate_attr('dcf_indexd_guid', value)
+        self._dcf_indexd_guid = value
+
+    @property
+    def file_category(self):
+        return self._file_category
+
+    @file_category.setter
+    def file_category(self, value):
+        self._validate_attr('file_category', value)
+        self._file_category = value
+
+    @property
+    def file_description(self):
+        return self._file_description
+
+    @file_description.setter
+    def file_description(self, value):
+        self._validate_attr('file_description', value)
+        self._file_description = value
+
+    @property
+    def file_name(self):
+        return self._file_name
+
+    @file_name.setter
+    def file_name(self, value):
+        self._validate_attr('file_name', value)
+        self._file_name = value
+
+    @property
+    def file_size(self):
+        return self._file_size
+
+    @file_size.setter
+    def file_size(self, value):
+        self._validate_attr('file_size', value)
+        self._file_size = value
+
+    @property
+    def file_type(self):
+        return self._file_type
+
+    @file_type.setter
+    def file_type(self, value):
+        self._validate_attr('file_type', value)
+        self._file_type = value
+
+    @property
+    def md5sum(self):
+        return self._md5sum
+
+    @md5sum.setter
+    def md5sum(self, value):
+        self._validate_attr('md5sum', value)
+        self._md5sum = value
+
+    @property
+    def reference_file_id(self):
+        return self._reference_file_id
+
+    @reference_file_id.setter
+    def reference_file_id(self, value):
+        self._validate_attr('reference_file_id', value)
+        self._reference_file_id = value
+
+    @property
+    def reference_file_url(self):
+        return self._reference_file_url
+
+    @reference_file_url.setter
+    def reference_file_url(self, value):
+        self._validate_attr('reference_file_url', value)
+        self._reference_file_url = value
+
+    def to_list(self):
+        return [
+            'reference_file',
+            self.reference_file_id,
+            self.file_category,
+            self.file_name,
+            self.file_type,
+            self.file_description,
+            self.file_size,
+            self.md5sum,
+            self.reference_file_url,
+            self.dcf_indexd_guid,
+            self.checksum_algorithm,
+            self.checksum_value,
         ]
