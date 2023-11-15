@@ -80,6 +80,9 @@ class Node:
         if is_required and type == str and value == '':
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
+        if not is_required and value is None:
+            return
+
         # Check that the value is the right type
         if value is not None and not isinstance(value, type):
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
@@ -182,9 +185,9 @@ class Participant(Node):
         return [
             'participant',
             self._participant_id,
-            self._race,
+            ';'.join(self._race),
             self._gender,
-            self._ethnicity,
+            ';'.join(self._ethnicity),
             self._alternate_participant_id,
         ]
 
@@ -342,4 +345,340 @@ class Study(Node):
             self._consent,
             self._consent_number,
             self._external_url,
+        ]
+
+class Diagnosis(Node):
+    _PROPER_NAMES = {
+        'age_at_diagnosis': 'Age at Diagnosis',
+        'anatomic_site': 'Anatomic Site',
+        'diagnosis_finer_resolution': 'Diagnosis Finer Resolution',
+        'diagnosis_icd_cm': 'Diagnosis ICD-10-CM',
+        'diagnosis_icd_o': 'Diagnosis ICD-O',
+        'diagnosis_id': 'Diagnosis ID',
+        'disease_phase': 'Disease Phase',
+        'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
+        'tumor_grade': 'Tumor Grade',
+        'tumor_stage_clinical_m': 'Tumor Clinical M Stage',
+        'tumor_stage_clinical_n': 'Tumor Clinical N Stage',
+        'tumor_stage_clinical_t': 'Tumor Clinical T Stage',
+    }
+
+    def __init__(self, age_at_diagnosis, anatomic_site,
+            diagnosis_finer_resolution, diagnosis_icd_cm,
+            diagnosis_icd_o, diagnosis_id, disease_phase,
+            toronto_childhood_cancer_staging, tumor_grade,
+            tumor_stage_clinical_m, tumor_stage_clinical_n,
+            tumor_stage_clinical_t):
+        self.age_at_diagnosis = age_at_diagnosis or None
+        self.anatomic_site = anatomic_site or None
+        self.diagnosis_finer_resolution = diagnosis_finer_resolution or None
+        self.diagnosis_icd_cm = diagnosis_icd_cm or None
+        self.diagnosis_icd_o = diagnosis_icd_o or None
+        self.diagnosis_id = diagnosis_id or None
+        self.disease_phase = disease_phase or None
+        self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging or None
+        self.tumor_grade = tumor_grade or None
+        self.tumor_stage_clinical_m = tumor_stage_clinical_m or None
+        self.tumor_stage_clinical_n = tumor_stage_clinical_n or None
+        self.tumor_stage_clinical_t = tumor_stage_clinical_t or None
+
+    def __str__(self):
+        return ' | '.join([
+            self._age_at_diagnosis,
+            self._anatomic_site,
+            self._diagnosis_finer_resolution,
+            self._diagnosis_icd_cm,
+            self._diagnosis_icd_o,
+            self._diagnosis_id,
+            self._disease_phase,
+            self._toronto_childhood_cancer_staging,
+            self._tumor_grade,
+            self._tumor_stage_clinical_m,
+            self._tumor_stage_clinical_n,
+            self._tumor_stage_clinical_t,
+        ])
+
+    @property
+    def age_at_diagnosis(self):
+        return self._age_at_diagnosis
+
+    @age_at_diagnosis.setter
+    def age_at_diagnosis(self, value):
+        self._validate_attr('age_at_diagnosis', value)
+        self._age_at_diagnosis = value
+
+    @property
+    def anatomic_site(self):
+        return self._anatomic_site
+
+    @anatomic_site.setter
+    def anatomic_site(self, value):
+        self._validate_attr('anatomic_site', value)
+        self._anatomic_site = value
+
+    @property
+    def diagnosis_finer_resolution(self):
+        return self._diagnosis_finer_resolution
+
+    @diagnosis_finer_resolution.setter
+    def diagnosis_finer_resolution(self, value):
+        self._validate_attr('diagnosis_finer_resolution', value)
+        self._diagnosis_finer_resolution = value
+
+    @property
+    def diagnosis_icd_cm(self):
+        return self._diagnosis_icd_cm
+
+    @diagnosis_icd_cm.setter
+    def diagnosis_icd_cm(self, value):
+        self._validate_attr('diagnosis_icd_cm', value)
+        self._diagnosis_icd_cm = value
+
+    @property
+    def diagnosis_icd_o(self):
+        return self._diagnosis_icd_o
+
+    @diagnosis_icd_o.setter
+    def diagnosis_icd_o(self, value):
+        self._validate_attr('diagnosis_icd_o', value)
+        self._diagnosis_icd_o = value
+
+    @property
+    def diagnosis_id(self):
+        return self._diagnosis_id
+
+    @diagnosis_id.setter
+    def diagnosis_id(self, value):
+        self._validate_attr('diagnosis_id', value)
+        self._diagnosis_id = value
+
+    @property
+    def disease_phase(self):
+        return self._disease_phase
+
+    @disease_phase.setter
+    def disease_phase(self, value):
+        self._validate_attr('disease_phase', value)
+        self._disease_phase = value
+
+    @property
+    def toronto_childhood_cancer_staging(self):
+        return self._toronto_childhood_cancer_staging
+
+    @toronto_childhood_cancer_staging.setter
+    def toronto_childhood_cancer_staging(self, value):
+        self._validate_attr('toronto_childhood_cancer_staging', value)
+        self._toronto_childhood_cancer_staging = value
+
+    @property
+    def tumor_grade(self):
+        return self._tumor_grade
+
+    @tumor_grade.setter
+    def tumor_grade(self, value):
+        self._validate_attr('tumor_grade', value)
+        self._tumor_grade = value
+
+    @property
+    def tumor_stage_clinical_m(self):
+        return self._tumor_stage_clinical_m
+
+    @tumor_stage_clinical_m.setter
+    def tumor_stage_clinical_m(self, value):
+        self._validate_attr('tumor_stage_clinical_m', value)
+        self._tumor_stage_clinical_m = value
+
+    @property
+    def tumor_stage_clinical_n(self):
+        return self._tumor_stage_clinical_n
+
+    @tumor_stage_clinical_n.setter
+    def tumor_stage_clinical_n(self, value):
+        self._validate_attr('tumor_stage_clinical_n', value)
+        self._tumor_stage_clinical_n = value
+
+    @property
+    def tumor_stage_clinical_t(self):
+        return self._tumor_stage_clinical_t
+
+    @tumor_stage_clinical_t.setter
+    def tumor_stage_clinical_t(self, value):
+        self._validate_attr('tumor_stage_clinical_t', value)
+        self._tumor_stage_clinical_t = value
+
+    def to_list(self):
+        return [
+            'diagnosis',
+            self._diagnosis_id,
+            ';'.join(self._diagnosis_icd_o),
+            self._diagnosis_icd_cm,
+            self._diagnosis_finer_resolution,
+            self._disease_phase,
+            self._anatomic_site,
+            self._age_at_diagnosis,
+            self._toronto_childhood_cancer_staging,
+            self._tumor_grade,
+            self._tumor_stage_clinical_t,
+            self._tumor_stage_clinical_n,
+            self._tumor_stage_clinical_m,
+        ]
+
+class ReferenceFile(Node):
+    _PROPER_NAMES = {
+        'checksum_algorithm': 'Checksum Algorithm',
+        'checksum_value': 'Checksum Value',
+        'dcf_indexd_guid': 'DCF Index GUID',
+        'file_category': 'File Category',
+        'file_description': 'File Description',
+        'file_name': 'Filename',
+        'file_size': 'File Size',
+        'file_type': 'File Type',
+        'md5sum': 'MD5 Checksum',
+        'reference_file_id': 'Reference File ID',
+        'reference_file_url': 'Reference File URL',
+    }
+
+    def __init__(self, checksum_algorithm, checksum_value, dcf_indexd_guid,
+            file_category, file_description, file_name, file_size, file_type,
+            md5sum, reference_file_id, reference_file_url):
+        self.checksum_algorithm = checksum_algorithm or None
+        self.checksum_value = checksum_value or None
+        self.dcf_indexd_guid = dcf_indexd_guid or None
+        self.file_category = file_category or None
+        self.file_description = file_description or None
+        self.file_name = file_name or None
+        self.file_size = file_size or None
+        self.file_type = file_type or None
+        self.md5sum = md5sum or None
+        self.reference_file_id = reference_file_id or None
+        self.reference_file_url = reference_file_url or None
+
+    def __str__(self):
+        return ' | '.join([
+            self.checksum_algorithm,
+            self.checksum_value,
+            self.dcf_indexd_guid,
+            self.file_category,
+            self.file_description,
+            self.file_name,
+            self.file_size,
+            self.file_type,
+            self.md5sum,
+            self.reference_file_id,
+            self.reference_file_url,
+        ])
+
+    @property
+    def checksum_algorithm(self):
+        return self._checksum_algorithm
+
+    @checksum_algorithm.setter
+    def checksum_algorithm(self, value):
+        self._validate_attr('checksum_algorithm', value)
+        self._checksum_algorithm = value
+
+    @property
+    def checksum_value(self):
+        return self._checksum_value
+
+    @checksum_value.setter
+    def checksum_value(self, value):
+        self._validate_attr('checksum_value', value)
+        self._checksum_value = value
+
+    @property
+    def dcf_indexd_guid(self):
+        return self._dcf_indexd_guid
+
+    @dcf_indexd_guid.setter
+    def dcf_indexd_guid(self, value):
+        self._validate_attr('dcf_indexd_guid', value)
+        self._dcf_indexd_guid = value
+
+    @property
+    def file_category(self):
+        return self._file_category
+
+    @file_category.setter
+    def file_category(self, value):
+        self._validate_attr('file_category', value)
+        self._file_category = value
+
+    @property
+    def file_description(self):
+        return self._file_description
+
+    @file_description.setter
+    def file_description(self, value):
+        self._validate_attr('file_description', value)
+        self._file_description = value
+
+    @property
+    def file_name(self):
+        return self._file_name
+
+    @file_name.setter
+    def file_name(self, value):
+        self._validate_attr('file_name', value)
+        self._file_name = value
+
+    @property
+    def file_size(self):
+        return self._file_size
+
+    @file_size.setter
+    def file_size(self, value):
+        self._validate_attr('file_size', value)
+        self._file_size = value
+
+    @property
+    def file_type(self):
+        return self._file_type
+
+    @file_type.setter
+    def file_type(self, value):
+        self._validate_attr('file_type', value)
+        self._file_type = value
+
+    @property
+    def md5sum(self):
+        return self._md5sum
+
+    @md5sum.setter
+    def md5sum(self, value):
+        self._validate_attr('md5sum', value)
+        self._md5sum = value
+
+    @property
+    def reference_file_id(self):
+        return self._reference_file_id
+
+    @reference_file_id.setter
+    def reference_file_id(self, value):
+        self._validate_attr('reference_file_id', value)
+        self._reference_file_id = value
+
+    @property
+    def reference_file_url(self):
+        return self._reference_file_url
+
+    @reference_file_url.setter
+    def reference_file_url(self, value):
+        self._validate_attr('reference_file_url', value)
+        self._reference_file_url = value
+
+    def to_list(self):
+        return [
+            'reference_file',
+            self.reference_file_id,
+            self.file_category,
+            self.file_name,
+            self.file_type,
+            self.file_description,
+            self.file_size,
+            self.md5sum,
+            self.reference_file_url,
+            self.dcf_indexd_guid,
+            self.checksum_algorithm,
+            self.checksum_value,
         ]
