@@ -534,8 +534,13 @@ class Diagnosis(Node):
         return [
             'diagnosis',
             self._diagnosis_id,
+            self._diagnosis_classification,
+            self._diagnosis_classification_system,
+            ';'.join(self._diagnosis_basis),
+            self._diagnosis_comment,
+            self._diagnosis_verification_status,
             self._disease_phase,
-            self._anatomic_site,
+            ';'.join(self._anatomic_site),
             self._age_at_diagnosis,
             self._toronto_childhood_cancer_staging,
             self._tumor_grade,
@@ -745,7 +750,7 @@ class Survival(Node):
 
     @property
     def age_at_last_known_survival_status(self):
-        return self._checksum_value
+        return self._age_at_last_known_survival_status
 
     @age_at_last_known_survival_status.setter
     def age_at_last_known_survival_status(self, value):
