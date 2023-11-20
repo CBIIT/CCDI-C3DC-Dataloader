@@ -432,7 +432,7 @@ def check_survivals_for_participants():
         if survival_id not in survivals_to_participants.keys():
             print(f'Survival {survival_id} does not have a Participant!')
             print(f'Skipping Survival {survival_id}...')
-            survival_ids_to_remove.append(reference_file_id)
+            survival_ids_to_remove.append(survival_id)
 
     for survival_id in survival_ids_to_remove:
         del survivals[survival_id]
