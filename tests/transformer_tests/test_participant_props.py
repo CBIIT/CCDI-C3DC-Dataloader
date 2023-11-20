@@ -6,15 +6,15 @@ class TestParticipantFactory():
             self,
             alternate_participant_id = None,
             ethnicity = ['Not Hispanic or Latino'],
-            gender = 'Male',
             participant_id = 'FOO-BAR-123',
-            race = ['Asian']):
+            race = ['Asian'],
+            sex_at_birth = 'Male'):
         participant = Participant(
             alternate_participant_id,
             ethnicity,
-            gender,
             participant_id,
-            race
+            race,
+            sex_at_birth
         )
 
         return participant
@@ -46,8 +46,8 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             self.participant_factory.create_participant(ethnicity=value)
 
-        with self.assertRaisesRegex(TypeError, "Ethnicity `3` must be of type <class 'list'>"):
-            value = 3
+        with self.assertRaisesRegex(TypeError, "Ethnicity `Foo` must be of type <class 'list'>"):
+            value = 'Foo'
             print(test_msg.format(value))
             self.participant_factory.create_participant(ethnicity=value)
 
@@ -55,30 +55,6 @@ class TestParticipantProps(unittest.TestCase):
             value = ['Foo']
             print(test_msg.format(value))
             self.participant_factory.create_participant(ethnicity=value)
-
-    # Participant.gender
-    def test_participant_gender(self):
-        test_msg = 'Testing Participant.gender being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, 'Gender is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(gender=value)
-
-        with self.assertRaisesRegex(TypeError, 'Gender is missing'):
-            value = ''
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(gender=value)
-
-        with self.assertRaisesRegex(TypeError, "Gender `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(gender=value)
-
-        with self.assertRaisesRegex(ValueError, 'Gender `Foo` must be one of the specified values'):
-            value = 'Foo'
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(gender=value)
 
     # Participant.participant_id
     def test_participant_id(self):
@@ -113,11 +89,6 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             self.participant_factory.create_participant(race=value)
 
-        with self.assertRaisesRegex(TypeError, "Race `3` must be of type <class 'list'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(race=value)
-
         with self.assertRaisesRegex(TypeError, "Race `Foo` must be of type <class 'list'>"):
             value = 'Foo'
             print(test_msg.format(value))
@@ -127,6 +98,30 @@ class TestParticipantProps(unittest.TestCase):
             value = ['Foo']
             print(test_msg.format(value))
             self.participant_factory.create_participant(race=value)
+
+    # Participant.sex_at_birth
+    def test_participant_sex_at_birth(self):
+        test_msg = 'Testing Participant.sex_at_birth being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, 'Sex at Birth is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.participant_factory.create_participant(sex_at_birth=value)
+
+        with self.assertRaisesRegex(TypeError, 'Sex at Birth is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.participant_factory.create_participant(sex_at_birth=value)
+
+        with self.assertRaisesRegex(TypeError, "Sex at Birth `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.participant_factory.create_participant(sex_at_birth=value)
+
+        with self.assertRaisesRegex(ValueError, 'Sex at Birth `Foo` must be one of the specified values'):
+            value = 'Foo'
+            print(test_msg.format(value))
+            self.participant_factory.create_participant(sex_at_birth=value)
 
 if __name__ == '__main__':
     unittest.main()
