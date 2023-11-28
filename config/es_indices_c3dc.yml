@@ -40,7 +40,6 @@ Indices:
   #         last_known_survival_status: su.last_known_survival_status
   #       }) as survivals
 
-  # This one's fucked and won't finish
   - index_name: home_stats
     type: neo4j
     mapping:
@@ -59,13 +58,13 @@ Indices:
       MATCH (p:participant)
       MATCH (rf:reference_file)
       MATCH (st:study)
-      MATCH (su:survival)
+      MATCH (sur:survivals)
       RETURN
         COUNT(DISTINCT d) AS num_diagnoses,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT rf) AS num_reference_files,
         COUNT(DISTINCT st) AS num_studies,
-        COUNT(DISTINCT su) AS num_survivals
+        COUNT(DISTINCT sur) AS num_survivals
 
   - index_name: diagnoses
     type: neo4j
@@ -190,7 +189,7 @@ Indices:
       checksum_value:
         type: keyword
       created:
-        type: keyword
+        type: date
       dcf_indexd_guid:
         type: keyword
       file_category:
