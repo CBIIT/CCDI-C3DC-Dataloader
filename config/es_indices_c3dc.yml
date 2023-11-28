@@ -188,8 +188,6 @@ Indices:
         type: keyword
       checksum_value:
         type: keyword
-      created:
-        type: date
       dcf_indexd_guid:
         type: keyword
       file_category:
@@ -215,7 +213,6 @@ Indices:
       RETURN
         r.checksum_algorithm as checksum_algorithm,
         r.checksum_value as checksum_value,
-        r.created as created,
         r.dcf_indexd_guid as dcf_indexd_guid,
         r.file_category as file_category,
         r.file_description as file_description,
