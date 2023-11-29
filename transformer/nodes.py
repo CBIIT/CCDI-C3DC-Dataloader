@@ -107,17 +107,17 @@ class Participant(Node):
     _PROPER_NAMES = {
         'alternate_participant_id': 'Alternate Participant ID',
         'ethnicity': 'Ethnicity',
-        'gender': 'Gender',
         'participant_id': 'Participant ID',
         'race': 'Race',
+        'sex_at_birth': 'Sex at Birth',
     }
 
-    def __init__(self, alternate_participant_id, ethnicity, gender, participant_id, race, model_file_path=None, props_file_path=None):
+    def __init__(self, alternate_participant_id, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
         self.alternate_participant_id = alternate_participant_id or None
         self.ethnicity = ethnicity or None
-        self.gender = gender or None
         self.participant_id = participant_id or None
         self.race = race or None
+        self.sex_at_birth = sex_at_birth or None
 
         if (not model_file_path is None):
             with open(model_file_path, 'r') as file:
@@ -131,9 +131,9 @@ class Participant(Node):
         return ' | '.join([
             self._participant_id or '',
             self._alternate_participant_id or '',
-            self._gender or '',
             self._ethnicity or '',
             self._race or '',
+            self._sex_at_birth or '',
         ])
 
     @property
@@ -155,15 +155,6 @@ class Participant(Node):
         self._ethnicity = value
 
     @property
-    def gender(self):
-        return self._gender
-
-    @gender.setter
-    def gender(self, value):
-        self._validate_attr('gender', value)
-        self._gender = value
-
-    @property
     def participant_id(self):
         return self._participant_id
 
@@ -181,12 +172,21 @@ class Participant(Node):
         self._validate_attr('race', value)
         self._race = value
 
+    @property
+    def gender(self):
+        return self._gender
+
+    @gender.setter
+    def sex_at_birth(self, value):
+        self._validate_attr('sex_at_birth', value)
+        self._sex_at_birth = value
+
     def to_list(self):
         return [
             'participant',
             self._participant_id,
             ';'.join(self._race),
-            self._gender,
+            self._sex_at_birth,
             ';'.join(self._ethnicity),
             self._alternate_participant_id,
         ]
@@ -351,10 +351,12 @@ class Diagnosis(Node):
     _PROPER_NAMES = {
         'age_at_diagnosis': 'Age at Diagnosis',
         'anatomic_site': 'Anatomic Site',
-        'diagnosis_finer_resolution': 'Diagnosis Finer Resolution',
-        'diagnosis_icd_cm': 'Diagnosis ICD-10-CM',
-        'diagnosis_icd_o': 'Diagnosis ICD-O',
+        'diagnosis_basis': 'Diagnosis Basis',
+        'diagnosis_classification': 'Diagnosis Classification',
+        'diagnosis_classification_system': 'Diagnosis Classification System',
+        'diagnosis_comment': 'Diagnosis Comment',
         'diagnosis_id': 'Diagnosis ID',
+        'diagnosis_verification_status': 'Diagnosis Verification Status',
         'disease_phase': 'Disease Phase',
         'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
         'tumor_grade': 'Tumor Grade',
@@ -363,18 +365,20 @@ class Diagnosis(Node):
         'tumor_stage_clinical_t': 'Tumor Clinical T Stage',
     }
 
-    def __init__(self, age_at_diagnosis, anatomic_site,
-            diagnosis_finer_resolution, diagnosis_icd_cm,
-            diagnosis_icd_o, diagnosis_id, disease_phase,
-            toronto_childhood_cancer_staging, tumor_grade,
+    def __init__(self, age_at_diagnosis, anatomic_site, diagnosis_basis,
+            diagnosis_classification, diagnosis_classification_system,
+            diagnosis_comment, diagnosis_id, diagnosis_verification_status,
+            disease_phase, toronto_childhood_cancer_staging, tumor_grade,
             tumor_stage_clinical_m, tumor_stage_clinical_n,
             tumor_stage_clinical_t):
         self.age_at_diagnosis = age_at_diagnosis or None
         self.anatomic_site = anatomic_site or None
-        self.diagnosis_finer_resolution = diagnosis_finer_resolution or None
-        self.diagnosis_icd_cm = diagnosis_icd_cm or None
-        self.diagnosis_icd_o = diagnosis_icd_o or None
+        self.diagnosis_basis = diagnosis_basis or None
+        self.diagnosis_classification = diagnosis_classification or None
+        self.diagnosis_classification_system = diagnosis_classification_system or None
+        self.diagnosis_comment = diagnosis_comment or None
         self.diagnosis_id = diagnosis_id or None
+        self.diagnosis_verification_status = diagnosis_verification_status or None
         self.disease_phase = disease_phase or None
         self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging or None
         self.tumor_grade = tumor_grade or None
@@ -386,10 +390,12 @@ class Diagnosis(Node):
         return ' | '.join([
             self._age_at_diagnosis,
             self._anatomic_site,
-            self._diagnosis_finer_resolution,
-            self._diagnosis_icd_cm,
-            self._diagnosis_icd_o,
+            self._diagnosis_basis,
+            self._diagnosis_classification,
+            self._diagnosis_classification_system,
+            self._diagnosis_comment,
             self._diagnosis_id,
+            self._diagnosis_verification_status,
             self._disease_phase,
             self._toronto_childhood_cancer_staging,
             self._tumor_grade,
@@ -417,31 +423,40 @@ class Diagnosis(Node):
         self._anatomic_site = value
 
     @property
-    def diagnosis_finer_resolution(self):
-        return self._diagnosis_finer_resolution
+    def diagnosis_basis(self):
+        return self._diagnosis_basis
 
-    @diagnosis_finer_resolution.setter
-    def diagnosis_finer_resolution(self, value):
-        self._validate_attr('diagnosis_finer_resolution', value)
-        self._diagnosis_finer_resolution = value
-
-    @property
-    def diagnosis_icd_cm(self):
-        return self._diagnosis_icd_cm
-
-    @diagnosis_icd_cm.setter
-    def diagnosis_icd_cm(self, value):
-        self._validate_attr('diagnosis_icd_cm', value)
-        self._diagnosis_icd_cm = value
+    @diagnosis_basis.setter
+    def diagnosis_basis(self, value):
+        self._validate_attr('diagnosis_basis', value)
+        self._diagnosis_basis = value
 
     @property
-    def diagnosis_icd_o(self):
-        return self._diagnosis_icd_o
+    def diagnosis_classification(self):
+        return self._diagnosis_classification
 
-    @diagnosis_icd_o.setter
-    def diagnosis_icd_o(self, value):
-        self._validate_attr('diagnosis_icd_o', value)
-        self._diagnosis_icd_o = value
+    @diagnosis_classification.setter
+    def diagnosis_classification(self, value):
+        self._validate_attr('diagnosis_classification', value)
+        self._diagnosis_classification = value
+
+    @property
+    def diagnosis_classification_system(self):
+        return self._diagnosis_classification_system
+
+    @diagnosis_classification_system.setter
+    def diagnosis_classification_system(self, value):
+        self._validate_attr('diagnosis_classification_system', value)
+        self._diagnosis_classification_system = value
+
+    @property
+    def diagnosis_comment(self):
+        return self._diagnosis_comment
+
+    @diagnosis_comment.setter
+    def diagnosis_comment(self, value):
+        self._validate_attr('diagnosis_comment', value)
+        self._diagnosis_comment = value
 
     @property
     def diagnosis_id(self):
@@ -451,6 +466,15 @@ class Diagnosis(Node):
     def diagnosis_id(self, value):
         self._validate_attr('diagnosis_id', value)
         self._diagnosis_id = value
+
+    @property
+    def diagnosis_verification_status(self):
+        return self._diagnosis_verification_status
+
+    @diagnosis_verification_status.setter
+    def diagnosis_verification_status(self, value):
+        self._validate_attr('diagnosis_verification_status', value)
+        self._diagnosis_verification_status = value
 
     @property
     def disease_phase(self):
@@ -510,11 +534,13 @@ class Diagnosis(Node):
         return [
             'diagnosis',
             self._diagnosis_id,
-            ';'.join(self._diagnosis_icd_o),
-            self._diagnosis_icd_cm,
-            self._diagnosis_finer_resolution,
+            self._diagnosis_classification,
+            self._diagnosis_classification_system,
+            ';'.join(self._diagnosis_basis),
+            self._diagnosis_comment,
+            self._diagnosis_verification_status,
             self._disease_phase,
-            self._anatomic_site,
+            ';'.join(self._anatomic_site),
             self._age_at_diagnosis,
             self._toronto_childhood_cancer_staging,
             self._tumor_grade,
@@ -681,4 +707,99 @@ class ReferenceFile(Node):
             self.dcf_indexd_guid,
             self.checksum_algorithm,
             self.checksum_value,
+        ]
+
+class Survival(Node):
+    _PROPER_NAMES = {
+        'age_at_event_free_survival_status': 'Age at Event Free Survival Status',
+        'age_at_last_known_survival_status': 'Age at Last Known Survival Status',
+        'event_free_survival_status': 'Event Free Survival Status',
+        'first_event': 'First Event',
+        'last_known_survival_status': 'Last Known Survival Status',
+        'survival_id': 'Survival ID',
+    }
+
+    def __init__(self, age_at_event_free_survival_status,
+            age_at_last_known_survival_status, event_free_survival_status,
+            first_event, last_known_survival_status, survival_id):
+        self.age_at_event_free_survival_status = age_at_event_free_survival_status or None
+        self.age_at_last_known_survival_status = age_at_last_known_survival_status or None
+        self.event_free_survival_status = event_free_survival_status or None
+        self.first_event = first_event or None
+        self.last_known_survival_status = last_known_survival_status or None
+        self.survival_id = survival_id or None
+
+    def __str__(self):
+        return ' | '.join([
+            self.age_at_event_free_survival_status,
+            self.age_at_last_known_survival_status,
+            self.event_free_survival_status,
+            self.first_event,
+            self.last_known_survival_status,
+            self.survival_id,
+        ])
+
+    @property
+    def age_at_event_free_survival_status(self):
+        return self._age_at_event_free_survival_status
+
+    @age_at_event_free_survival_status.setter
+    def age_at_event_free_survival_status(self, value):
+        self._validate_attr('age_at_event_free_survival_status', value)
+        self._age_at_event_free_survival_status = value
+
+    @property
+    def age_at_last_known_survival_status(self):
+        return self._age_at_last_known_survival_status
+
+    @age_at_last_known_survival_status.setter
+    def age_at_last_known_survival_status(self, value):
+        self._validate_attr('age_at_last_known_survival_status', value)
+        self._age_at_last_known_survival_status = value
+
+    @property
+    def event_free_survival_status(self):
+        return self._event_free_survival_status
+
+    @event_free_survival_status.setter
+    def event_free_survival_status(self, value):
+        self._validate_attr('event_free_survival_status', value)
+        self._event_free_survival_status = value
+
+    @property
+    def first_event(self):
+        return self._first_event
+
+    @first_event.setter
+    def first_event(self, value):
+        self._validate_attr('first_event', value)
+        self._first_event = value
+
+    @property
+    def last_known_survival_status(self):
+        return self._last_known_survival_status
+
+    @last_known_survival_status.setter
+    def last_known_survival_status(self, value):
+        self._validate_attr('last_known_survival_status', value)
+        self._last_known_survival_status = value
+
+    @property
+    def survival_id(self):
+        return self._survival_id
+
+    @survival_id.setter
+    def survival_id(self, value):
+        self._validate_attr('survival_id', value)
+        self._survival_id = value
+
+    def to_list(self):
+        return [
+            'survival',
+            self.survival_id,
+            self.last_known_survival_status,
+            self.event_free_survival_status,
+            self.first_event,
+            self.age_at_last_known_survival_status,
+            self.age_at_event_free_survival_status,
         ]

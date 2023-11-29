@@ -1,13 +1,15 @@
 import csv
 import json
-from nodes import Diagnosis, Participant, ReferenceFile, Study
+from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 
 DIAGNOSIS_HEADERS = [
     'type',
     'diagnosis_id',
-    'diagnosis_icd_o',
-    'diagnosis_icd_cm',
-    'diagnosis_finer_resolution',
+    'diagnosis_classification',
+    'diagnosis_classification_system',
+    'diagnosis_basis',
+    'diagnosis_comment',
+    'diagnosis_verification_status',
     'disease_phase',
     'anatomic_site',
     'age_at_diagnosis',
@@ -24,7 +26,7 @@ PARTICIPANT_HEADERS = [
     'type',
     'participant_id',
     'race',
-    'gender',
+    'sex_at_birth',
     'ethnicity',
     'alternate_participant_id',
     'id',
@@ -63,6 +65,18 @@ STUDY_HEADERS = [
     'id',
 ]
 
+SURVIVAL_HEADERS = [
+    'type',
+    'survival_id',
+    'last_known_survival_status',
+    'event_free_survival_status',
+    'first_event',
+    'age_at_last_known_survival_status',
+    'age_at_event_free_survival_status',
+    'id',
+    'participant.participant_id',
+]
+
 discovery_file = open('data/TARGET_NBL_ClinicalData_Discovery_20220125.json')
 validation_file = open('data/TARGET_NBL_ClinicalData_Validation_20220125.json')
 discovery_data = json.load(discovery_file)
@@ -76,6 +90,8 @@ participants = {}
 reference_files = {}
 reference_files_to_studies = {} # Map of reference file ids to study ids
 studies = {}
+survivals = {}
+survivals_to_participants = {} # Map of survival ids to participant ids
 
 def transform():
     print('Parsing Participants from JSON...')
@@ -86,6 +102,10 @@ def transform():
     parse_studies()
     print('Finished parsing Studies\n')
 
+    print('Parsing Survivals from JSON...')
+    parse_survivals()
+    print('Finished parsing Survivals\n')
+
     print('Parsing Diagnoses from JSON...')
     parse_diagnoses()
     print('Finished parsing Diagnoses\n')
@@ -94,13 +114,17 @@ def transform():
     parse_reference_files()
     print('Finished parsing Reference Files\n')
 
-    print('Verifying that each Diagnosis has a Participant...')
-    check_diagnoses_for_participants()
-    print('Finished verifying that each Diagnosis has a Participant\n')
-
     print('Verifying that each Participant has a Study...')
     check_participants_for_studies()
     print('Finished verifying that each Participant has a Study\n')
+
+    print('Verifying that each Survival has a Participant...')
+    check_survivals_for_participants()
+    print('Finished verifying that each Survival has a Participant\n')
+
+    print('Verifying that each Diagnosis has a Participant...')
+    check_diagnoses_for_participants()
+    print('Finished verifying that each Diagnosis has a Participant\n')
 
     print('Verifying that each Reference File has a Study...')
     check_reference_files_for_studies()
@@ -114,9 +138,13 @@ def transform():
     write_studies()
     print('Finished writing Studies TSV\n')
 
+    print('Writing Survivals TSV...')
+    write_survivals()
+    print('Finished writing Survivals TSV\n')
+
     print('Writing Diagnoses TSV...')
     write_diagnoses()
-    print('Finished writing Diagnoses TSV')
+    print('Finished writing Diagnoses TSV\n')
 
     print('Writing Reference Files TSV...')
     write_reference_files()
@@ -143,10 +171,12 @@ def parse_diagnoses():
             diagnosis = Diagnosis(
                 age_at_diagnosis = diagnosis_data.get('age_at_diagnosis', None),
                 anatomic_site = diagnosis_data.get('anatomic_site', None),
-                diagnosis_finer_resolution = diagnosis_data.get('diagnosis_finer_resolution', None),
-                diagnosis_icd_cm = diagnosis_data.get('diagnosis_icd_cm', None),
-                diagnosis_icd_o = diagnosis_data.get('diagnosis_icd_o', None),
+                diagnosis_basis = diagnosis_data.get('diagnosis_basis', None),
+                diagnosis_classification = diagnosis_data.get('diagnosis_classification', None),
+                diagnosis_classification_system = diagnosis_data.get('diagnosis_classification_system', None),
+                diagnosis_comment = diagnosis_data.get('diagnosis_comment', None),
                 diagnosis_id = diagnosis_data.get('diagnosis_id', None),
+                diagnosis_verification_status = diagnosis_data.get('diagnosis_verification_status', None),
                 disease_phase = diagnosis_data.get('disease_phase', None),
                 toronto_childhood_cancer_staging = diagnosis_data.get('toronto_childhood_cancer_staging', None),
                 tumor_grade = diagnosis_data.get('tumor_grade', None),
@@ -202,9 +232,9 @@ def parse_participants():
             participant = Participant(
                 alternate_participant_id = participant_data.get('alternate_participant_id', None),
                 ethnicity = participant_data.get('ethnicity', None),
-                gender = participant_data.get('gender', None),
                 participant_id = participant_data.get('participant_id', None),
-                race = participant_data.get('race', None)
+                race = participant_data.get('race', None),
+                sex_at_birth = participant_data.get('sex_at_birth', None)
             )
             participants[participant_id] = participant
         except TypeError as e:
@@ -307,7 +337,7 @@ def write_reference_files():
 
         reference_files_file.close()
 
-# Log any duplicate participants
+# Log any duplicate studies
 def parse_studies():
     all_study_data = discovery_data['studies'] + validation_data['studies']
 
@@ -362,6 +392,64 @@ def write_studies():
             tsv_writer.writerow(row)
 
         studies_file.close()
+
+def parse_survivals():
+    all_survival_data = discovery_data['survivals'] + validation_data['survivals']
+
+    for survival_data in all_survival_data:
+        participant_id = survival_data['participant.participant_id']
+        survival_id = survival_data['survival_id']
+
+        # Don't consider duplicate survival ID as an error yet
+        if survival_id in survivals:
+            print(f'Survival {survival_id} exists!')
+
+        try:
+            survival = Survival(
+                age_at_event_free_survival_status = survival_data.get('age_at_event_free_survival_status', None),
+                age_at_last_known_survival_status = survival_data.get('age_at_last_known_survival_status', None),
+                event_free_survival_status = survival_data.get('event_free_survival_status', None),
+                first_event = survival_data.get('first_event', None),
+                last_known_survival_status = survival_data.get('last_known_survival_status', None),
+                survival_id = survival_data.get('survival_id', None)
+            )
+            survivals[survival_id] = survival
+        except TypeError as e:
+            print('Wrong data type!', e)
+        except ValueError as e:
+            print('Invalid value!', e)
+
+        # Add mappings of participant ID's to survival ID's
+        if participant_id not in participants.keys():
+            raise ValueError(f'Survival {survival_id} references nonexistent Participant {participant_id}!')
+
+        survivals_to_participants[survival_id] = participant_id
+
+def check_survivals_for_participants():
+    survival_ids_to_remove = []
+
+    for survival_id in survivals.keys():
+        if survival_id not in survivals_to_participants.keys():
+            print(f'Survival {survival_id} does not have a Participant!')
+            print(f'Skipping Survival {survival_id}...')
+            survival_ids_to_remove.append(survival_id)
+
+    for survival_id in survival_ids_to_remove:
+        del survivals[survival_id]
+
+def write_survivals():
+    with open('data/survivals.tsv', 'w', newline='') as survivals_file:
+        tsv_writer = csv.writer(survivals_file, delimiter='\t', dialect='unix')
+        tsv_writer.writerow(SURVIVAL_HEADERS)
+
+        for survival in survivals.values():
+            row = survival.to_list() + [
+                survival.survival_id,
+                survivals_to_participants[survival.survival_id],
+            ]
+            tsv_writer.writerow(row)
+
+        survivals_file.close()
 
 transform()
 
