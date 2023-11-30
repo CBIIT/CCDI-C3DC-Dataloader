@@ -1,9 +1,9 @@
 import yaml
 
 class Node:
-    with open('config/c3dc-model.yml', 'r') as file:
+    with open('c3dc-model/model-desc/c3dc-model.yml', 'r') as file:
         _NODEDEFS = yaml.safe_load(file)['Nodes']
-    with open('config/c3dc-model-props.yml', 'r') as file:
+    with open('c3dc-model/model-desc/c3dc-model-props.yml', 'r') as file:
         _PROPDEFS = yaml.safe_load(file)['PropDefinitions']
 
     _PROPER_NAMES = {}
@@ -359,6 +359,7 @@ class Diagnosis(Node):
         'diagnosis_verification_status': 'Diagnosis Verification Status',
         'disease_phase': 'Disease Phase',
         'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
+        'tumor_classification': 'Tumor Classification',
         'tumor_grade': 'Tumor Grade',
         'tumor_stage_clinical_m': 'Tumor Clinical M Stage',
         'tumor_stage_clinical_n': 'Tumor Clinical N Stage',
@@ -368,9 +369,9 @@ class Diagnosis(Node):
     def __init__(self, age_at_diagnosis, anatomic_site, diagnosis_basis,
             diagnosis_classification, diagnosis_classification_system,
             diagnosis_comment, diagnosis_id, diagnosis_verification_status,
-            disease_phase, toronto_childhood_cancer_staging, tumor_grade,
-            tumor_stage_clinical_m, tumor_stage_clinical_n,
-            tumor_stage_clinical_t):
+            disease_phase, toronto_childhood_cancer_staging,
+            tumor_classification, tumor_grade, tumor_stage_clinical_m,
+            tumor_stage_clinical_n, tumor_stage_clinical_t):
         self.age_at_diagnosis = age_at_diagnosis or None
         self.anatomic_site = anatomic_site or None
         self.diagnosis_basis = diagnosis_basis or None
@@ -381,6 +382,7 @@ class Diagnosis(Node):
         self.diagnosis_verification_status = diagnosis_verification_status or None
         self.disease_phase = disease_phase or None
         self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging or None
+        self.tumor_classification = tumor_classification or None
         self.tumor_grade = tumor_grade or None
         self.tumor_stage_clinical_m = tumor_stage_clinical_m or None
         self.tumor_stage_clinical_n = tumor_stage_clinical_n or None
@@ -398,6 +400,7 @@ class Diagnosis(Node):
             self._diagnosis_verification_status,
             self._disease_phase,
             self._toronto_childhood_cancer_staging,
+            self._tumor_classification,
             self._tumor_grade,
             self._tumor_stage_clinical_m,
             self._tumor_stage_clinical_n,
@@ -495,6 +498,15 @@ class Diagnosis(Node):
         self._toronto_childhood_cancer_staging = value
 
     @property
+    def tumor_classification(self):
+        return self._tumor_classification
+
+    @tumor_classification.setter
+    def tumor_classification(self, value):
+        self._validate_attr('tumor_classification', value)
+        self._tumor_classification = value
+
+    @property
     def tumor_grade(self):
         return self._tumor_grade
 
@@ -543,6 +555,7 @@ class Diagnosis(Node):
             ';'.join(self._anatomic_site),
             self._age_at_diagnosis,
             self._toronto_childhood_cancer_staging,
+            self._tumor_classification,
             self._tumor_grade,
             self._tumor_stage_clinical_t,
             self._tumor_stage_clinical_n,
