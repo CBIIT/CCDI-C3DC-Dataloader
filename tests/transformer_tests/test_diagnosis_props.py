@@ -14,6 +14,7 @@ class TestDiagnosisFactory():
             diagnosis_verification_status = 'Not Reported',
             disease_phase = 'Initial Diagnosis',
             toronto_childhood_cancer_staging = 'Neuroblastoma Stage M',
+            tumor_classification = 'Primary',
             tumor_grade = 'High Grade',
             tumor_stage_clinical_m = None,
             tumor_stage_clinical_n = None,
@@ -30,6 +31,7 @@ class TestDiagnosisFactory():
             diagnosis_verification_status,
             disease_phase,
             toronto_childhood_cancer_staging,
+            tumor_classification,
             tumor_grade,
             tumor_stage_clinical_m,
             tumor_stage_clinical_n,
@@ -246,6 +248,30 @@ class TestDiagnosisProps(unittest.TestCase):
             value = 'Foo'
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(toronto_childhood_cancer_staging=value)
+
+    # Diagnosis.tumor_classification
+    def test_diagnosis_tumor_classification(self):
+        test_msg = 'Testing Diagnosis.tumor_classification being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, 'Tumor Classification is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(tumor_classification=value)
+
+        with self.assertRaisesRegex(TypeError, 'Tumor Classification is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(tumor_classification=value)
+
+        with self.assertRaisesRegex(TypeError, "Tumor Classification `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(tumor_classification=value)
+
+        with self.assertRaisesRegex(ValueError, 'Tumor Classification `Foo` must be one of the specified values'):
+            value = 'Foo'
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(tumor_classification=value)
 
     # Diagnosis.tumor_grade
     def test_diagnosis_tumor_grade(self):
