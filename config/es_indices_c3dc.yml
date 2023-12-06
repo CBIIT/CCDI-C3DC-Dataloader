@@ -1,45 +1,4 @@
 Indices:
-  # - index_name: participants_faceted
-  #   type: neo4j
-  #   mapping:
-  #     alternate_participant_id:
-  #       type: integer
-  #     ethnicity:
-  #       type: keyword
-  #     id:
-  #       type: keyword
-  #     participant_id:
-  #       type: keyword
-  #     race:
-  #       type: keyword
-  #     sex_at_birth:
-  #       type: keyword
-  #     # Survivals
-  #     survivals:
-  #       type: nested
-  #       properties:
-  #         age_at_last_known_survival_status:
-  #           type: integer
-  #         first_event:
-  #           type: keyword
-  #         last_known_survival_status:
-  #           type: keyword
-  #   cypher_query: >
-  #     MATCH (p:participant)
-  #     OPTIONAL MATCH (p)<--(su:survival)
-  #     RETURN
-  #       p.alternate_participant_id as alternate_participant_id,
-  #       p.ethnicity as ethnicity,
-  #       p.id as id,
-  #       p.participant_id as participant_id,
-  #       p.race as race,
-  #       p.sex_at_birth as sex_at_birth,
-  #       COLLECT({
-  #         age_at_last_known_survival_status: su.age_at_last_known_survival_status,
-  #         first_event: su.first_event,
-  #         last_known_survival_status: su.last_known_survival_status
-  #       }) as survivals
-
   - index_name: home_stats
     type: neo4j
     mapping:
@@ -54,17 +13,16 @@ Indices:
       num_survivals:
         type: integer
     cypher_query: >
-      MATCH (d:diagnosis)
-      MATCH (p:participant)
-      MATCH (rf:reference_file)
-      MATCH (st:study)
-      MATCH (sur:survivals)
+      MATCH (p:participant)-->(st:study)
+        OPTIONAL MATCH (st)<--(rf:reference_file)
+        OPTIONAL MATCH (p)<--(su:survival)
+        OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
         COUNT(DISTINCT d) AS num_diagnoses,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT rf) AS num_reference_files,
         COUNT(DISTINCT st) AS num_studies,
-        COUNT(DISTINCT sur) AS num_survivals
+        COUNT(DISTINCT su) AS num_survivals;
 
   - index_name: diagnoses
     type: neo4j
@@ -99,44 +57,6 @@ Indices:
         type: keyword
       tumor_stage_clinical_t:
         type: keyword
-      # Participant fields
-      # ethnicity:
-      #   type: keyword
-      # participant_id:
-      #   type: keyword
-      # race:
-      #   type: keyword
-      # sex_at_birth:
-      #   type: keyword
-      # Samples
-      # samples:
-      #   type: nested
-      #   properties:
-      #     anatomic_site:
-      #       type: keyword
-      #     participant_age_at_collection:
-      #       type: integer
-      #     sample_tumor_status:
-      #       type: keyword
-      #     tumor_classification:
-      #       type: keyword
-      # Studies
-      # phs_accession:
-      #   type: keyword
-      # study_acronym:
-      #   type: keyword
-      # study_short_title:
-      #   type: keyword
-      # Survivals
-      # survivals:
-      #   type: nested
-      #   properties:
-      #     age_at_last_known_survival_status:
-      #       type: integer
-      #     first_event:
-      #       type: keyword
-      #     last_known_survival_status:
-      #       type: keyword
     cypher_query: >
       MATCH (d:diagnosis)
       RETURN
