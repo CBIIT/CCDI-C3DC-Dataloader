@@ -57,6 +57,44 @@ Indices:
         type: keyword
       tumor_stage_clinical_t:
         type: keyword
+      # Participant fields
+      # ethnicity:
+      #   type: keyword
+      # participant_id:
+      #   type: keyword
+      # race:
+      #   type: keyword
+      # sex_at_birth:
+      #   type: keyword
+      # Samples
+      # samples:
+      #   type: nested
+      #   properties:
+      #     anatomic_site:
+      #       type: keyword
+      #     participant_age_at_collection:
+      #       type: integer
+      #     sample_tumor_status:
+      #       type: keyword
+      #     tumor_classification:
+      #       type: keyword
+      # Studies
+      # phs_accession:
+      #   type: keyword
+      # study_acronym:
+      #   type: keyword
+      # study_short_title:
+      #   type: keyword
+      # Survivals
+      # survivals:
+      #   type: nested
+      #   properties:
+      #     age_at_last_known_survival_status:
+      #       type: integer
+      #     first_event:
+      #       type: keyword
+      #     last_known_survival_status:
+      #       type: keyword
     cypher_query: >
       MATCH (d:diagnosis)
       RETURN
@@ -83,23 +121,46 @@ Indices:
         type: integer
       ethnicity:
         type: keyword
+      ethnicity_str:
+        type: keyword
       id:
         type: keyword
       participant_id:
         type: keyword
       race:
         type: keyword
+      race_str:
+        type: keyword
       sex_at_birth:
         type: keyword
+      # Survivals
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+    # Make sure Neo4j has APOC plugin installed
     cypher_query: >
       MATCH (p:participant)
+      OPTIONAL MATCH (p)<--(sur:survival)
       RETURN
         p.alternate_participant_id as alternate_participant_id,
-        p.ethnicity as ethnicity,
+        apoc.text.split(p.ethnicity, ';') as ethnicity,
+        p.ethnicity as ethnicity_str,
         p.id as id,
         p.participant_id as participant_id,
-        p.race as race,
-        p.sex_at_birth as sex_at_birth
+        apoc.text.split(p.race, ';') as race,
+        p.race as race_str,
+        p.sex_at_birth as sex_at_birth,
+        COLLECT({
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals
 
   - index_name: reference_files
     type: neo4j
@@ -196,12 +257,25 @@ Indices:
         type: keyword
       survival_id:
         type: keyword
+      # Participant fields
+      ethnicity:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      sex_at_birth:
+        type: keyword
     cypher_query: >
-      MATCH (s:survival)
+      MATCH (s:survival)-->(p:participant)
       RETURN
-        s.age_at_event_free_survival_status as age_at_event_free_survival_status,
-        s.age_at_last_known_survival_status as age_at_last_known_survival_status,
-        s.event_free_survival_status as event_free_survival_status,
-        s.first_event as first_event,
-        s.last_known_survival_status as last_known_survival_status,
-        s.survival_id as survival_id
+        s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
+        s.age_at_last_known_survival_status AS age_at_last_known_survival_status,
+        s.event_free_survival_status AS event_free_survival_status,
+        s.first_event AS first_event,
+        s.last_known_survival_status AS last_known_survival_status,
+        s.survival_id AS survival_id,
+        p.ethnicity AS ethnicity,
+        p.participant_id AS participant_id,
+        p.race AS race,
+        p.sex_at_birth AS sex_at_birth
