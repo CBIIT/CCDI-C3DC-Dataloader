@@ -58,14 +58,18 @@ Indices:
       tumor_stage_clinical_t:
         type: keyword
       # Participant fields
-      # ethnicity:
-      #   type: keyword
-      # participant_id:
-      #   type: keyword
-      # race:
-      #   type: keyword
-      # sex_at_birth:
-      #   type: keyword
+      ethnicity:
+        type: keyword
+      ethnicity_str:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      race_str:
+        type: keyword
+      sex_at_birth:
+        type: keyword
       # Samples
       # samples:
       #   type: nested
@@ -86,17 +90,18 @@ Indices:
       # study_short_title:
       #   type: keyword
       # Survivals
-      # survivals:
-      #   type: nested
-      #   properties:
-      #     age_at_last_known_survival_status:
-      #       type: integer
-      #     first_event:
-      #       type: keyword
-      #     last_known_survival_status:
-      #       type: keyword
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
     cypher_query: >
-      MATCH (d:diagnosis)
+      MATCH (d:diagnosis)-->(p:participant)
+      OPTIONAL MATCH (p)<--(sur:survival)
       RETURN
         d.age_at_diagnosis as age_at_diagnosis,
         d.anatomic_site as anatomic_site,
@@ -112,7 +117,18 @@ Indices:
         d.tumor_grade as tumor_grade,
         d.tumor_stage_clinical_m as tumor_stage_clinical_m,
         d.tumor_stage_clinical_n as tumor_stage_clinical_n,
-        d.tumor_stage_clinical_t as tumor_stage_clinical_t
+        d.tumor_stage_clinical_t as tumor_stage_clinical_t,
+        apoc.text.split(p.ethnicity, ';') as ethnicity,
+        p.ethnicity as ethnicity_str,
+        p.participant_id as participant_id,
+        apoc.text.split(p.race, ';') as race,
+        p.race as race_str,
+        p.sex_at_birth as sex_at_birth,
+        COLLECT({
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals
 
   - index_name: participants
     type: neo4j
@@ -133,6 +149,33 @@ Indices:
         type: keyword
       sex_at_birth:
         type: keyword
+      # Diagnoses
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis_classification:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_id:
+            type: keyword
+          diagnosis_verification_status:
+            type: keyword
+          disease_phase:
+            type: keyword
+      # Studies
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_short_title:
+        type: keyword
       # Survivals
       survivals:
         type: nested
@@ -145,22 +188,36 @@ Indices:
             type: keyword
     # Make sure Neo4j has APOC plugin installed
     cypher_query: >
-      MATCH (p:participant)
+      MATCH (p:participant)-->(stu:study)
       OPTIONAL MATCH (p)<--(sur:survival)
+      OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
-        p.alternate_participant_id as alternate_participant_id,
-        apoc.text.split(p.ethnicity, ';') as ethnicity,
-        p.ethnicity as ethnicity_str,
-        p.id as id,
-        p.participant_id as participant_id,
-        apoc.text.split(p.race, ';') as race,
-        p.race as race_str,
-        p.sex_at_birth as sex_at_birth,
+        p.alternate_participant_id AS alternate_participant_id,
+        apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.ethnicity AS ethnicity_str,
+        p.id AS id,
+        p.participant_id AS participant_id,
+        apoc.text.split(p.race, ';') AS race,
+        p.race AS race_str,
+        p.sex_at_birth AS sex_at_birth,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_short_title AS study_short_title,
         COLLECT({
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
-        }) AS survivals
+        }) AS survivals,
+        COLLECT({
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_classification: d.diagnosis_classification,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_id: d.diagnosis_id,
+          diagnosis_verification_status: d.diagnosis_verification_status,
+          disease_phase: d.disease_phase
+        }) AS diagnoses
 
   - index_name: reference_files
     type: neo4j
@@ -266,8 +323,29 @@ Indices:
         type: keyword
       sex_at_birth:
         type: keyword
+      # Diagnoses
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis_classification:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_id:
+            type: keyword
+          diagnosis_verification_status:
+            type: keyword
+          disease_phase:
+            type: keyword
     cypher_query: >
       MATCH (s:survival)-->(p:participant)
+      OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
         s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
         s.age_at_last_known_survival_status AS age_at_last_known_survival_status,
@@ -278,4 +356,14 @@ Indices:
         p.ethnicity AS ethnicity,
         p.participant_id AS participant_id,
         p.race AS race,
-        p.sex_at_birth AS sex_at_birth
+        p.sex_at_birth AS sex_at_birth,
+        COLLECT({
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_classification: d.diagnosis_classification,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_id: d.diagnosis_id,
+          diagnosis_verification_status: d.diagnosis_verification_status,
+          disease_phase: d.disease_phase
+        }) AS diagnoses
