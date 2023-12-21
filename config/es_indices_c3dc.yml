@@ -83,12 +83,12 @@ Indices:
       #     tumor_classification:
       #       type: keyword
       # Studies
-      # phs_accession:
-      #   type: keyword
-      # study_acronym:
-      #   type: keyword
-      # study_short_title:
-      #   type: keyword
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_short_title:
+        type: keyword
       # Survivals
       survivals:
         type: nested
@@ -100,7 +100,7 @@ Indices:
           last_known_survival_status:
             type: keyword
     cypher_query: >
-      MATCH (d:diagnosis)-->(p:participant)
+      MATCH (d:diagnosis)-->(p:participant)-->(stu:study)
       OPTIONAL MATCH (p)<--(sur:survival)
       RETURN
         d.age_at_diagnosis as age_at_diagnosis,
@@ -124,6 +124,9 @@ Indices:
         apoc.text.split(p.race, ';') as race,
         p.race as race_str,
         p.sex_at_birth as sex_at_birth,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_short_title AS study_short_title,
         COLLECT({
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
           first_event: sur.first_event,
@@ -314,15 +317,6 @@ Indices:
         type: keyword
       survival_id:
         type: keyword
-      # Participant fields
-      ethnicity:
-        type: keyword
-      participant_id:
-        type: keyword
-      race:
-        type: keyword
-      sex_at_birth:
-        type: keyword
       # Diagnoses
       diagnoses:
         type: nested
@@ -343,8 +337,24 @@ Indices:
             type: keyword
           disease_phase:
             type: keyword
+      # Participant fields
+      ethnicity:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Studies
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_short_title:
+        type: keyword
     cypher_query: >
-      MATCH (s:survival)-->(p:participant)
+      MATCH (s:survival)-->(p:participant)-->(stu:study)
       OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
         s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
@@ -357,6 +367,9 @@ Indices:
         p.participant_id AS participant_id,
         p.race AS race,
         p.sex_at_birth AS sex_at_birth,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_short_title AS study_short_title,
         COLLECT({
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
