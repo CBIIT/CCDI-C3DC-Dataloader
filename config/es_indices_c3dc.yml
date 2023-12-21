@@ -127,7 +127,7 @@ Indices:
         stu.phs_accession AS phs_accession,
         stu.study_acronym AS study_acronym,
         stu.study_short_title AS study_short_title,
-        COLLECT({
+        COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
@@ -165,8 +165,6 @@ Indices:
           diagnosis_classification:
             type: keyword
           diagnosis_classification_system:
-            type: keyword
-          diagnosis_id:
             type: keyword
           diagnosis_verification_status:
             type: keyword
@@ -217,7 +215,6 @@ Indices:
           diagnosis_basis: d.diagnosis_basis,
           diagnosis_classification: d.diagnosis_classification,
           diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_id: d.diagnosis_id,
           diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
         }) AS diagnoses
@@ -331,8 +328,6 @@ Indices:
             type: keyword
           diagnosis_classification_system:
             type: keyword
-          diagnosis_id:
-            type: keyword
           diagnosis_verification_status:
             type: keyword
           disease_phase:
@@ -370,13 +365,12 @@ Indices:
         stu.phs_accession AS phs_accession,
         stu.study_acronym AS study_acronym,
         stu.study_short_title AS study_short_title,
-        COLLECT({
+        COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
           diagnosis_classification: d.diagnosis_classification,
           diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_id: d.diagnosis_id,
           diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
         }) AS diagnoses
