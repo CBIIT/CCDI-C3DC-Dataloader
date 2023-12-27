@@ -171,6 +171,8 @@ Indices:
           disease_phase:
             type: keyword
       # Studies
+      study_id:
+        type: keyword
       phs_accession:
         type: keyword
       study_acronym:
@@ -201,6 +203,7 @@ Indices:
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
         p.sex_at_birth AS sex_at_birth,
+        stu.study_id AS study_id,
         stu.phs_accession AS phs_accession,
         stu.study_acronym AS study_acronym,
         stu.study_short_title AS study_short_title,
