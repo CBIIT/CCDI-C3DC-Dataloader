@@ -49,6 +49,8 @@ Indices:
         type: keyword
       toronto_childhood_cancer_staging:
         type: keyword
+      tumor_classification:
+        type: keyword
       tumor_grade:
         type: keyword
       tumor_stage_clinical_m:
@@ -114,6 +116,7 @@ Indices:
         d.disease_phase as disease_phase,
         d.id as id,
         d.toronto_childhood_cancer_staging as toronto_childhood_cancer_staging,
+        d.tumor_classification as tumor_classification,
         d.tumor_grade as tumor_grade,
         d.tumor_stage_clinical_m as tumor_stage_clinical_m,
         d.tumor_stage_clinical_n as tumor_stage_clinical_n,
