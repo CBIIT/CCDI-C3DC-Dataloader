@@ -55,7 +55,7 @@ Configured by `/config/es_indices_c3dc.yml` and `/config/es_loader.yml`.
 Build Opensearch indices from Neo4j with this command:
 
 ```bash
-python es_loader.py config/es_indices_c3dc_model.yml config/es_loader.yml
+python es_loader.py config/es_indices_c3dc.yml config/es_loader.yml
 ```
 
 ### Transformation Unit Tests
