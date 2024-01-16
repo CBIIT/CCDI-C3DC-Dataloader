@@ -113,11 +113,11 @@ class Participant(Node):
     }
 
     def __init__(self, alternate_participant_id, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
-        self.alternate_participant_id = alternate_participant_id or None
-        self.ethnicity = ethnicity or None
-        self.participant_id = participant_id or None
-        self.race = race or None
-        self.sex_at_birth = sex_at_birth or None
+        self.alternate_participant_id = alternate_participant_id
+        self.ethnicity = ethnicity
+        self.participant_id = participant_id
+        self.race = race
+        self.sex_at_birth = sex_at_birth
 
         if (not model_file_path is None):
             with open(model_file_path, 'r') as file:
@@ -208,16 +208,16 @@ class Study(Node):
     def __init__(self, acl, consent, consent_number, external_url,
             phs_accession, study_acronym, study_description,
             study_id, study_name, study_short_title):
-        self.acl = acl or None
-        self.consent = consent or None
-        self.consent_number = consent_number or None
-        self.external_url = external_url or None
-        self.phs_accession = phs_accession or None
-        self.study_acronym = study_acronym or None
-        self.study_description = study_description or None
-        self.study_id = study_id or None
-        self.study_name = study_name or None
-        self.study_short_title = study_short_title or None
+        self.acl = acl
+        self.consent = consent
+        self.consent_number = consent_number
+        self.external_url = external_url
+        self.phs_accession = phs_accession
+        self.study_acronym = study_acronym
+        self.study_description = study_description
+        self.study_id = study_id
+        self.study_name = study_name
+        self.study_short_title = study_short_title
 
     def __str__(self):
         return ' | '.join([
@@ -372,21 +372,21 @@ class Diagnosis(Node):
             disease_phase, toronto_childhood_cancer_staging,
             tumor_classification, tumor_grade, tumor_stage_clinical_m,
             tumor_stage_clinical_n, tumor_stage_clinical_t):
-        self.age_at_diagnosis = age_at_diagnosis or None
-        self.anatomic_site = anatomic_site or None
-        self.diagnosis_basis = diagnosis_basis or None
-        self.diagnosis_classification = diagnosis_classification or None
-        self.diagnosis_classification_system = diagnosis_classification_system or None
-        self.diagnosis_comment = diagnosis_comment or None
-        self.diagnosis_id = diagnosis_id or None
-        self.diagnosis_verification_status = diagnosis_verification_status or None
-        self.disease_phase = disease_phase or None
-        self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging or None
-        self.tumor_classification = tumor_classification or None
-        self.tumor_grade = tumor_grade or None
-        self.tumor_stage_clinical_m = tumor_stage_clinical_m or None
-        self.tumor_stage_clinical_n = tumor_stage_clinical_n or None
-        self.tumor_stage_clinical_t = tumor_stage_clinical_t or None
+        self.age_at_diagnosis = age_at_diagnosis
+        self.anatomic_site = anatomic_site
+        self.diagnosis_basis = diagnosis_basis
+        self.diagnosis_classification = diagnosis_classification
+        self.diagnosis_classification_system = diagnosis_classification_system
+        self.diagnosis_comment = diagnosis_comment
+        self.diagnosis_id = diagnosis_id
+        self.diagnosis_verification_status = diagnosis_verification_status
+        self.disease_phase = disease_phase
+        self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging
+        self.tumor_classification = tumor_classification
+        self.tumor_grade = tumor_grade
+        self.tumor_stage_clinical_m = tumor_stage_clinical_m
+        self.tumor_stage_clinical_n = tumor_stage_clinical_n
+        self.tumor_stage_clinical_t = tumor_stage_clinical_t
 
     def __str__(self):
         return ' | '.join([
@@ -580,17 +580,17 @@ class ReferenceFile(Node):
     def __init__(self, checksum_algorithm, checksum_value, dcf_indexd_guid,
             file_category, file_description, file_name, file_size, file_type,
             md5sum, reference_file_id, reference_file_url):
-        self.checksum_algorithm = checksum_algorithm or None
-        self.checksum_value = checksum_value or None
-        self.dcf_indexd_guid = dcf_indexd_guid or None
-        self.file_category = file_category or None
-        self.file_description = file_description or None
-        self.file_name = file_name or None
-        self.file_size = file_size or None
-        self.file_type = file_type or None
-        self.md5sum = md5sum or None
-        self.reference_file_id = reference_file_id or None
-        self.reference_file_url = reference_file_url or None
+        self.checksum_algorithm = checksum_algorithm
+        self.checksum_value = checksum_value
+        self.dcf_indexd_guid = dcf_indexd_guid
+        self.file_category = file_category
+        self.file_description = file_description
+        self.file_name = file_name
+        self.file_size = file_size
+        self.file_type = file_type
+        self.md5sum = md5sum
+        self.reference_file_id = reference_file_id
+        self.reference_file_url = reference_file_url
 
     def __str__(self):
         return ' | '.join([
@@ -735,12 +735,12 @@ class Survival(Node):
     def __init__(self, age_at_event_free_survival_status,
             age_at_last_known_survival_status, event_free_survival_status,
             first_event, last_known_survival_status, survival_id):
-        self.age_at_event_free_survival_status = age_at_event_free_survival_status or None
-        self.age_at_last_known_survival_status = age_at_last_known_survival_status or None
-        self.event_free_survival_status = event_free_survival_status or None
-        self.first_event = first_event or None
-        self.last_known_survival_status = last_known_survival_status or None
-        self.survival_id = survival_id or None
+        self.age_at_event_free_survival_status = age_at_event_free_survival_status
+        self.age_at_last_known_survival_status = age_at_last_known_survival_status
+        self.event_free_survival_status = event_free_survival_status
+        self.first_event = first_event
+        self.last_known_survival_status = last_known_survival_status
+        self.survival_id = survival_id
 
     def __str__(self):
         return ' | '.join([
