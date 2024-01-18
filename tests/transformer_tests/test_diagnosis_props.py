@@ -53,7 +53,7 @@ class TestDiagnosisProps(unittest.TestCase):
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(age_at_diagnosis=value)
 
-        with self.assertRaisesRegex(TypeError, 'Age at Diagnosis is missing'):
+        with self.assertRaisesRegex(TypeError, "Age at Diagnosis `` must be of type <class 'int'>"):
             value = ''
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(age_at_diagnosis=value)
@@ -72,7 +72,7 @@ class TestDiagnosisProps(unittest.TestCase):
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(anatomic_site=value)
 
-        with self.assertRaisesRegex(TypeError, 'Anatomic Site is missing'):
+        with self.assertRaisesRegex(TypeError, "Anatomic Site `` must be of type <class 'list'>"):
             value = ''
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(anatomic_site=value)
@@ -96,7 +96,7 @@ class TestDiagnosisProps(unittest.TestCase):
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)
 
-        with self.assertRaisesRegex(TypeError, 'Diagnosis Basis is missing'):
+        with self.assertRaisesRegex(TypeError, "Diagnosis Basis `` must be of type <class 'list'>"):
             value = ''
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)

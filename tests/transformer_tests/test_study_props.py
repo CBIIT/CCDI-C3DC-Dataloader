@@ -80,7 +80,7 @@ class TestStudyProps(unittest.TestCase):
             print(test_msg.format(value))
             self.study_factory.create_study(consent_number=value)
 
-        with self.assertRaisesRegex(TypeError, 'Consent Number is missing'):
+        with self.assertRaisesRegex(TypeError, "Consent Number `` must be of type <class 'int'>"):
             value = ''
             print(test_msg.format(value))
             self.study_factory.create_study(consent_number=value)

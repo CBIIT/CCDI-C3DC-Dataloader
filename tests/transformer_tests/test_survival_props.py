@@ -29,6 +29,11 @@ class TestSurvivalProps(unittest.TestCase):
     def test_survival_age_at_event_free_survival_status(self):
         test_msg = 'Testing Survival.age_at_event_free_survival_status being <{}>...'
 
+        with self.assertRaisesRegex(TypeError, "Age at Event Free Survival Status `` must be of type <class 'int'>"):
+            value = ''
+            print(test_msg.format(value))
+            self.survival_factory.create_survival(age_at_event_free_survival_status=value)
+
         with self.assertRaisesRegex(TypeError, "Age at Event Free Survival Status `Foo` must be of type <class 'int'>"):
             value = 'Foo'
             print(test_msg.format(value))
@@ -43,7 +48,7 @@ class TestSurvivalProps(unittest.TestCase):
             print(test_msg.format(value))
             self.survival_factory.create_survival(age_at_last_known_survival_status=value)
 
-        with self.assertRaisesRegex(TypeError, 'Age at Last Known Survival Status is missing'):
+        with self.assertRaisesRegex(TypeError, "Age at Last Known Survival Status `` must be of type <class 'int'>"):
             value = ''
             print(test_msg.format(value))
             self.survival_factory.create_survival(age_at_last_known_survival_status=value)

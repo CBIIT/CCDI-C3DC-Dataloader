@@ -133,7 +133,7 @@ class TestReferenceFileProps(unittest.TestCase):
             print(test_msg.format(value))
             self.reference_file_factory.create_reference_file(file_size=value)
 
-        with self.assertRaisesRegex(TypeError, 'File Size is missing'):
+        with self.assertRaisesRegex(TypeError, "File Size `` must be of type <class 'int'>"):
             value = ''
             print(test_msg.format(value))
             self.reference_file_factory.create_reference_file(file_size=value)

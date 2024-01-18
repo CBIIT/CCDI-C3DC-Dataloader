@@ -1,5 +1,7 @@
 import csv
+import functools
 import json
+import os
 from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 
 DIAGNOSIS_HEADERS = [
@@ -78,10 +80,33 @@ SURVIVAL_HEADERS = [
     'participant.participant_id',
 ]
 
-discovery_file = open('data/TARGET_NBL_ClinicalData_Discovery_20220125.json')
-validation_file = open('data/TARGET_NBL_ClinicalData_Validation_20220125.json')
-discovery_data = json.load(discovery_file)
-validation_data = json.load(validation_file)
+node_names = [
+    'diagnoses',
+    'participants',
+    'reference_files',
+    'studies',
+    'survivals',
+]
+all_json_data = dict.fromkeys(node_names, [])
+
+for filename in os.listdir('data/'):
+    # Skip non-JSON files
+    if not filename.endswith('.json'):
+        continue
+
+    path = 'data/' + filename
+
+    print('Reading data from ' + path + '...')
+    json_file = open(path)
+    json_data = json.load(json_file)
+
+    for node_name in node_names:
+        if node_name not in json_data:
+            continue
+
+        all_json_data[node_name] = all_json_data[node_name] + json_data[node_name]
+    json_file.close()
+    print('Finished reading data from ' + path + '...')
 
 # TODO crosscheck foreign keys (eg: check each participant's study ID consistent with study's participant ID's)
 diagnoses = {}
@@ -152,7 +177,7 @@ def transform():
     print('Finished writing Reference Files TSV')
 
 def parse_diagnoses():
-    all_diagnosis_data = discovery_data['diagnoses'] + validation_data['diagnoses']
+    all_diagnosis_data = all_json_data['diagnoses']
 
     for diagnosis_data in all_diagnosis_data:
         diagnosis_id = diagnosis_data['diagnosis_id']
@@ -188,9 +213,9 @@ def parse_diagnoses():
             )
             diagnoses[diagnosis_id] = diagnosis
         except TypeError as e:
-            print('Wrong data type!', e)
+            print('Error for Diagnosis ' + diagnosis_id, 'Wrong data type!', e)
         except ValueError as e:
-            print('Invalid value!', e)
+            print('Error for Diagnosis ' + diagnosis_id, 'Invalid value!', e)
 
 def check_diagnoses_for_participants():
     diagnosis_ids_to_remove = []
@@ -220,7 +245,7 @@ def write_diagnoses():
         diagnoses_file.close()
 
 def parse_participants():
-    all_participant_data = discovery_data['participants'] + validation_data['participants']
+    all_participant_data = all_json_data['participants']
 
     for participant_data in all_participant_data:
         participant_id = participant_data['participant_id']
@@ -240,9 +265,9 @@ def parse_participants():
             )
             participants[participant_id] = participant
         except TypeError as e:
-            print('Wrong data type!', e)
+            print('Error for Participant ' + participant_id, 'Wrong data type!', e)
         except ValueError as e:
-            print('Invalid value!', e)
+            print('Error for Participant ' + participant_id, 'Invalid value!', e)
 
 def check_participants_for_studies():
     participant_ids_to_remove = []
@@ -276,7 +301,7 @@ def write_participants():
         participants_file.close()
 
 def parse_reference_files():
-    all_reference_file_data = discovery_data['reference_files'] + validation_data['reference_files']
+    all_reference_file_data = all_json_data['reference_files']
 
     for reference_file_data in all_reference_file_data:
         reference_file_id = reference_file_data['reference_file_id']
@@ -308,9 +333,9 @@ def parse_reference_files():
             )
             reference_files[reference_file_id] = reference_file
         except TypeError as e:
-            print('Wrong data type!', e)
+            print('Error for Reference File ' + reference_file_id, 'Wrong data type!', e)
         except ValueError as e:
-            print('Invalid value!', e)
+            print('Error for Reference File ' + reference_file_id, 'Invalid value!', e)
 
 def check_reference_files_for_studies():
     reference_file_ids_to_remove = []
@@ -341,7 +366,7 @@ def write_reference_files():
 
 # Log any duplicate studies
 def parse_studies():
-    all_study_data = discovery_data['studies'] + validation_data['studies']
+    all_study_data = all_json_data['studies']
 
     for study_data in all_study_data:
         participant_ids = study_data['participant.participant_id']
@@ -366,9 +391,9 @@ def parse_studies():
             )
             studies[study_id] = study
         except TypeError as e:
-            print('Wrong data type!', e)
+            print('Error for Study ' + study_id, 'Wrong data type!', e)
         except ValueError as e:
-            print('Invalid value!', e)
+            print('Error for Study ' + study_id, 'Invalid value!', e)
 
         # Add mappings of participant ID's to study ID's
         for participant_id in participant_ids:
@@ -396,7 +421,7 @@ def write_studies():
         studies_file.close()
 
 def parse_survivals():
-    all_survival_data = discovery_data['survivals'] + validation_data['survivals']
+    all_survival_data = all_json_data['survivals']
 
     for survival_data in all_survival_data:
         participant_id = survival_data['participant.participant_id']
@@ -417,9 +442,9 @@ def parse_survivals():
             )
             survivals[survival_id] = survival
         except TypeError as e:
-            print('Wrong data type!', e)
+            print('Error for Survival ' + survival_id, 'Wrong data type!', e)
         except ValueError as e:
-            print('Invalid value!', e)
+            print('Error for Survival ' + survival_id, 'Invalid value!', e)
 
         # Add mappings of participant ID's to survival ID's
         if participant_id not in participants.keys():
@@ -454,6 +479,3 @@ def write_survivals():
         survivals_file.close()
 
 transform()
-
-discovery_file.close()
-validation_file.close()

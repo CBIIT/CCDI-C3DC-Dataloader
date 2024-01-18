@@ -41,7 +41,7 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             self.participant_factory.create_participant(ethnicity=value)
 
-        with self.assertRaisesRegex(TypeError, 'Ethnicity is missing'):
+        with self.assertRaisesRegex(TypeError, "Ethnicity `` must be of type <class 'list'>"):
             value = ''
             print(test_msg.format(value))
             self.participant_factory.create_participant(ethnicity=value)
@@ -84,7 +84,7 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             self.participant_factory.create_participant(race=value)
 
-        with self.assertRaisesRegex(TypeError, 'Race is missing'):
+        with self.assertRaisesRegex(TypeError, "Race `` must be of type <class 'list'>"):
             value = ''
             print(test_msg.format(value))
             self.participant_factory.create_participant(race=value)
