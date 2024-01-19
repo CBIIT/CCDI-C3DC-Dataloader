@@ -8,7 +8,7 @@ Config:
   # Elastic search host name or IP, without trailing slash
   es_host: localhost:9200
   # Path to about file
-  about_file: 
+  about_file: config/searchablePagesContent.yaml
 
   model_files:
     - config/c3dc-model.yml
