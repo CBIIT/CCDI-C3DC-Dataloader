@@ -1,4 +1,16 @@
 Indices:
+  - index_name: c3dc_static_pages
+    type: about_file
+    mapping:
+      page:
+        type: search_as_you_type
+      title:
+        type: search_as_you_type
+      primaryContentImage:
+        type: text
+      content:
+        type: object
+
   - index_name: home_stats
     type: neo4j
     mapping:
