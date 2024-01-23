@@ -147,7 +147,8 @@ Indices:
         stu.study_short_title AS study_short_title,
         COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
-          first_event: sur.first_event,
+          // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
+          first_event: CASE sur.first_event WHEN '' THEN 'Not Reported' ELSE sur.first_event END,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals
 
@@ -227,7 +228,8 @@ Indices:
         stu.study_short_title AS study_short_title,
         COLLECT({
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
-          first_event: sur.first_event,
+          // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
+          first_event: CASE sur.first_event WHEN '' THEN 'Not Reported' ELSE sur.first_event END,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,
         COLLECT({
@@ -378,7 +380,8 @@ Indices:
         s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
         s.age_at_last_known_survival_status AS age_at_last_known_survival_status,
         s.event_free_survival_status AS event_free_survival_status,
-        s.first_event AS first_event,
+        // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
+        (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
         s.last_known_survival_status AS last_known_survival_status,
         s.survival_id AS survival_id,
         p.ethnicity AS ethnicity,
