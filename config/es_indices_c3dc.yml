@@ -78,6 +78,8 @@ Indices:
         type: keyword
       participant_id:
         type: keyword
+      pid: # Corresponds to participant.id
+        type: keyword
       race:
         type: keyword
       race_str:
@@ -138,6 +140,7 @@ Indices:
         apoc.text.split(p.ethnicity, ';') as ethnicity,
         p.ethnicity as ethnicity_str,
         p.participant_id as participant_id,
+        p.id as pid,
         apoc.text.split(p.race, ';') as race,
         p.race as race_str,
         p.sex_at_birth as sex_at_birth,
@@ -296,6 +299,8 @@ Indices:
         type: integer
       external_url:
         type: keyword
+      id:
+        type: keyword
       phs_accession:
         type: keyword
       study_acronym:
@@ -315,6 +320,7 @@ Indices:
         s.consent as consent,
         s.consent_number as consent_number,
         s.external_url as external_url,
+        s.id as id,
         s.phs_accession as phs_accession,
         s.study_acronym as study_acronym,
         s.study_description as study_description,
@@ -332,6 +338,8 @@ Indices:
       event_free_survival_status:
         type: keyword
       first_event:
+        type: keyword
+      id:
         type: keyword
       last_known_survival_status:
         type: keyword
@@ -360,6 +368,8 @@ Indices:
         type: keyword
       participant_id:
         type: keyword
+      pid: # Corresponds to participant.id
+        type: keyword
       race:
         type: keyword
       sex_at_birth:
@@ -382,10 +392,12 @@ Indices:
         s.event_free_survival_status AS event_free_survival_status,
         // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
         (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
+        s.id AS id,
         s.last_known_survival_status AS last_known_survival_status,
         s.survival_id AS survival_id,
         p.ethnicity AS ethnicity,
         p.participant_id AS participant_id,
+        p.id AS pid,
         p.race AS race,
         p.sex_at_birth AS sex_at_birth,
         stu.phs_accession AS phs_accession,
