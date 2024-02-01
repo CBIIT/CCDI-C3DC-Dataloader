@@ -234,11 +234,11 @@ def write_diagnoses():
         tsv_writer = csv.writer(diagnoses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(DIAGNOSIS_HEADERS)
 
-        for diagnosis in diagnoses.values():
+        for diagnosis_id, diagnosis in diagnoses:
             diagnosis_row = diagnosis.to_list()
             row = diagnosis_row + [
-                diagnosis.diagnosis_id,
-                diagnoses_to_participants[diagnosis.diagnosis_id],
+                diagnosis_id,
+                diagnoses_to_participants[diagnosis_id],
             ]
             tsv_writer.writerow(row)
 
@@ -286,12 +286,12 @@ def write_participants():
         tsv_writer = csv.writer(participants_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(PARTICIPANT_HEADERS)
 
-        for participant in participants.values():
+        for participant_id, participant in participants:
             participant_row = participant.to_list()
-            for study_id in participants_to_studies[participant.participant_id]:
+            for study_id in participants_to_studies[participant_id]:
                 row = participant_row + [
                     '::'.join([
-                        participant.participant_id,
+                        participant_id,
                         study_id,
                     ]),
                     study_id,
@@ -354,11 +354,11 @@ def write_reference_files():
         tsv_writer = csv.writer(reference_files_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(REFERENCE_FILE_HEADERS)
 
-        for reference_file in reference_files.values():
+        for reference_file_id, reference_file in reference_files:
             reference_file_row = reference_file.to_list()
             row = reference_file_row + [
-                reference_file.reference_file_id,
-                reference_files_to_studies[reference_file.reference_file_id],
+                reference_file_id,
+                reference_files_to_studies[reference_file_id],
             ]
             tsv_writer.writerow(row)
 
@@ -412,9 +412,9 @@ def write_studies():
         tsv_writer = csv.writer(studies_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(STUDY_HEADERS)
 
-        for study in studies.values():
+        for study_id, study in studies.values():
             row = study.to_list() + [
-                study.study_id,
+                study_id,
             ]
             tsv_writer.writerow(row)
 
@@ -469,10 +469,10 @@ def write_survivals():
         tsv_writer = csv.writer(survivals_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(SURVIVAL_HEADERS)
 
-        for survival in survivals.values():
+        for survival_id, survival in survivals:
             row = survival.to_list() + [
-                survival.survival_id,
-                survivals_to_participants[survival.survival_id],
+                survival_id,
+                survivals_to_participants[survival_id],
             ]
             tsv_writer.writerow(row)
 
