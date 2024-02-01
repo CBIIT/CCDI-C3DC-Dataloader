@@ -11,7 +11,7 @@ Config:
   about_file: config/searchablePagesContent.yaml
 
   model_files:
-    - config/c3dc-model.yml
-    - config/c3dc-model-props.yml
+    - c3dc-model/model-desc/c3dc-model-props.yml
+    - c3dc-model/model-desc/c3dc-model.yml
 
   prop_file: config/props-c3dc.yml
