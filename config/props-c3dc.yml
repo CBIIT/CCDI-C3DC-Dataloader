@@ -21,8 +21,8 @@ Properties:
     TBD: String
 
   id_fields:
-    diagnosis: id
-    participant: id
-    reference_file: id
-    study: id
-    survival: id
+    diagnosis: diagnosis_id
+    participant: participant_id
+    reference_file: reference_file_id
+    study: study_id
+    survival: survival_id

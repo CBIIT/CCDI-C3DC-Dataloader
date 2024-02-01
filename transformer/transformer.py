@@ -1,5 +1,4 @@
 import csv
-import functools
 import json
 import os
 from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
@@ -21,7 +20,6 @@ DIAGNOSIS_HEADERS = [
     'tumor_stage_clinical_t',
     'tumor_stage_clinical_n',
     'tumor_stage_clinical_m',
-    'id',
     'participant.participant_id',
 ]
 
@@ -32,7 +30,6 @@ PARTICIPANT_HEADERS = [
     'sex_at_birth',
     'ethnicity',
     'alternate_participant_id',
-    'id',
     'study.study_id',
 ]
 
@@ -49,7 +46,6 @@ REFERENCE_FILE_HEADERS = [
     'dcf_indexd_guid',
     'checksum_algorithm',
     'checksum_value',
-    'id',
     'study.study_id',
 ]
 
@@ -65,7 +61,6 @@ STUDY_HEADERS = [
     'consent',
     'consent_number',
     'external_url',
-    'id',
 ]
 
 SURVIVAL_HEADERS = [
@@ -76,7 +71,6 @@ SURVIVAL_HEADERS = [
     'first_event',
     'age_at_last_known_survival_status',
     'age_at_event_free_survival_status',
-    'id',
     'participant.participant_id',
 ]
 
@@ -229,18 +223,29 @@ def check_diagnoses_for_participants():
     for diagnosis_id in diagnosis_ids_to_remove:
         del diagnoses[diagnosis_id]
 
+# id = diagnosis_id::study_id
+# participant.id = participant_id::study_id
 def write_diagnoses():
     with open('data/diagnoses.tsv', 'w', newline='') as diagnoses_file:
         tsv_writer = csv.writer(diagnoses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(DIAGNOSIS_HEADERS)
 
-        for diagnosis_id, diagnosis in diagnoses:
+        for diagnosis_id, diagnosis in diagnoses.items():
             diagnosis_row = diagnosis.to_list()
-            row = diagnosis_row + [
-                diagnosis_id,
-                diagnoses_to_participants[diagnosis_id],
-            ]
-            tsv_writer.writerow(row)
+            participant_id = diagnoses_to_participants[diagnosis_id]
+
+            for study_id in participants_to_studies[participant_id]:
+                diagnosis_row[1] = '::'.join([
+                    diagnosis_id,
+                    study_id,
+                ])
+                row = diagnosis_row + [
+                    '::'.join([
+                        participant_id,
+                        study_id,
+                    ]),
+                ]
+                tsv_writer.writerow(row)
 
         diagnoses_file.close()
 
@@ -281,19 +286,22 @@ def check_participants_for_studies():
     for participant_id in participant_ids_to_remove:
         del participants[participant_id]
 
+# id = participant_id::study_id
+# study.id = study_id
 def write_participants():
     with open('data/participants.tsv', 'w', newline='') as participants_file:
         tsv_writer = csv.writer(participants_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(PARTICIPANT_HEADERS)
 
-        for participant_id, participant in participants:
+        for participant_id, participant in participants.items():
             participant_row = participant.to_list()
+
             for study_id in participants_to_studies[participant_id]:
+                participant_row[1] = '::'.join([
+                    participant_id,
+                    study_id,
+                ])
                 row = participant_row + [
-                    '::'.join([
-                        participant_id,
-                        study_id,
-                    ]),
                     study_id,
                 ]
                 tsv_writer.writerow(row)
@@ -349,16 +357,22 @@ def check_reference_files_for_studies():
     for reference_file_id in reference_file_ids_to_remove:
         del reference_files[reference_file_id]
 
+# id = reference_file_id::study_id
+# study.id = study_id
 def write_reference_files():
     with open('data/reference_files.tsv', 'w', newline='') as reference_files_file:
         tsv_writer = csv.writer(reference_files_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(REFERENCE_FILE_HEADERS)
 
-        for reference_file_id, reference_file in reference_files:
+        for reference_file_id, reference_file in reference_files.items():
             reference_file_row = reference_file.to_list()
-            row = reference_file_row + [
+            study_id = reference_files_to_studies[reference_file_id]
+            reference_file_row[1] = '::'.join([
                 reference_file_id,
-                reference_files_to_studies[reference_file_id],
+                study_id,
+            ])
+            row = reference_file_row + [
+                study_id,
             ]
             tsv_writer.writerow(row)
 
@@ -407,15 +421,14 @@ def parse_studies():
 
             participants_to_studies[participant_id] = [study_id]
 
+# study.id = study.study_id
 def write_studies():
     with open('data/studies.tsv', 'w', newline='') as studies_file:
         tsv_writer = csv.writer(studies_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(STUDY_HEADERS)
 
-        for study_id, study in studies.values():
-            row = study.to_list() + [
-                study_id,
-            ]
+        for study_id, study in studies.items():
+            row = study.to_list()
             tsv_writer.writerow(row)
 
         studies_file.close()
@@ -464,17 +477,30 @@ def check_survivals_for_participants():
     for survival_id in survival_ids_to_remove:
         del survivals[survival_id]
 
+# id = survival_id::study_id
+# participant.id = participant_id::study_id
 def write_survivals():
     with open('data/survivals.tsv', 'w', newline='') as survivals_file:
         tsv_writer = csv.writer(survivals_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(SURVIVAL_HEADERS)
 
-        for survival_id, survival in survivals:
-            row = survival.to_list() + [
-                survival_id,
-                survivals_to_participants[survival_id],
-            ]
-            tsv_writer.writerow(row)
+        for survival_id, survival in survivals.items():
+            survival_row = survival.to_list()
+            participant_id = survivals_to_participants[survival_id]
+
+            for study_id in participants_to_studies[participant_id]:
+                survival_row[1] = '::'.join([
+                    survival_id,
+                    study_id,
+                ])
+                row = survival_row + [
+                    '::'.join([
+                        participant_id,
+                        study_id,
+                    ]),
+
+                ]
+                tsv_writer.writerow(row)
 
         survivals_file.close()
 

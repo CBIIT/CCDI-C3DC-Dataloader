@@ -53,11 +53,11 @@ Indices:
         type: keyword
       diagnosis_id:
         type: keyword
+      did:
+        type: keyword
       diagnosis_verification_status:
         type: keyword
       disease_phase:
-        type: keyword
-      id:
         type: keyword
       toronto_childhood_cancer_staging:
         type: keyword
@@ -78,7 +78,7 @@ Indices:
         type: keyword
       participant_id:
         type: keyword
-      pid: # Corresponds to participant.id
+      pid:
         type: keyword
       race:
         type: keyword
@@ -127,10 +127,10 @@ Indices:
         d.diagnosis_classification as diagnosis_classification,
         d.diagnosis_classification_system as diagnosis_classification_system,
         d.diagnosis_comment as diagnosis_comment,
-        d.diagnosis_id as diagnosis_id,
+        apoc.text.split(d.diagnosis_id, '::')[0] as diagnosis_id,
+        d.diagnosis_id as did,
         d.diagnosis_verification_status as diagnosis_verification_status,
         d.disease_phase as disease_phase,
-        d.id as id,
         d.toronto_childhood_cancer_staging as toronto_childhood_cancer_staging,
         d.tumor_classification as tumor_classification,
         d.tumor_grade as tumor_grade,
@@ -139,8 +139,8 @@ Indices:
         d.tumor_stage_clinical_t as tumor_stage_clinical_t,
         apoc.text.split(p.ethnicity, ';') as ethnicity,
         p.ethnicity as ethnicity_str,
-        p.participant_id as participant_id,
-        p.id as pid,
+        apoc.text.split(p.participant_id, '::')[0] as participant_id,
+        p.participant_id as pid,
         apoc.text.split(p.race, ';') as race,
         p.race as race_str,
         p.sex_at_birth as sex_at_birth,
@@ -164,9 +164,9 @@ Indices:
         type: keyword
       ethnicity_str:
         type: keyword
-      id:
-        type: keyword
       participant_id:
+        type: keyword
+      pid:
         type: keyword
       race:
         type: keyword
@@ -220,8 +220,8 @@ Indices:
         p.alternate_participant_id AS alternate_participant_id,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.ethnicity AS ethnicity_str,
-        p.id AS id,
-        p.participant_id AS participant_id,
+        apoc.text.split(p.participant_id, '::')[0] AS participant_id,
+        p.participant_id AS pid,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
         p.sex_at_birth AS sex_at_birth,
@@ -264,11 +264,11 @@ Indices:
         type: long
       file_type:
         type: keyword
-      id:
-        type: keyword
       md5sum:
         type: keyword
       reference_file_id:
+        type: keyword
+      rid:
         type: keyword
       reference_file_url:
         type: keyword
@@ -283,9 +283,9 @@ Indices:
         r.file_name as file_name,
         r.file_size as file_size,
         r.file_type as file_type,
-        r.id as id,
         r.md5sum as md5sum,
-        r.reference_file_id as reference_file_id,
+        apoc.text.split(r.reference_file_id, '::')[0] as reference_file_id,
+        r.reference_file_id as rid,
         r.reference_file_url as reference_file_url
 
   - index_name: studies
@@ -298,8 +298,6 @@ Indices:
       consent_number:
         type: integer
       external_url:
-        type: keyword
-      id:
         type: keyword
       phs_accession:
         type: keyword
@@ -320,7 +318,6 @@ Indices:
         s.consent as consent,
         s.consent_number as consent_number,
         s.external_url as external_url,
-        s.id as id,
         s.phs_accession as phs_accession,
         s.study_acronym as study_acronym,
         s.study_description as study_description,
@@ -339,11 +336,11 @@ Indices:
         type: keyword
       first_event:
         type: keyword
-      id:
-        type: keyword
       last_known_survival_status:
         type: keyword
       survival_id:
+        type: keyword
+      svid:
         type: keyword
       # Diagnoses
       diagnoses:
@@ -368,7 +365,7 @@ Indices:
         type: keyword
       participant_id:
         type: keyword
-      pid: # Corresponds to participant.id
+      pid:
         type: keyword
       race:
         type: keyword
@@ -392,12 +389,12 @@ Indices:
         s.event_free_survival_status AS event_free_survival_status,
         // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
         (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
-        s.id AS id,
         s.last_known_survival_status AS last_known_survival_status,
-        s.survival_id AS survival_id,
+        apoc.text.split(s.survival_id, '::')[0] AS survival_id,
+        s.survival_id AS svid,
         p.ethnicity AS ethnicity,
-        p.participant_id AS participant_id,
-        p.id AS pid,
+        apoc.text.split(p.participant_id, '::')[0] AS participant_id,
+        p.participant_id AS pid,
         p.race AS race,
         p.sex_at_birth AS sex_at_birth,
         stu.phs_accession AS phs_accession,
