@@ -150,7 +150,7 @@ Indices:
           // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
           first_event: CASE sur.first_event WHEN '' THEN 'Not Reported' ELSE sur.first_event END,
           last_known_survival_status: sur.last_known_survival_status
-        }) AS survivals
+        }) AS survivals;
 
   - index_name: participants
     type: neo4j
@@ -240,7 +240,7 @@ Indices:
           diagnosis_classification_system: d.diagnosis_classification_system,
           diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
-        }) AS diagnoses
+        }) AS diagnoses;
 
   - index_name: reference_files
     type: neo4j
@@ -283,7 +283,7 @@ Indices:
         r.id as id,
         r.md5sum as md5sum,
         r.reference_file_id as reference_file_id,
-        r.reference_file_url as reference_file_url
+        r.reference_file_url as reference_file_url;
 
   - index_name: studies
     type: neo4j
@@ -320,7 +320,7 @@ Indices:
         s.study_description as study_description,
         s.study_id as study_id,
         s.study_name as study_name,
-        s.study_short_title as study_short_title
+        s.study_short_title as study_short_title;
 
   - index_name: survivals
     type: neo4j
@@ -384,9 +384,11 @@ Indices:
         (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
         s.last_known_survival_status AS last_known_survival_status,
         s.survival_id AS survival_id,
-        p.ethnicity AS ethnicity,
+        apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
-        p.race AS race,
+        apoc.text.split(p.race, ';') AS race,
+        p.race as race_str,
         p.sex_at_birth AS sex_at_birth,
         stu.phs_accession AS phs_accession,
         stu.study_acronym AS study_acronym,
@@ -400,4 +402,4 @@ Indices:
           diagnosis_classification_system: d.diagnosis_classification_system,
           diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
-        }) AS diagnoses
+        }) AS diagnoses;
