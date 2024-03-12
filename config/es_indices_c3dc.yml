@@ -14,7 +14,7 @@ Indices:
   - index_name: home_stats
     type: neo4j
     mapping:
-      num_diagnoses:
+      num_diseases:
         type: integer
       num_participants:
         type: integer
@@ -30,7 +30,7 @@ Indices:
         OPTIONAL MATCH (p)<--(su:survival)
         OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
-        COUNT(DISTINCT d) AS num_diagnoses,
+        COUNT(DISTINCT d.diagnosis_classification) AS num_diseases,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT rf) AS num_reference_files,
         COUNT(DISTINCT st) AS num_studies,
