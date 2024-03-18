@@ -30,7 +30,7 @@ Indices:
         OPTIONAL MATCH (p)<--(su:survival)
         OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
-        COUNT(DISTINCT d.diagnosis_classification) AS num_diseases,
+        COUNT(DISTINCT d.diagnosis) AS num_diseases,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT rf) AS num_reference_files,
         COUNT(DISTINCT st) AS num_studies,
@@ -45,7 +45,7 @@ Indices:
         type: keyword
       diagnosis_basis:
         type: keyword
-      diagnosis_classification:
+      diagnosis:
         type: keyword
       diagnosis_classification_system:
         type: keyword
@@ -122,7 +122,7 @@ Indices:
         d.age_at_diagnosis as age_at_diagnosis,
         d.anatomic_site as anatomic_site,
         d.diagnosis_basis as diagnosis_basis,
-        d.diagnosis_classification as diagnosis_classification,
+        d.diagnosis as diagnosis,
         d.diagnosis_classification_system as diagnosis_classification_system,
         d.diagnosis_comment as diagnosis_comment,
         d.diagnosis_id as diagnosis_id,
@@ -181,7 +181,7 @@ Indices:
             type: keyword
           diagnosis_basis:
             type: keyword
-          diagnosis_classification:
+          diagnosis:
             type: keyword
           diagnosis_classification_system:
             type: keyword
@@ -236,7 +236,7 @@ Indices:
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
-          diagnosis_classification: d.diagnosis_classification,
+          diagnosis: d.diagnosis,
           diagnosis_classification_system: d.diagnosis_classification_system,
           diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
@@ -347,7 +347,7 @@ Indices:
             type: keyword
           diagnosis_basis:
             type: keyword
-          diagnosis_classification:
+          diagnosis:
             type: keyword
           diagnosis_classification_system:
             type: keyword
@@ -398,7 +398,7 @@ Indices:
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
-          diagnosis_classification: d.diagnosis_classification,
+          diagnosis: d.diagnosis,
           diagnosis_classification_system: d.diagnosis_classification_system,
           diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase

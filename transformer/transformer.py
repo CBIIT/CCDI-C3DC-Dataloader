@@ -10,7 +10,7 @@ from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 DIAGNOSIS_HEADERS = [
     'type',
     'diagnosis_id',
-    'diagnosis_classification',
+    'diagnosis',
     'diagnosis_classification_system',
     'diagnosis_basis',
     'diagnosis_comment',
@@ -204,7 +204,7 @@ def parse_diagnoses():
                 age_at_diagnosis = diagnosis_data.get('age_at_diagnosis', None),
                 anatomic_site = diagnosis_data.get('anatomic_site', None),
                 diagnosis_basis = diagnosis_data.get('diagnosis_basis', None),
-                diagnosis_classification = diagnosis_data.get('diagnosis_classification', None),
+                diagnosis = diagnosis_data.get('diagnosis', None),
                 diagnosis_classification_system = diagnosis_data.get('diagnosis_classification_system', None),
                 diagnosis_comment = diagnosis_data.get('diagnosis_comment', None),
                 diagnosis_id = diagnosis_data.get('diagnosis_id', None),

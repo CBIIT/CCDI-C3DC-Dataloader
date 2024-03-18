@@ -352,7 +352,7 @@ class Diagnosis(Node):
         'age_at_diagnosis': 'Age at Diagnosis',
         'anatomic_site': 'Anatomic Site',
         'diagnosis_basis': 'Diagnosis Basis',
-        'diagnosis_classification': 'Diagnosis Classification',
+        'diagnosis': 'Diagnosis',
         'diagnosis_classification_system': 'Diagnosis Classification System',
         'diagnosis_comment': 'Diagnosis Comment',
         'diagnosis_id': 'Diagnosis ID',
@@ -367,7 +367,7 @@ class Diagnosis(Node):
     }
 
     def __init__(self, age_at_diagnosis, anatomic_site, diagnosis_basis,
-            diagnosis_classification, diagnosis_classification_system,
+            diagnosis, diagnosis_classification_system,
             diagnosis_comment, diagnosis_id, diagnosis_verification_status,
             disease_phase, toronto_childhood_cancer_staging,
             tumor_classification, tumor_grade, tumor_stage_clinical_m,
@@ -375,7 +375,7 @@ class Diagnosis(Node):
         self.age_at_diagnosis = age_at_diagnosis
         self.anatomic_site = anatomic_site
         self.diagnosis_basis = diagnosis_basis
-        self.diagnosis_classification = diagnosis_classification
+        self.diagnosis = diagnosis
         self.diagnosis_classification_system = diagnosis_classification_system
         self.diagnosis_comment = diagnosis_comment
         self.diagnosis_id = diagnosis_id
@@ -393,7 +393,7 @@ class Diagnosis(Node):
             self._age_at_diagnosis,
             self._anatomic_site,
             self._diagnosis_basis,
-            self._diagnosis_classification,
+            self._diagnosis,
             self._diagnosis_classification_system,
             self._diagnosis_comment,
             self._diagnosis_id,
@@ -435,13 +435,13 @@ class Diagnosis(Node):
         self._diagnosis_basis = value
 
     @property
-    def diagnosis_classification(self):
-        return self._diagnosis_classification
+    def diagnosis(self):
+        return self._diagnosis
 
-    @diagnosis_classification.setter
-    def diagnosis_classification(self, value):
-        self._validate_attr('diagnosis_classification', value)
-        self._diagnosis_classification = value
+    @diagnosis.setter
+    def diagnosis(self, value):
+        self._validate_attr('diagnosis', value)
+        self._diagnosis = value
 
     @property
     def diagnosis_classification_system(self):
@@ -546,7 +546,7 @@ class Diagnosis(Node):
         return [
             'diagnosis',
             self._diagnosis_id,
-            self._diagnosis_classification,
+            self._diagnosis,
             self._diagnosis_classification_system,
             ';'.join(self._diagnosis_basis),
             self._diagnosis_comment,
