@@ -356,7 +356,6 @@ class Diagnosis(Node):
         'diagnosis_classification_system': 'Diagnosis Classification System',
         'diagnosis_comment': 'Diagnosis Comment',
         'diagnosis_id': 'Diagnosis ID',
-        'diagnosis_verification_status': 'Diagnosis Verification Status',
         'disease_phase': 'Disease Phase',
         'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
         'tumor_classification': 'Tumor Classification',
@@ -368,10 +367,10 @@ class Diagnosis(Node):
 
     def __init__(self, age_at_diagnosis, anatomic_site, diagnosis_basis,
             diagnosis, diagnosis_classification_system,
-            diagnosis_comment, diagnosis_id, diagnosis_verification_status,
-            disease_phase, toronto_childhood_cancer_staging,
-            tumor_classification, tumor_grade, tumor_stage_clinical_m,
-            tumor_stage_clinical_n, tumor_stage_clinical_t):
+            diagnosis_comment, diagnosis_id, disease_phase,
+            toronto_childhood_cancer_staging, tumor_classification,
+            tumor_grade, tumor_stage_clinical_m, tumor_stage_clinical_n,
+            tumor_stage_clinical_t):
         self.age_at_diagnosis = age_at_diagnosis
         self.anatomic_site = anatomic_site
         self.diagnosis_basis = diagnosis_basis
@@ -379,7 +378,6 @@ class Diagnosis(Node):
         self.diagnosis_classification_system = diagnosis_classification_system
         self.diagnosis_comment = diagnosis_comment
         self.diagnosis_id = diagnosis_id
-        self.diagnosis_verification_status = diagnosis_verification_status
         self.disease_phase = disease_phase
         self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging
         self.tumor_classification = tumor_classification
@@ -397,7 +395,6 @@ class Diagnosis(Node):
             self._diagnosis_classification_system,
             self._diagnosis_comment,
             self._diagnosis_id,
-            self._diagnosis_verification_status,
             self._disease_phase,
             self._toronto_childhood_cancer_staging,
             self._tumor_classification,
@@ -471,15 +468,6 @@ class Diagnosis(Node):
         self._diagnosis_id = value
 
     @property
-    def diagnosis_verification_status(self):
-        return self._diagnosis_verification_status
-
-    @diagnosis_verification_status.setter
-    def diagnosis_verification_status(self, value):
-        self._validate_attr('diagnosis_verification_status', value)
-        self._diagnosis_verification_status = value
-
-    @property
     def disease_phase(self):
         return self._disease_phase
 
@@ -550,7 +538,6 @@ class Diagnosis(Node):
             self._diagnosis_classification_system,
             ';'.join(self._diagnosis_basis),
             self._diagnosis_comment,
-            self._diagnosis_verification_status,
             self._disease_phase,
             ';'.join(self._anatomic_site),
             self._age_at_diagnosis,

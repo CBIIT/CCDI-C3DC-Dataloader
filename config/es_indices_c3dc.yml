@@ -53,8 +53,6 @@ Indices:
         type: keyword
       diagnosis_id:
         type: keyword
-      diagnosis_verification_status:
-        type: keyword
       disease_phase:
         type: keyword
       id:
@@ -126,7 +124,6 @@ Indices:
         d.diagnosis_classification_system as diagnosis_classification_system,
         d.diagnosis_comment as diagnosis_comment,
         d.diagnosis_id as diagnosis_id,
-        d.diagnosis_verification_status as diagnosis_verification_status,
         d.disease_phase as disease_phase,
         d.id as id,
         d.toronto_childhood_cancer_staging as toronto_childhood_cancer_staging,
@@ -185,8 +182,6 @@ Indices:
             type: keyword
           diagnosis_classification_system:
             type: keyword
-          diagnosis_verification_status:
-            type: keyword
           disease_phase:
             type: keyword
       # Studies
@@ -238,7 +233,6 @@ Indices:
           diagnosis_basis: d.diagnosis_basis,
           diagnosis: d.diagnosis,
           diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
         }) AS diagnoses;
 
@@ -351,8 +345,6 @@ Indices:
             type: keyword
           diagnosis_classification_system:
             type: keyword
-          diagnosis_verification_status:
-            type: keyword
           disease_phase:
             type: keyword
       # Participant fields
@@ -400,6 +392,5 @@ Indices:
           diagnosis_basis: d.diagnosis_basis,
           diagnosis: d.diagnosis,
           diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
         }) AS diagnoses;
