@@ -239,10 +239,6 @@ Indices:
   - index_name: reference_files
     type: neo4j
     mapping:
-      checksum_algorithm:
-        type: keyword
-      checksum_value:
-        type: keyword
       dcf_indexd_guid:
         type: keyword
       file_category:
@@ -266,8 +262,6 @@ Indices:
     cypher_query: >
       MATCH (r:reference_file)
       RETURN
-        r.checksum_algorithm as checksum_algorithm,
-        r.checksum_value as checksum_value,
         r.dcf_indexd_guid as dcf_indexd_guid,
         r.file_category as file_category,
         r.file_description as file_description,

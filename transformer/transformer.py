@@ -49,8 +49,6 @@ REFERENCE_FILE_HEADERS = [
     'md5sum',
     'reference_file_url',
     'dcf_indexd_guid',
-    'checksum_algorithm',
-    'checksum_value',
     'id',
     'study.study_id',
 ]
@@ -323,8 +321,6 @@ def parse_reference_files():
 
         try:
             reference_file = ReferenceFile(
-                checksum_algorithm = reference_file_data.get('checksum_algorithm', None),
-                checksum_value = reference_file_data.get('checksum_value', None),
                 dcf_indexd_guid = reference_file_data.get('dcf_indexd_guid', None),
                 file_category = reference_file_data.get('file_category', None),
                 file_description = reference_file_data.get('file_description', None),

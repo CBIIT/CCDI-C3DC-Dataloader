@@ -551,8 +551,6 @@ class Diagnosis(Node):
 
 class ReferenceFile(Node):
     _PROPER_NAMES = {
-        'checksum_algorithm': 'Checksum Algorithm',
-        'checksum_value': 'Checksum Value',
         'dcf_indexd_guid': 'DCF Index GUID',
         'file_category': 'File Category',
         'file_description': 'File Description',
@@ -564,11 +562,9 @@ class ReferenceFile(Node):
         'reference_file_url': 'Reference File URL',
     }
 
-    def __init__(self, checksum_algorithm, checksum_value, dcf_indexd_guid,
-            file_category, file_description, file_name, file_size, file_type,
-            md5sum, reference_file_id, reference_file_url):
-        self.checksum_algorithm = checksum_algorithm
-        self.checksum_value = checksum_value
+    def __init__(self, dcf_indexd_guid, file_category, file_description,
+            file_name, file_size, file_type, md5sum, reference_file_id,
+            reference_file_url):
         self.dcf_indexd_guid = dcf_indexd_guid
         self.file_category = file_category
         self.file_description = file_description
@@ -581,8 +577,6 @@ class ReferenceFile(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.checksum_algorithm,
-            self.checksum_value,
             self.dcf_indexd_guid,
             self.file_category,
             self.file_description,
@@ -593,24 +587,6 @@ class ReferenceFile(Node):
             self.reference_file_id,
             self.reference_file_url,
         ])
-
-    @property
-    def checksum_algorithm(self):
-        return self._checksum_algorithm
-
-    @checksum_algorithm.setter
-    def checksum_algorithm(self, value):
-        self._validate_attr('checksum_algorithm', value)
-        self._checksum_algorithm = value
-
-    @property
-    def checksum_value(self):
-        return self._checksum_value
-
-    @checksum_value.setter
-    def checksum_value(self, value):
-        self._validate_attr('checksum_value', value)
-        self._checksum_value = value
 
     @property
     def dcf_indexd_guid(self):
@@ -705,8 +681,6 @@ class ReferenceFile(Node):
             self.md5sum,
             self.reference_file_url,
             self.dcf_indexd_guid,
-            self.checksum_algorithm,
-            self.checksum_value,
         ]
 
 class Survival(Node):

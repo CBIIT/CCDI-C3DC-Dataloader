@@ -4,11 +4,9 @@ from transformer.nodes import ReferenceFile
 class TestReferenceFileFactory():
     def create_reference_file(
             self,
-            checksum_algorithm = None,
-            checksum_value = None,
             dcf_indexd_guid = '7c2abf1c-3d3e-45fb-94e4-99e705242bbf',
             file_category = 'programmatic source code',
-            file_description = None,
+            file_description = 'foo',
             file_name = 'c3dc_etl.py',
             file_size = 37950,
             file_type = 'py',
@@ -16,8 +14,6 @@ class TestReferenceFileFactory():
             reference_file_id = '9d35fb29-72f6-4d52-a13c-50fe10dbe2b1',
             reference_file_url = 'https://github.com/chicagopcdc/c3dc_etl/blob/main/etl/c3dc_etl.py'):
         reference_file = ReferenceFile(
-            checksum_algorithm,
-            checksum_value,
             dcf_indexd_guid,
             file_category,
             file_description,
@@ -34,24 +30,6 @@ class TestReferenceFileFactory():
 class TestReferenceFileProps(unittest.TestCase):
     def setUp(self):
         self.reference_file_factory = TestReferenceFileFactory()
-
-    # ReferenceFile.checksum_algorithm
-    def test_reference_file_checksum_algorithm(self):
-        test_msg = 'Testing ReferenceFile.checksum_algorithm being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, "Checksum Algorithm `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.reference_file_factory.create_reference_file(checksum_algorithm=value)
-
-    # ReferenceFile.checksum_value
-    def test_reference_file_checksum_value(self):
-        test_msg = 'Testing ReferenceFile.checksum_value being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, "Checksum Value `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.reference_file_factory.create_reference_file(checksum_value=value)
 
     # ReferenceFile.dcf_indexd_guid
     def test_reference_file_dcf_indexd_guid(self):
@@ -99,6 +77,16 @@ class TestReferenceFileProps(unittest.TestCase):
     # ReferenceFile.file_description
     def test_reference_file_file_description(self):
         test_msg = 'Testing ReferenceFile.file_description being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, 'File Description is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.reference_file_factory.create_reference_file(file_description=value)
+
+        with self.assertRaisesRegex(TypeError, 'File Description is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.reference_file_factory.create_reference_file(file_desription=value)
 
         with self.assertRaisesRegex(TypeError, "File Description `3` must be of type <class 'str'>"):
             value = 3
