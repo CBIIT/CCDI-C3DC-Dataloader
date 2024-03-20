@@ -33,7 +33,6 @@ PARTICIPANT_HEADERS = [
     'race',
     'sex_at_birth',
     'ethnicity',
-    'alternate_participant_id',
     'id',
     'study.study_id',
 ]
@@ -259,7 +258,6 @@ def parse_participants():
 
         try:
             participant = Participant(
-                alternate_participant_id = participant_data.get('alternate_participant_id', None),
                 ethnicity = participant_data.get('ethnicity', None),
                 participant_id = participant_data.get('participant_id', None),
                 race = participant_data.get('race', None),

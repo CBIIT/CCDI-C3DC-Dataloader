@@ -105,15 +105,13 @@ class Node:
 
 class Participant(Node):
     _PROPER_NAMES = {
-        'alternate_participant_id': 'Alternate Participant ID',
         'ethnicity': 'Ethnicity',
         'participant_id': 'Participant ID',
         'race': 'Race',
         'sex_at_birth': 'Sex at Birth',
     }
 
-    def __init__(self, alternate_participant_id, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
-        self.alternate_participant_id = alternate_participant_id
+    def __init__(self, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
         self.ethnicity = ethnicity
         self.participant_id = participant_id
         self.race = race
@@ -130,20 +128,10 @@ class Participant(Node):
     def __str__(self):
         return ' | '.join([
             self._participant_id or '',
-            self._alternate_participant_id or '',
             self._ethnicity or '',
             self._race or '',
             self._sex_at_birth or '',
         ])
-
-    @property
-    def alternate_participant_id(self):
-        return self._alternate_participant_id
-
-    @alternate_participant_id.setter
-    def alternate_participant_id(self, value):
-        self._validate_attr('alternate_participant_id', value)
-        self._alternate_participant_id = value
 
     @property
     def ethnicity(self):
@@ -188,7 +176,6 @@ class Participant(Node):
             ';'.join(self._race),
             self._sex_at_birth,
             ';'.join(self._ethnicity),
-            self._alternate_participant_id,
         ]
 
 class Study(Node):

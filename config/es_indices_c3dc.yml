@@ -152,8 +152,6 @@ Indices:
   - index_name: participants
     type: neo4j
     mapping:
-      alternate_participant_id:
-        type: integer
       ethnicity:
         type: keyword
       ethnicity_str:
@@ -209,7 +207,6 @@ Indices:
       OPTIONAL MATCH (p)<--(sur:survival)
       OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
-        p.alternate_participant_id AS alternate_participant_id,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.ethnicity AS ethnicity_str,
         p.id AS id,
