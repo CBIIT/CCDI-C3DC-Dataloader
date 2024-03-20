@@ -12,7 +12,6 @@ class TestStudyFactory():
             study_acronym = 'TARGET_NBL',
             study_description = 'foo',
             study_id = 'phs000467.v22.p8',
-            study_name = 'TARGET: Neuroblastoma (NBL)',
             study_short_title = 'TARGET NBL'):
         study = Study(
             acl,
@@ -23,7 +22,6 @@ class TestStudyFactory():
             study_acronym,
             study_description,
             study_id,
-            study_name,
             study_short_title
         )
 
@@ -94,6 +92,16 @@ class TestStudyProps(unittest.TestCase):
     def test_study_external_url(self):
         test_msg = 'Testing Study.external_url being <{}>...'
 
+        with self.assertRaisesRegex(TypeError, 'External URL is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.study_factory.create_study(external_url=value)
+
+        with self.assertRaisesRegex(TypeError, 'External URL is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.study_factory.create_study(external_url=value)
+
         with self.assertRaisesRegex(TypeError, "External URL `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
@@ -102,6 +110,16 @@ class TestStudyProps(unittest.TestCase):
     # Study.phs_accession
     def test_study_phs_accession(self):
         test_msg = 'Testing Study.phs_accession being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, 'PHS Accession is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.study_factory.create_study(phs_accession=value)
+
+        with self.assertRaisesRegex(TypeError, 'PHS Accession is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.study_factory.create_study(phs_accession=value)
 
         with self.assertRaisesRegex(TypeError, "PHS Accession `3` must be of type <class 'str'>"):
             value = 3
@@ -164,15 +182,6 @@ class TestStudyProps(unittest.TestCase):
             value = 3
             print(test_msg.format(value))
             self.study_factory.create_study(study_id=value)
-
-    # Study.study_name
-    def test_study_study_name(self):
-        test_msg = 'Testing Study.study_name being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, "Study Name `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.study_factory.create_study(study_name=value)
 
     # Study.study_short_title
     def test_study_study_short_title(self):

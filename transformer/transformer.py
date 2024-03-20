@@ -57,7 +57,6 @@ STUDY_HEADERS = [
     'study_id',
     'phs_accession',
     'acl',
-    'study_name',
     'study_short_title',
     'study_acronym',
     'study_description',
@@ -384,7 +383,6 @@ def parse_studies():
                 study_acronym = study_data.get('study_acronym', None),
                 study_description = study_data.get('study_description', None),
                 study_id = study_data.get('study_id', None),
-                study_name = study_data.get('study_name', None),
                 study_short_title = study_data.get('study_short_title', None),
             )
             studies[study_id] = study
