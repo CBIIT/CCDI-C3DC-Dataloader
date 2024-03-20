@@ -1,7 +1,10 @@
 import csv
 import functools
 import json
+import logging
 import os
+import sys
+import time
 from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 
 DIAGNOSIS_HEADERS = [
@@ -88,6 +91,9 @@ node_names = [
     'survivals',
 ]
 all_json_data = dict.fromkeys(node_names, [])
+timestr = time.strftime('%Y%m%d-%H%M%S')
+log_targets = logging.StreamHandler(sys.stdout), logging.FileHandler('tmp/transformer-' + timestr + '.log')
+logging.basicConfig(format='%(message)s', level=logging.INFO, handlers=log_targets)
 
 for filename in os.listdir('data/'):
     # Skip non-JSON files
@@ -96,7 +102,7 @@ for filename in os.listdir('data/'):
 
     path = 'data/' + filename
 
-    print('Reading data from ' + path + '...')
+    logging.info('Reading data from ' + path + '...')
     json_file = open(path)
     json_data = json.load(json_file)
 
@@ -106,7 +112,7 @@ for filename in os.listdir('data/'):
 
         all_json_data[node_name] = all_json_data[node_name] + json_data[node_name]
     json_file.close()
-    print('Finished reading data from ' + path + '...')
+    logging.info('Finished reading data from ' + path + '...')
 
 # TODO crosscheck foreign keys (eg: check each participant's study ID consistent with study's participant ID's)
 diagnoses = {}
@@ -120,61 +126,61 @@ survivals = {}
 survivals_to_participants = {} # Map of survival ids to participant ids
 
 def transform():
-    print('Parsing Participants from JSON...')
+    logging.info('Parsing Participants from JSON...')
     parse_participants()
-    print('Finished parsing Participants\n')
+    logging.info('Finished parsing Participants\n')
 
-    print('Parsing Studies from JSON...')
+    logging.info('Parsing Studies from JSON...')
     parse_studies()
-    print('Finished parsing Studies\n')
+    logging.info('Finished parsing Studies\n')
 
-    print('Parsing Survivals from JSON...')
+    logging.info('Parsing Survivals from JSON...')
     parse_survivals()
-    print('Finished parsing Survivals\n')
+    logging.info('Finished parsing Survivals\n')
 
-    print('Parsing Diagnoses from JSON...')
+    logging.info('Parsing Diagnoses from JSON...')
     parse_diagnoses()
-    print('Finished parsing Diagnoses\n')
+    logging.info('Finished parsing Diagnoses\n')
 
-    print('Parsing Reference Files from JSON...')
+    logging.info('Parsing Reference Files from JSON...')
     parse_reference_files()
-    print('Finished parsing Reference Files\n')
+    logging.info('Finished parsing Reference Files\n')
 
-    print('Verifying that each Participant has a Study...')
+    logging.info('Verifying that each Participant has a Study...')
     check_participants_for_studies()
-    print('Finished verifying that each Participant has a Study\n')
+    logging.info('Finished verifying that each Participant has a Study\n')
 
-    print('Verifying that each Survival has a Participant...')
+    logging.info('Verifying that each Survival has a Participant...')
     check_survivals_for_participants()
-    print('Finished verifying that each Survival has a Participant\n')
+    logging.info('Finished verifying that each Survival has a Participant\n')
 
-    print('Verifying that each Diagnosis has a Participant...')
+    logging.info('Verifying that each Diagnosis has a Participant...')
     check_diagnoses_for_participants()
-    print('Finished verifying that each Diagnosis has a Participant\n')
+    logging.info('Finished verifying that each Diagnosis has a Participant\n')
 
-    print('Verifying that each Reference File has a Study...')
+    logging.info('Verifying that each Reference File has a Study...')
     check_reference_files_for_studies()
-    print('Finished verifying that each Reference File has a Study\n')
+    logging.info('Finished verifying that each Reference File has a Study\n')
 
-    print('Writing Participants TSV...')
+    logging.info('Writing Participants TSV...')
     write_participants()
-    print('Finished writing Participants TSV\n')
+    logging.info('Finished writing Participants TSV\n')
 
-    print('Writing Studies TSV...')
+    logging.info('Writing Studies TSV...')
     write_studies()
-    print('Finished writing Studies TSV\n')
+    logging.info('Finished writing Studies TSV\n')
 
-    print('Writing Survivals TSV...')
+    logging.info('Writing Survivals TSV...')
     write_survivals()
-    print('Finished writing Survivals TSV\n')
+    logging.info('Finished writing Survivals TSV\n')
 
-    print('Writing Diagnoses TSV...')
+    logging.info('Writing Diagnoses TSV...')
     write_diagnoses()
-    print('Finished writing Diagnoses TSV\n')
+    logging.info('Finished writing Diagnoses TSV\n')
 
-    print('Writing Reference Files TSV...')
+    logging.info('Writing Reference Files TSV...')
     write_reference_files()
-    print('Finished writing Reference Files TSV')
+    logging.info('Finished writing Reference Files TSV')
 
 def parse_diagnoses():
     all_diagnosis_data = all_json_data['diagnoses']
@@ -184,12 +190,12 @@ def parse_diagnoses():
 
         # Don't consider duplicate diagnosis ID as an error yet
         if diagnosis_id in diagnoses:
-            print(f'Diagnosis {diagnosis_id} exists!')
-            print(f'Skipping Diagnosis {diagnosis_id}...')
+            logging.warning(f'Diagnosis {diagnosis_id} exists!')
+            logging.warning(f'Skipping Diagnosis {diagnosis_id}...')
 
         # Warning for not having a foreign key to Participant
         if 'participant.participant_id' not in diagnosis_data:
-            print(f'Diagnosis {diagnosis_id} does not have a Participant ID!')
+            logging.warning(f'Diagnosis {diagnosis_id} does not have a Participant ID!')
         else:
             diagnoses_to_participants[diagnosis_id] = diagnosis_data['participant.participant_id']
 
@@ -213,17 +219,17 @@ def parse_diagnoses():
             )
             diagnoses[diagnosis_id] = diagnosis
         except TypeError as e:
-            print('Error for Diagnosis ' + diagnosis_id, 'Wrong data type!', e)
+            logging.error('Wrong data type for Diagnosis %s: %s', diagnosis_id, e)
         except ValueError as e:
-            print('Error for Diagnosis ' + diagnosis_id, 'Invalid value!', e)
+            logging.error('Invalid value for Diagnosis %s: %s', diagnosis_id, e)
 
 def check_diagnoses_for_participants():
     diagnosis_ids_to_remove = []
 
     for diagnosis_id in diagnoses.keys():
         if diagnosis_id not in diagnoses_to_participants.keys():
-            print(f'Diagnosis {diagnosis_id} does not have a Participant!')
-            print(f'Skipping Diagnosis {diagnosis_id}...')
+            logging.warning(f'Diagnosis {diagnosis_id} does not have a Participant!')
+            logging.warning(f'Skipping Diagnosis {diagnosis_id}...')
             diagnosis_ids_to_remove.append(diagnosis_id)
 
     for diagnosis_id in diagnosis_ids_to_remove:
@@ -252,8 +258,8 @@ def parse_participants():
 
         # Don't consider duplicate participant ID as an error yet
         if participant_id in participants:
-            print(f'Participant {participant_id} exists!')
-            print(f'Skipping Participant {participant_id}...')
+            logging.warning(f'Participant {participant_id} exists!')
+            logging.warning(f'Skipping Participant {participant_id}...')
 
         try:
             participant = Participant(
@@ -265,17 +271,17 @@ def parse_participants():
             )
             participants[participant_id] = participant
         except TypeError as e:
-            print('Error for Participant ' + participant_id, 'Wrong data type!', e)
+            logging.error('Wrong data type for Participant %s: %s', participant_id, e)
         except ValueError as e:
-            print('Error for Participant ' + participant_id, 'Invalid value!', e)
+            logging.error('Invalid value for Participant %s: %s', participant_id, e)
 
 def check_participants_for_studies():
     participant_ids_to_remove = []
 
     for participant_id in participants.keys():
         if participant_id not in participants_to_studies.keys():
-            print(f'Participant {participant_id} does not have a Study!')
-            print(f'Skipping Participant {participant_id}...')
+            logging.warning(f'Participant {participant_id} does not have a Study!')
+            logging.warning(f'Skipping Participant {participant_id}...')
             participant_ids_to_remove.append(participant_id)
 
     for participant_id in participant_ids_to_remove:
@@ -308,12 +314,12 @@ def parse_reference_files():
 
         # Don't consider duplicate reference file ID as an error yet
         if reference_file_id in reference_files:
-            print(f'Reference File {reference_file_id} exists!')
-            print(f'Skipping Reference File {reference_file_id}...')
+            logging.warning(f'Reference File {reference_file_id} exists!')
+            logging.warning(f'Skipping Reference File {reference_file_id}...')
 
         # Warning for not having a foreign key to Study
         if 'study.study_id' not in reference_file_data:
-            print(f'Reference File {reference_file_id} does not have a Study ID!')
+            logging.warning(f'Reference File {reference_file_id} does not have a Study ID!')
         else:
             reference_files_to_studies[reference_file_id] = reference_file_data['study.study_id']
 
@@ -333,17 +339,17 @@ def parse_reference_files():
             )
             reference_files[reference_file_id] = reference_file
         except TypeError as e:
-            print('Error for Reference File ' + reference_file_id, 'Wrong data type!', e)
+            logging.error('Wrong data type for Reference File %s: %s', reference_file_id, e)
         except ValueError as e:
-            print('Error for Reference File ' + reference_file_id, 'Invalid value!', e)
+            logging.error('Invalid value for Reference File %s: %s', reference_file_id, e)
 
 def check_reference_files_for_studies():
     reference_file_ids_to_remove = []
 
     for reference_file_id in reference_files.keys():
         if reference_file_id not in reference_files_to_studies.keys():
-            print(f'Reference File {reference_file_id} does not have a Study!')
-            print(f'Skipping Reference File {reference_file_id}...')
+            logging.warning(f'Reference File {reference_file_id} does not have a Study!')
+            logging.warning(f'Skipping Reference File {reference_file_id}...')
             reference_file_ids_to_remove.append(reference_file_id)
 
     for reference_file_id in reference_file_ids_to_remove:
@@ -374,7 +380,7 @@ def parse_studies():
 
         # Don't consider duplicate study ID as an error yet
         if study_id in studies:
-            print(f'Study {study_id} exists!')
+            logging.warning(f'Study {study_id} exists!')
 
         try:
             study = Study(
@@ -391,9 +397,9 @@ def parse_studies():
             )
             studies[study_id] = study
         except TypeError as e:
-            print('Error for Study ' + study_id, 'Wrong data type!', e)
+            logging.error('Wrong data type for Study %s: %s', study_id, e)
         except ValueError as e:
-            print('Error for Study ' + study_id, 'Invalid value!', e)
+            logging.error('Invalid value for Study %s: %s', study_id, e)
 
         # Add mappings of participant ID's to study ID's
         for participant_id in participant_ids:
@@ -402,8 +408,8 @@ def parse_studies():
 
             # Don't consider it an error for a participant to be associated to multiple studies
             if participant_id in participants_to_studies.keys():
-                print(f'Participant {participant_id} already matched to {participants_to_studies[participant_id]}!')
-                print(f'Mapping participant {participant_id} to another study: {study_id}...')
+                logging.warning(f'Participant {participant_id} already matched to {participants_to_studies[participant_id]}!')
+                logging.warning(f'Mapping participant {participant_id} to another study: {study_id}...')
 
             participants_to_studies[participant_id] = [study_id]
 
@@ -429,7 +435,7 @@ def parse_survivals():
 
         # Don't consider duplicate survival ID as an error yet
         if survival_id in survivals:
-            print(f'Survival {survival_id} exists!')
+            logging.warning(f'Survival {survival_id} exists!')
 
         try:
             survival = Survival(
@@ -442,9 +448,9 @@ def parse_survivals():
             )
             survivals[survival_id] = survival
         except TypeError as e:
-            print('Error for Survival ' + survival_id, 'Wrong data type!', e)
+            logging.error('Wrong data type for Survival %s: %s', survival_id, e)
         except ValueError as e:
-            print('Error for Survival ' + survival_id, 'Invalid value!', e)
+            logging.error('Invalid value for Survival %s: %s', survival_id, e)
 
         # Add mappings of participant ID's to survival ID's
         if participant_id not in participants.keys():
@@ -457,8 +463,8 @@ def check_survivals_for_participants():
 
     for survival_id in survivals.keys():
         if survival_id not in survivals_to_participants.keys():
-            print(f'Survival {survival_id} does not have a Participant!')
-            print(f'Skipping Survival {survival_id}...')
+            logging.warning(f'Survival {survival_id} does not have a Participant!')
+            logging.warning(f'Skipping Survival {survival_id}...')
             survival_ids_to_remove.append(survival_id)
 
     for survival_id in survival_ids_to_remove:
