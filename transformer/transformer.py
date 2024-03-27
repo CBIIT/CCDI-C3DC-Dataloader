@@ -157,25 +157,40 @@ def transform():
     check_reference_files_for_studies()
     logging.info('Finished verifying that each Reference File has a Study\n')
 
-    logging.info('Writing Participants TSV...')
-    write_participants()
-    logging.info('Finished writing Participants TSV\n')
+    if len(participants) == 0:
+        logging.info('No Participants. Skipping TSV...\n')
+    else:
+        logging.info('Writing Participants TSV...')
+        write_participants()
+        logging.info('Finished writing Participants TSV\n')
 
-    logging.info('Writing Studies TSV...')
-    write_studies()
-    logging.info('Finished writing Studies TSV\n')
+    if len(studies) == 0:
+        logging.info('No Studies. Skipping TSV...\n')
+    else:
+        logging.info('Writing Studies TSV...')
+        write_studies()
+        logging.info('Finished writing Studies TSV\n')
 
-    logging.info('Writing Survivals TSV...')
-    write_survivals()
-    logging.info('Finished writing Survivals TSV\n')
+    if len(survivals) == 0:
+        logging.info('No Survivals. Skipping TSV...\n')
+    else:
+        logging.info('Writing Survivals TSV...')
+        write_survivals()
+        logging.info('Finished writing Survivals TSV\n')
 
-    logging.info('Writing Diagnoses TSV...')
-    write_diagnoses()
-    logging.info('Finished writing Diagnoses TSV\n')
+    if len(diagnoses) == 0:
+        logging.info('No Diagnoses. Skipping TSV...\n')
+    else:
+        logging.info('Writing Diagnoses TSV...')
+        write_diagnoses()
+        logging.info('Finished writing Diagnoses TSV\n')
 
-    logging.info('Writing Reference Files TSV...')
-    write_reference_files()
-    logging.info('Finished writing Reference Files TSV')
+    if len(reference_files) == 0:
+        logging.info('No Reference Files. Skipping TSV...\n')
+    else:
+        logging.info('Writing Reference Files TSV...')
+        write_reference_files()
+        logging.info('Finished writing Reference Files TSV')
 
 def parse_diagnoses():
     all_diagnosis_data = all_json_data['diagnoses']
