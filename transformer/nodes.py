@@ -105,15 +105,13 @@ class Node:
 
 class Participant(Node):
     _PROPER_NAMES = {
-        'alternate_participant_id': 'Alternate Participant ID',
         'ethnicity': 'Ethnicity',
         'participant_id': 'Participant ID',
         'race': 'Race',
         'sex_at_birth': 'Sex at Birth',
     }
 
-    def __init__(self, alternate_participant_id, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
-        self.alternate_participant_id = alternate_participant_id
+    def __init__(self, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
         self.ethnicity = ethnicity
         self.participant_id = participant_id
         self.race = race
@@ -130,20 +128,10 @@ class Participant(Node):
     def __str__(self):
         return ' | '.join([
             self._participant_id or '',
-            self._alternate_participant_id or '',
             self._ethnicity or '',
             self._race or '',
             self._sex_at_birth or '',
         ])
-
-    @property
-    def alternate_participant_id(self):
-        return self._alternate_participant_id
-
-    @alternate_participant_id.setter
-    def alternate_participant_id(self, value):
-        self._validate_attr('alternate_participant_id', value)
-        self._alternate_participant_id = value
 
     @property
     def ethnicity(self):
@@ -188,7 +176,6 @@ class Participant(Node):
             ';'.join(self._race),
             self._sex_at_birth,
             ';'.join(self._ethnicity),
-            self._alternate_participant_id,
         ]
 
 class Study(Node):
@@ -201,13 +188,12 @@ class Study(Node):
         'study_acronym': 'Study Acronym',
         'study_description': 'Study Description',
         'study_id': 'Study ID',
-        'study_name': 'Study Name',
         'study_short_title': 'Study Short Title',
     }
 
     def __init__(self, acl, consent, consent_number, external_url,
-            phs_accession, study_acronym, study_description,
-            study_id, study_name, study_short_title):
+            phs_accession, study_acronym, study_description, study_id,
+            study_short_title):
         self.acl = acl
         self.consent = consent
         self.consent_number = consent_number
@@ -216,7 +202,6 @@ class Study(Node):
         self.study_acronym = study_acronym
         self.study_description = study_description
         self.study_id = study_id
-        self.study_name = study_name
         self.study_short_title = study_short_title
 
     def __str__(self):
@@ -229,7 +214,6 @@ class Study(Node):
             self._study_acronym,
             self._study_description,
             self._study_id,
-            self._study_name,
             self._study_short_title,
         ])
 
@@ -306,15 +290,6 @@ class Study(Node):
         self._study_id = value
 
     @property
-    def study_name(self):
-        return self._study_name
-
-    @study_name.setter
-    def study_name(self, value):
-        self._validate_attr('study_name', value)
-        self._study_name = value
-
-    @property
     def study_short_title(self):
         return self._study_short_title
 
@@ -338,7 +313,6 @@ class Study(Node):
             self._study_id,
             self._phs_accession,
             self._acl,
-            self._study_name,
             self._study_short_title,
             self._study_acronym,
             self._study_description,
@@ -352,11 +326,10 @@ class Diagnosis(Node):
         'age_at_diagnosis': 'Age at Diagnosis',
         'anatomic_site': 'Anatomic Site',
         'diagnosis_basis': 'Diagnosis Basis',
-        'diagnosis_classification': 'Diagnosis Classification',
+        'diagnosis': 'Diagnosis',
         'diagnosis_classification_system': 'Diagnosis Classification System',
         'diagnosis_comment': 'Diagnosis Comment',
         'diagnosis_id': 'Diagnosis ID',
-        'diagnosis_verification_status': 'Diagnosis Verification Status',
         'disease_phase': 'Disease Phase',
         'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
         'tumor_classification': 'Tumor Classification',
@@ -367,19 +340,18 @@ class Diagnosis(Node):
     }
 
     def __init__(self, age_at_diagnosis, anatomic_site, diagnosis_basis,
-            diagnosis_classification, diagnosis_classification_system,
-            diagnosis_comment, diagnosis_id, diagnosis_verification_status,
-            disease_phase, toronto_childhood_cancer_staging,
-            tumor_classification, tumor_grade, tumor_stage_clinical_m,
-            tumor_stage_clinical_n, tumor_stage_clinical_t):
+            diagnosis, diagnosis_classification_system,
+            diagnosis_comment, diagnosis_id, disease_phase,
+            toronto_childhood_cancer_staging, tumor_classification,
+            tumor_grade, tumor_stage_clinical_m, tumor_stage_clinical_n,
+            tumor_stage_clinical_t):
         self.age_at_diagnosis = age_at_diagnosis
         self.anatomic_site = anatomic_site
         self.diagnosis_basis = diagnosis_basis
-        self.diagnosis_classification = diagnosis_classification
+        self.diagnosis = diagnosis
         self.diagnosis_classification_system = diagnosis_classification_system
         self.diagnosis_comment = diagnosis_comment
         self.diagnosis_id = diagnosis_id
-        self.diagnosis_verification_status = diagnosis_verification_status
         self.disease_phase = disease_phase
         self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging
         self.tumor_classification = tumor_classification
@@ -393,11 +365,10 @@ class Diagnosis(Node):
             self._age_at_diagnosis,
             self._anatomic_site,
             self._diagnosis_basis,
-            self._diagnosis_classification,
+            self._diagnosis,
             self._diagnosis_classification_system,
             self._diagnosis_comment,
             self._diagnosis_id,
-            self._diagnosis_verification_status,
             self._disease_phase,
             self._toronto_childhood_cancer_staging,
             self._tumor_classification,
@@ -435,13 +406,13 @@ class Diagnosis(Node):
         self._diagnosis_basis = value
 
     @property
-    def diagnosis_classification(self):
-        return self._diagnosis_classification
+    def diagnosis(self):
+        return self._diagnosis
 
-    @diagnosis_classification.setter
-    def diagnosis_classification(self, value):
-        self._validate_attr('diagnosis_classification', value)
-        self._diagnosis_classification = value
+    @diagnosis.setter
+    def diagnosis(self, value):
+        self._validate_attr('diagnosis', value)
+        self._diagnosis = value
 
     @property
     def diagnosis_classification_system(self):
@@ -469,15 +440,6 @@ class Diagnosis(Node):
     def diagnosis_id(self, value):
         self._validate_attr('diagnosis_id', value)
         self._diagnosis_id = value
-
-    @property
-    def diagnosis_verification_status(self):
-        return self._diagnosis_verification_status
-
-    @diagnosis_verification_status.setter
-    def diagnosis_verification_status(self, value):
-        self._validate_attr('diagnosis_verification_status', value)
-        self._diagnosis_verification_status = value
 
     @property
     def disease_phase(self):
@@ -546,11 +508,10 @@ class Diagnosis(Node):
         return [
             'diagnosis',
             self._diagnosis_id,
-            self._diagnosis_classification,
+            self._diagnosis,
             self._diagnosis_classification_system,
             ';'.join(self._diagnosis_basis),
             self._diagnosis_comment,
-            self._diagnosis_verification_status,
             self._disease_phase,
             ';'.join(self._anatomic_site),
             self._age_at_diagnosis,
@@ -564,8 +525,6 @@ class Diagnosis(Node):
 
 class ReferenceFile(Node):
     _PROPER_NAMES = {
-        'checksum_algorithm': 'Checksum Algorithm',
-        'checksum_value': 'Checksum Value',
         'dcf_indexd_guid': 'DCF Index GUID',
         'file_category': 'File Category',
         'file_description': 'File Description',
@@ -577,11 +536,9 @@ class ReferenceFile(Node):
         'reference_file_url': 'Reference File URL',
     }
 
-    def __init__(self, checksum_algorithm, checksum_value, dcf_indexd_guid,
-            file_category, file_description, file_name, file_size, file_type,
-            md5sum, reference_file_id, reference_file_url):
-        self.checksum_algorithm = checksum_algorithm
-        self.checksum_value = checksum_value
+    def __init__(self, dcf_indexd_guid, file_category, file_description,
+            file_name, file_size, file_type, md5sum, reference_file_id,
+            reference_file_url):
         self.dcf_indexd_guid = dcf_indexd_guid
         self.file_category = file_category
         self.file_description = file_description
@@ -594,8 +551,6 @@ class ReferenceFile(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.checksum_algorithm,
-            self.checksum_value,
             self.dcf_indexd_guid,
             self.file_category,
             self.file_description,
@@ -606,24 +561,6 @@ class ReferenceFile(Node):
             self.reference_file_id,
             self.reference_file_url,
         ])
-
-    @property
-    def checksum_algorithm(self):
-        return self._checksum_algorithm
-
-    @checksum_algorithm.setter
-    def checksum_algorithm(self, value):
-        self._validate_attr('checksum_algorithm', value)
-        self._checksum_algorithm = value
-
-    @property
-    def checksum_value(self):
-        return self._checksum_value
-
-    @checksum_value.setter
-    def checksum_value(self, value):
-        self._validate_attr('checksum_value', value)
-        self._checksum_value = value
 
     @property
     def dcf_indexd_guid(self):
@@ -718,8 +655,6 @@ class ReferenceFile(Node):
             self.md5sum,
             self.reference_file_url,
             self.dcf_indexd_guid,
-            self.checksum_algorithm,
-            self.checksum_value,
         ]
 
 class Survival(Node):

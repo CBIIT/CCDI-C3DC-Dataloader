@@ -7,11 +7,10 @@ class TestDiagnosisFactory():
             age_at_diagnosis = 96,
             anatomic_site = ['C74.9 : Adrenal gland, NOS'],
             diagnosis_basis = ['Not Reported'],
-            diagnosis_classification = '9500/3 : Neuroblastoma, NOS',
+            diagnosis = '9500/3 : Neuroblastoma, NOS',
             diagnosis_classification_system = 'ICD-O-3.2',
             diagnosis_comment = 'Neuroblastoma',
             diagnosis_id = '328b01d8-b493-48fe-ba2d-0e2d30ca9883',
-            diagnosis_verification_status = 'Not Reported',
             disease_phase = 'Initial Diagnosis',
             toronto_childhood_cancer_staging = 'Neuroblastoma Stage M',
             tumor_classification = 'Primary',
@@ -24,11 +23,10 @@ class TestDiagnosisFactory():
             age_at_diagnosis,
             anatomic_site,
             diagnosis_basis,
-            diagnosis_classification,
+            diagnosis,
             diagnosis_classification_system,
             diagnosis_comment,
             diagnosis_id,
-            diagnosis_verification_status,
             disease_phase,
             toronto_childhood_cancer_staging,
             tumor_classification,
@@ -111,29 +109,29 @@ class TestDiagnosisProps(unittest.TestCase):
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)
 
-    # Diagnosis.diagnosis_classification
-    def test_diagnosis_diagnosis_classification(self):
-        test_msg = 'Testing Diagnosis.diagnosis_classification being <{}>...'
+    # Diagnosis.diagnosis
+    def test_diagnosis_diagnosis(self):
+        test_msg = 'Testing Diagnosis.diagnosis being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'Diagnosis Classification is missing'):
+        with self.assertRaisesRegex(TypeError, 'Diagnosis is missing'):
             value = None
             print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_classification=value)
+            self.diagnosis_factory.create_diagnosis(diagnosis=value)
 
-        with self.assertRaisesRegex(TypeError, 'Diagnosis Classification is missing'):
+        with self.assertRaisesRegex(TypeError, 'Diagnosis is missing'):
             value = ''
             print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_classification=value)
+            self.diagnosis_factory.create_diagnosis(diagnosis=value)
 
-        with self.assertRaisesRegex(TypeError, "Diagnosis Classification `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(TypeError, "Diagnosis `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_classification=value)
+            self.diagnosis_factory.create_diagnosis(diagnosis=value)
 
-        with self.assertRaisesRegex(ValueError, 'Diagnosis Classification `Foo` must be one of the specified values'):
+        with self.assertRaisesRegex(ValueError, 'Diagnosis `Foo` must be one of the specified values'):
             value = 'Foo'
             print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_classification=value)
+            self.diagnosis_factory.create_diagnosis(diagnosis=value)
 
     # Diagnosis.diagnosis_classification_system
     def test_diagnosis_diagnosis_classification_system(self):
@@ -163,6 +161,16 @@ class TestDiagnosisProps(unittest.TestCase):
     def test_diagnosis_diagnosis_comment(self):
         test_msg = 'Testing Diagnosis.diagnosis_comment being <{}>...'
 
+        with self.assertRaisesRegex(TypeError, 'Diagnosis Comment is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(diagnosis_comment=value)
+
+        with self.assertRaisesRegex(TypeError, 'Diagnosis Comment is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(diagnosis_comment=value)
+
         with self.assertRaisesRegex(TypeError, "Diagnosis Comment `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
@@ -186,30 +194,6 @@ class TestDiagnosisProps(unittest.TestCase):
             value = 3
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_id=value)
-
-    # Diagnosis.diagnosis_verification_status
-    def test_diagnosis_diagnosis_verification_status(self):
-        test_msg = 'Testing Diagnosis.diagnosis_verification_status being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, 'Diagnosis Verification Status is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_verification_status=value)
-
-        with self.assertRaisesRegex(TypeError, 'Diagnosis Verification Status is missing'):
-            value = ''
-            print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_verification_status=value)
-
-        with self.assertRaisesRegex(TypeError, "Diagnosis Verification Status `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_verification_status=value)
-
-        with self.assertRaisesRegex(ValueError, 'Diagnosis Verification Status `Foo` must be one of the specified values'):
-            value = 'Foo'
-            print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_verification_status=value)
 
     # Diagnosis.disease_phase
     def test_diagnosis_disease_phase(self):
@@ -238,6 +222,16 @@ class TestDiagnosisProps(unittest.TestCase):
     # Diagnosis.toronto_childhood_cancer_staging
     def test_diagnosis_toronto_childhood_cancer_staging(self):
         test_msg = 'Testing Diagnosis.toronto_childhood_cancer_staging being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, 'Toronto Childhood Cancer Staging is missing'):
+            value = None
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(toronto_childhood_cancer_staging=value)
+
+        with self.assertRaisesRegex(TypeError, 'Toronto Childhood Cancer Staging is missing'):
+            value = ''
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(toronto_childhood_cancer_staging=value)
 
         with self.assertRaisesRegex(TypeError, "Toronto Childhood Cancer Staging `3` must be of type <class 'str'>"):
             value = 3

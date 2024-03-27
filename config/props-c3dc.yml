@@ -11,6 +11,7 @@ Properties:
     reference_file: reference_files
 
   type_mapping:
+    list: String
     string: String
     number: Float
     integer: Int

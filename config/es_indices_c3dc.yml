@@ -30,7 +30,7 @@ Indices:
         OPTIONAL MATCH (p)<--(su:survival)
         OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
-        COUNT(DISTINCT d.diagnosis_classification) AS num_diseases,
+        COUNT(DISTINCT d.diagnosis) AS num_diseases,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT rf) AS num_reference_files,
         COUNT(DISTINCT st) AS num_studies,
@@ -45,15 +45,13 @@ Indices:
         type: keyword
       diagnosis_basis:
         type: keyword
-      diagnosis_classification:
+      diagnosis:
         type: keyword
       diagnosis_classification_system:
         type: keyword
       diagnosis_comment:
         type: keyword
       diagnosis_id:
-        type: keyword
-      diagnosis_verification_status:
         type: keyword
       disease_phase:
         type: keyword
@@ -122,11 +120,10 @@ Indices:
         d.age_at_diagnosis as age_at_diagnosis,
         d.anatomic_site as anatomic_site,
         d.diagnosis_basis as diagnosis_basis,
-        d.diagnosis_classification as diagnosis_classification,
+        d.diagnosis as diagnosis,
         d.diagnosis_classification_system as diagnosis_classification_system,
         d.diagnosis_comment as diagnosis_comment,
         d.diagnosis_id as diagnosis_id,
-        d.diagnosis_verification_status as diagnosis_verification_status,
         d.disease_phase as disease_phase,
         d.id as id,
         d.toronto_childhood_cancer_staging as toronto_childhood_cancer_staging,
@@ -155,8 +152,6 @@ Indices:
   - index_name: participants
     type: neo4j
     mapping:
-      alternate_participant_id:
-        type: integer
       ethnicity:
         type: keyword
       ethnicity_str:
@@ -181,11 +176,9 @@ Indices:
             type: keyword
           diagnosis_basis:
             type: keyword
-          diagnosis_classification:
+          diagnosis:
             type: keyword
           diagnosis_classification_system:
-            type: keyword
-          diagnosis_verification_status:
             type: keyword
           disease_phase:
             type: keyword
@@ -214,7 +207,6 @@ Indices:
       OPTIONAL MATCH (p)<--(sur:survival)
       OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
-        p.alternate_participant_id AS alternate_participant_id,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.ethnicity AS ethnicity_str,
         p.id AS id,
@@ -236,19 +228,14 @@ Indices:
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
-          diagnosis_classification: d.diagnosis_classification,
+          diagnosis: d.diagnosis,
           diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
         }) AS diagnoses;
 
   - index_name: reference_files
     type: neo4j
     mapping:
-      checksum_algorithm:
-        type: keyword
-      checksum_value:
-        type: keyword
       dcf_indexd_guid:
         type: keyword
       file_category:
@@ -272,8 +259,6 @@ Indices:
     cypher_query: >
       MATCH (r:reference_file)
       RETURN
-        r.checksum_algorithm as checksum_algorithm,
-        r.checksum_value as checksum_value,
         r.dcf_indexd_guid as dcf_indexd_guid,
         r.file_category as file_category,
         r.file_description as file_description,
@@ -304,8 +289,6 @@ Indices:
         type: keyword
       study_id:
         type: keyword
-      study_name:
-        type: keyword
       study_short_title:
         type: keyword
     cypher_query: >
@@ -319,7 +302,6 @@ Indices:
         s.study_acronym as study_acronym,
         s.study_description as study_description,
         s.study_id as study_id,
-        s.study_name as study_name,
         s.study_short_title as study_short_title;
 
   - index_name: survivals
@@ -347,11 +329,9 @@ Indices:
             type: keyword
           diagnosis_basis:
             type: keyword
-          diagnosis_classification:
+          diagnosis:
             type: keyword
           diagnosis_classification_system:
-            type: keyword
-          diagnosis_verification_status:
             type: keyword
           disease_phase:
             type: keyword
@@ -398,8 +378,7 @@ Indices:
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
-          diagnosis_classification: d.diagnosis_classification,
+          diagnosis: d.diagnosis,
           diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_verification_status: d.diagnosis_verification_status,
           disease_phase: d.disease_phase
         }) AS diagnoses;

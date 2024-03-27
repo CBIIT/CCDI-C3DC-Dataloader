@@ -10,11 +10,10 @@ from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 DIAGNOSIS_HEADERS = [
     'type',
     'diagnosis_id',
-    'diagnosis_classification',
+    'diagnosis',
     'diagnosis_classification_system',
     'diagnosis_basis',
     'diagnosis_comment',
-    'diagnosis_verification_status',
     'disease_phase',
     'anatomic_site',
     'age_at_diagnosis',
@@ -34,7 +33,6 @@ PARTICIPANT_HEADERS = [
     'race',
     'sex_at_birth',
     'ethnicity',
-    'alternate_participant_id',
     'id',
     'study.study_id',
 ]
@@ -50,8 +48,6 @@ REFERENCE_FILE_HEADERS = [
     'md5sum',
     'reference_file_url',
     'dcf_indexd_guid',
-    'checksum_algorithm',
-    'checksum_value',
     'id',
     'study.study_id',
 ]
@@ -61,7 +57,6 @@ STUDY_HEADERS = [
     'study_id',
     'phs_accession',
     'acl',
-    'study_name',
     'study_short_title',
     'study_acronym',
     'study_description',
@@ -162,25 +157,40 @@ def transform():
     check_reference_files_for_studies()
     logging.info('Finished verifying that each Reference File has a Study\n')
 
-    logging.info('Writing Participants TSV...')
-    write_participants()
-    logging.info('Finished writing Participants TSV\n')
+    if len(participants) == 0:
+        logging.info('No Participants. Skipping TSV...\n')
+    else:
+        logging.info('Writing Participants TSV...')
+        write_participants()
+        logging.info('Finished writing Participants TSV\n')
 
-    logging.info('Writing Studies TSV...')
-    write_studies()
-    logging.info('Finished writing Studies TSV\n')
+    if len(studies) == 0:
+        logging.info('No Studies. Skipping TSV...\n')
+    else:
+        logging.info('Writing Studies TSV...')
+        write_studies()
+        logging.info('Finished writing Studies TSV\n')
 
-    logging.info('Writing Survivals TSV...')
-    write_survivals()
-    logging.info('Finished writing Survivals TSV\n')
+    if len(survivals) == 0:
+        logging.info('No Survivals. Skipping TSV...\n')
+    else:
+        logging.info('Writing Survivals TSV...')
+        write_survivals()
+        logging.info('Finished writing Survivals TSV\n')
 
-    logging.info('Writing Diagnoses TSV...')
-    write_diagnoses()
-    logging.info('Finished writing Diagnoses TSV\n')
+    if len(diagnoses) == 0:
+        logging.info('No Diagnoses. Skipping TSV...\n')
+    else:
+        logging.info('Writing Diagnoses TSV...')
+        write_diagnoses()
+        logging.info('Finished writing Diagnoses TSV\n')
 
-    logging.info('Writing Reference Files TSV...')
-    write_reference_files()
-    logging.info('Finished writing Reference Files TSV')
+    if len(reference_files) == 0:
+        logging.info('No Reference Files. Skipping TSV...\n')
+    else:
+        logging.info('Writing Reference Files TSV...')
+        write_reference_files()
+        logging.info('Finished writing Reference Files TSV')
 
 def parse_diagnoses():
     all_diagnosis_data = all_json_data['diagnoses']
@@ -204,11 +214,10 @@ def parse_diagnoses():
                 age_at_diagnosis = diagnosis_data.get('age_at_diagnosis', None),
                 anatomic_site = diagnosis_data.get('anatomic_site', None),
                 diagnosis_basis = diagnosis_data.get('diagnosis_basis', None),
-                diagnosis_classification = diagnosis_data.get('diagnosis_classification', None),
+                diagnosis = diagnosis_data.get('diagnosis', None),
                 diagnosis_classification_system = diagnosis_data.get('diagnosis_classification_system', None),
                 diagnosis_comment = diagnosis_data.get('diagnosis_comment', None),
                 diagnosis_id = diagnosis_data.get('diagnosis_id', None),
-                diagnosis_verification_status = diagnosis_data.get('diagnosis_verification_status', None),
                 disease_phase = diagnosis_data.get('disease_phase', None),
                 toronto_childhood_cancer_staging = diagnosis_data.get('toronto_childhood_cancer_staging', None),
                 tumor_classification= diagnosis_data.get('tumor_classification', None),
@@ -263,7 +272,6 @@ def parse_participants():
 
         try:
             participant = Participant(
-                alternate_participant_id = participant_data.get('alternate_participant_id', None),
                 ethnicity = participant_data.get('ethnicity', None),
                 participant_id = participant_data.get('participant_id', None),
                 race = participant_data.get('race', None),
@@ -325,8 +333,6 @@ def parse_reference_files():
 
         try:
             reference_file = ReferenceFile(
-                checksum_algorithm = reference_file_data.get('checksum_algorithm', None),
-                checksum_value = reference_file_data.get('checksum_value', None),
                 dcf_indexd_guid = reference_file_data.get('dcf_indexd_guid', None),
                 file_category = reference_file_data.get('file_category', None),
                 file_description = reference_file_data.get('file_description', None),
@@ -392,7 +398,6 @@ def parse_studies():
                 study_acronym = study_data.get('study_acronym', None),
                 study_description = study_data.get('study_description', None),
                 study_id = study_data.get('study_id', None),
-                study_name = study_data.get('study_name', None),
                 study_short_title = study_data.get('study_short_title', None),
             )
             studies[study_id] = study
