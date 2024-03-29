@@ -1,0 +1,405 @@
+Indices:
+  - index_name: c3dc_static_pages
+    type: about_file
+    mapping:
+      page:
+        type: search_as_you_type
+      title:
+        type: search_as_you_type
+      primaryContentImage:
+        type: text
+      content:
+        type: object
+
+  - index_name: home_stats
+    type: neo4j
+    mapping:
+      num_diagnoses:
+        type: integer
+      num_participants:
+        type: integer
+      num_reference_files:
+        type: integer
+      num_studies:
+        type: integer
+      num_survivals:
+        type: integer
+    cypher_query: >
+      MATCH (p:participant)-->(st:study)
+        OPTIONAL MATCH (st)<--(rf:reference_file)
+        OPTIONAL MATCH (p)<--(su:survival)
+        OPTIONAL MATCH (p)<--(d:diagnosis)
+      RETURN
+        COUNT(DISTINCT d) AS num_diagnoses,
+        COUNT(DISTINCT p) AS num_participants,
+        COUNT(DISTINCT rf) AS num_reference_files,
+        COUNT(DISTINCT st) AS num_studies,
+        COUNT(DISTINCT su) AS num_survivals;
+
+  - index_name: diagnoses
+    type: neo4j
+    mapping:
+      age_at_diagnosis:
+        type: integer
+      anatomic_site:
+        type: keyword
+      diagnosis_basis:
+        type: keyword
+      diagnosis_classification:
+        type: keyword
+      diagnosis_classification_system:
+        type: keyword
+      diagnosis_comment:
+        type: keyword
+      diagnosis_id:
+        type: keyword
+      diagnosis_verification_status:
+        type: keyword
+      disease_phase:
+        type: keyword
+      id:
+        type: keyword
+      toronto_childhood_cancer_staging:
+        type: keyword
+      tumor_classification:
+        type: keyword
+      tumor_grade:
+        type: keyword
+      tumor_stage_clinical_m:
+        type: keyword
+      tumor_stage_clinical_n:
+        type: keyword
+      tumor_stage_clinical_t:
+        type: keyword
+      # Participant fields
+      ethnicity:
+        type: keyword
+      ethnicity_str:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      race_str:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Samples
+      # samples:
+      #   type: nested
+      #   properties:
+      #     anatomic_site:
+      #       type: keyword
+      #     participant_age_at_collection:
+      #       type: integer
+      #     sample_tumor_status:
+      #       type: keyword
+      #     tumor_classification:
+      #       type: keyword
+      # Studies
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_id:
+        type: keyword
+      study_short_title:
+        type: keyword
+      # Survivals
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+    cypher_query: >
+      MATCH (d:diagnosis)-->(p:participant)-->(stu:study)
+      OPTIONAL MATCH (p)<--(sur:survival)
+      RETURN
+        d.age_at_diagnosis as age_at_diagnosis,
+        d.anatomic_site as anatomic_site,
+        d.diagnosis_basis as diagnosis_basis,
+        d.diagnosis_classification as diagnosis_classification,
+        d.diagnosis_classification_system as diagnosis_classification_system,
+        d.diagnosis_comment as diagnosis_comment,
+        d.diagnosis_id as diagnosis_id,
+        d.diagnosis_verification_status as diagnosis_verification_status,
+        d.disease_phase as disease_phase,
+        d.id as id,
+        d.toronto_childhood_cancer_staging as toronto_childhood_cancer_staging,
+        d.tumor_classification as tumor_classification,
+        d.tumor_grade as tumor_grade,
+        d.tumor_stage_clinical_m as tumor_stage_clinical_m,
+        d.tumor_stage_clinical_n as tumor_stage_clinical_n,
+        d.tumor_stage_clinical_t as tumor_stage_clinical_t,
+        apoc.text.split(p.ethnicity, ';') as ethnicity,
+        p.ethnicity as ethnicity_str,
+        p.participant_id as participant_id,
+        apoc.text.split(p.race, ';') as race,
+        p.race as race_str,
+        p.sex_at_birth as sex_at_birth,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_id AS study_id,
+        stu.study_short_title AS study_short_title,
+        COLLECT(DISTINCT {
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
+          first_event: CASE sur.first_event WHEN '' THEN 'Not Reported' ELSE sur.first_event END,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals;
+
+  - index_name: participants
+    type: neo4j
+    mapping:
+      alternate_participant_id:
+        type: integer
+      ethnicity:
+        type: keyword
+      ethnicity_str:
+        type: keyword
+      id:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      race_str:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Diagnoses
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis_classification:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_verification_status:
+            type: keyword
+          disease_phase:
+            type: keyword
+      # Studies
+      study_id:
+        type: keyword
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_short_title:
+        type: keyword
+      # Survivals
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+    # Make sure Neo4j has APOC plugin installed
+    cypher_query: >
+      MATCH (p:participant)-->(stu:study)
+      OPTIONAL MATCH (p)<--(sur:survival)
+      OPTIONAL MATCH (p)<--(d:diagnosis)
+      RETURN
+        p.alternate_participant_id AS alternate_participant_id,
+        apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.ethnicity AS ethnicity_str,
+        p.id AS id,
+        p.participant_id AS participant_id,
+        apoc.text.split(p.race, ';') AS race,
+        p.race AS race_str,
+        p.sex_at_birth AS sex_at_birth,
+        stu.study_id AS study_id,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_short_title AS study_short_title,
+        COLLECT({
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
+          first_event: CASE sur.first_event WHEN '' THEN 'Not Reported' ELSE sur.first_event END,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals,
+        COLLECT({
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_classification: d.diagnosis_classification,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_verification_status: d.diagnosis_verification_status,
+          disease_phase: d.disease_phase
+        }) AS diagnoses;
+
+  - index_name: reference_files
+    type: neo4j
+    mapping:
+      checksum_algorithm:
+        type: keyword
+      checksum_value:
+        type: keyword
+      dcf_indexd_guid:
+        type: keyword
+      file_category:
+        type: keyword
+      file_description:
+        type: keyword
+      file_name:
+        type: keyword
+      file_size:
+        type: long
+      file_type:
+        type: keyword
+      id:
+        type: keyword
+      md5sum:
+        type: keyword
+      reference_file_id:
+        type: keyword
+      reference_file_url:
+        type: keyword
+    cypher_query: >
+      MATCH (r:reference_file)
+      RETURN
+        r.checksum_algorithm as checksum_algorithm,
+        r.checksum_value as checksum_value,
+        r.dcf_indexd_guid as dcf_indexd_guid,
+        r.file_category as file_category,
+        r.file_description as file_description,
+        r.file_name as file_name,
+        r.file_size as file_size,
+        r.file_type as file_type,
+        r.id as id,
+        r.md5sum as md5sum,
+        r.reference_file_id as reference_file_id,
+        r.reference_file_url as reference_file_url;
+
+  - index_name: studies
+    type: neo4j
+    mapping:
+      acl:
+        type: keyword
+      consent:
+        type: keyword
+      consent_number:
+        type: integer
+      external_url:
+        type: keyword
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_description:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      study_short_title:
+        type: keyword
+    cypher_query: >
+      MATCH (s:study)
+      RETURN
+        s.acl as acl,
+        s.consent as consent,
+        s.consent_number as consent_number,
+        s.external_url as external_url,
+        s.phs_accession as phs_accession,
+        s.study_acronym as study_acronym,
+        s.study_description as study_description,
+        s.study_id as study_id,
+        s.study_name as study_name,
+        s.study_short_title as study_short_title;
+
+  - index_name: survivals
+    type: neo4j
+    mapping:
+      age_at_event_free_survival_status:
+        type: integer
+      age_at_last_known_survival_status:
+        type: integer
+      event_free_survival_status:
+        type: keyword
+      first_event:
+        type: keyword
+      last_known_survival_status:
+        type: keyword
+      survival_id:
+        type: keyword
+      # Diagnoses
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis_classification:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_verification_status:
+            type: keyword
+          disease_phase:
+            type: keyword
+      # Participant fields
+      ethnicity:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Studies
+      phs_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_id:
+        type: keyword
+      study_short_title:
+        type: keyword
+    cypher_query: >
+      MATCH (s:survival)-->(p:participant)-->(stu:study)
+      OPTIONAL MATCH (p)<--(d:diagnosis)
+      RETURN
+        s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
+        s.age_at_last_known_survival_status AS age_at_last_known_survival_status,
+        s.event_free_survival_status AS event_free_survival_status,
+        // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
+        (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
+        s.last_known_survival_status AS last_known_survival_status,
+        s.survival_id AS survival_id,
+        apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.ethnicity AS ethnicity_str,
+        p.participant_id AS participant_id,
+        apoc.text.split(p.race, ';') AS race,
+        p.race as race_str,
+        p.sex_at_birth AS sex_at_birth,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_id AS study_id,
+        stu.study_short_title AS study_short_title,
+        COLLECT(DISTINCT {
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_classification: d.diagnosis_classification,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_verification_status: d.diagnosis_verification_status,
+          disease_phase: d.disease_phase
+        }) AS diagnoses;
