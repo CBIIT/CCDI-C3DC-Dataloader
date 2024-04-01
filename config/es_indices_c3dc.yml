@@ -39,6 +39,8 @@ Indices:
   - index_name: diagnoses
     type: neo4j
     mapping:
+      diagnosis_pk: # Primary key
+        type: keyword
       age_at_diagnosis:
         type: integer
       anatomic_site:
@@ -55,8 +57,6 @@ Indices:
         type: keyword
       disease_phase:
         type: keyword
-      id:
-        type: keyword
       toronto_childhood_cancer_staging:
         type: keyword
       tumor_classification:
@@ -70,6 +70,8 @@ Indices:
       tumor_stage_clinical_t:
         type: keyword
       # Participant fields
+      participant_pk:
+        type: keyword
       ethnicity:
         type: keyword
       ethnicity_str:
@@ -117,24 +119,25 @@ Indices:
       MATCH (d:diagnosis)-->(p:participant)-->(stu:study)
       OPTIONAL MATCH (p)<--(sur:survival)
       RETURN
+        d.diagnosis_id AS diagnosis_pk,
         d.age_at_diagnosis as age_at_diagnosis,
         d.anatomic_site as anatomic_site,
         d.diagnosis_basis as diagnosis_basis,
         d.diagnosis as diagnosis,
         d.diagnosis_classification_system as diagnosis_classification_system,
         d.diagnosis_comment as diagnosis_comment,
-        d.diagnosis_id as diagnosis_id,
+        apoc.text.split(d.diagnosis_id, '::')[0] as diagnosis_id,
         d.disease_phase as disease_phase,
-        d.id as id,
         d.toronto_childhood_cancer_staging as toronto_childhood_cancer_staging,
         d.tumor_classification as tumor_classification,
         d.tumor_grade as tumor_grade,
         d.tumor_stage_clinical_m as tumor_stage_clinical_m,
         d.tumor_stage_clinical_n as tumor_stage_clinical_n,
         d.tumor_stage_clinical_t as tumor_stage_clinical_t,
+        p.participant_id AS participant_pk,
         apoc.text.split(p.ethnicity, ';') as ethnicity,
         p.ethnicity as ethnicity_str,
-        p.participant_id as participant_id,
+        apoc.text.split(p.participant_id, '::')[0] as participant_id,
         apoc.text.split(p.race, ';') as race,
         p.race as race_str,
         p.sex_at_birth as sex_at_birth,
@@ -152,11 +155,11 @@ Indices:
   - index_name: participants
     type: neo4j
     mapping:
+      participant_pk: # Primary key
+        type: keyword
       ethnicity:
         type: keyword
       ethnicity_str:
-        type: keyword
-      id:
         type: keyword
       participant_id:
         type: keyword
@@ -207,10 +210,10 @@ Indices:
       OPTIONAL MATCH (p)<--(sur:survival)
       OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
+        p.participant_id AS participant_pk,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.ethnicity AS ethnicity_str,
-        p.id AS id,
-        p.participant_id AS participant_id,
+        apoc.text.split(p.participant_id, '::')[0] as participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
         p.sex_at_birth AS sex_at_birth,
@@ -236,6 +239,8 @@ Indices:
   - index_name: reference_files
     type: neo4j
     mapping:
+      reference_file_pk: # Primary key
+        type: keyword
       dcf_indexd_guid:
         type: keyword
       file_category:
@@ -248,8 +253,6 @@ Indices:
         type: long
       file_type:
         type: keyword
-      id:
-        type: keyword
       md5sum:
         type: keyword
       reference_file_id:
@@ -259,20 +262,22 @@ Indices:
     cypher_query: >
       MATCH (r:reference_file)
       RETURN
+        r.reference_file_id AS reference_file_pk,
         r.dcf_indexd_guid as dcf_indexd_guid,
         r.file_category as file_category,
         r.file_description as file_description,
         r.file_name as file_name,
         r.file_size as file_size,
         r.file_type as file_type,
-        r.id as id,
         r.md5sum as md5sum,
-        r.reference_file_id as reference_file_id,
+        apoc.text.split(r.reference_file_id, '::')[0] as reference_file_id,
         r.reference_file_url as reference_file_url;
 
   - index_name: studies
     type: neo4j
     mapping:
+      study_pk: # Primary key
+        type: keyword
       acl:
         type: keyword
       consent:
@@ -294,6 +299,7 @@ Indices:
     cypher_query: >
       MATCH (s:study)
       RETURN
+        s.study_id AS study_pk,
         s.acl as acl,
         s.consent as consent,
         s.consent_number as consent_number,
@@ -307,6 +313,8 @@ Indices:
   - index_name: survivals
     type: neo4j
     mapping:
+      survival_pk: # Primary key
+        type: keyword
       age_at_event_free_survival_status:
         type: integer
       age_at_last_known_survival_status:
@@ -336,6 +344,8 @@ Indices:
           disease_phase:
             type: keyword
       # Participant fields
+      participant_pk:
+        type: keyword
       ethnicity:
         type: keyword
       participant_id:
@@ -357,16 +367,18 @@ Indices:
       MATCH (s:survival)-->(p:participant)-->(stu:study)
       OPTIONAL MATCH (p)<--(d:diagnosis)
       RETURN
+        s.survival_id AS survival_pk,
         s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
         s.age_at_last_known_survival_status AS age_at_last_known_survival_status,
         s.event_free_survival_status AS event_free_survival_status,
         // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
         (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
         s.last_known_survival_status AS last_known_survival_status,
-        s.survival_id AS survival_id,
+        apoc.text.split(s.survival_id, '::')[0] AS survival_id,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.participant_id AS participant_pk,
         p.ethnicity AS ethnicity_str,
-        p.participant_id AS participant_id,
+        apoc.text.split(p.participant_id, '::')[0] AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race as race_str,
         p.sex_at_birth AS sex_at_birth,
