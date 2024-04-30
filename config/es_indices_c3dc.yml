@@ -163,6 +163,7 @@ Indices:
         type: keyword
       participant_id:
         type: keyword
+        normalizer: lowercase
       race:
         type: keyword
       race_str:
