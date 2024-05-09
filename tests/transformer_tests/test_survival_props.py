@@ -4,13 +4,15 @@ from transformer.nodes import Survival
 class TestSurvivalFactory():
     def create_survival(
             self,
+            id = 'abc-123',
             age_at_event_free_survival_status = 3429,
             age_at_last_known_survival_status = 3429,
             event_free_survival_status = 'Censored',
-            first_event = None,
+            first_event = "Not Applicable",
             last_known_survival_status = 'Alive',
             survival_id = 'fcf081e4-3485-46f5-8988-a6feb67d06a7'):
         survival = Survival(
+            id,
             age_at_event_free_survival_status,
             age_at_last_known_survival_status,
             event_free_survival_status,
@@ -24,6 +26,15 @@ class TestSurvivalFactory():
 class TestSurvivalProps(unittest.TestCase):
     def setUp(self):
         self.survival_factory = TestSurvivalFactory()
+
+    # Survival.id
+    def test_survival_id(self):
+        test_msg = 'Testing Survival.id being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, "ID `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.survival_factory.create_survival(id=value)
 
     # Survival.age_at_event_free_survival_status
     def test_survival_age_at_event_free_survival_status(self):

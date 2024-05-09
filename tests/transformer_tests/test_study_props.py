@@ -4,16 +4,18 @@ from transformer.nodes import Study
 class TestStudyFactory():
     def create_study(
             self,
+            id = 'abc-123',
             acl = 'phs000467.v22.p8',
             consent = 'DS-PEDCR',
             consent_number = 1,
-            external_url = None,
+            external_url = 'foo',
             phs_accession = "['phs000467']",
             study_acronym = 'TARGET_NBL',
             study_description = 'foo',
             study_id = 'phs000467.v22.p8',
             study_short_title = 'TARGET NBL'):
         study = Study(
+            id,
             acl,
             consent,
             consent_number,
@@ -30,6 +32,15 @@ class TestStudyFactory():
 class TestStudyProps(unittest.TestCase):
     def setUp(self):
         self.study_factory = TestStudyFactory()
+
+    # Study.id
+    def test_study_id(self):
+        test_msg = 'Testing Study.id being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, "ID `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.study_factory.create_study(id=value)
 
     # Study.acl
     def test_study_acl(self):

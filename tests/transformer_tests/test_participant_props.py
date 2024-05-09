@@ -4,11 +4,13 @@ from transformer.nodes import Participant
 class TestParticipantFactory():
     def create_participant(
             self,
+            id = 'abc-123',
             ethnicity = ['Not Hispanic or Latino'],
             participant_id = 'FOO-BAR-123',
             race = ['Asian'],
             sex_at_birth = 'Male'):
         participant = Participant(
+            id,
             ethnicity,
             participant_id,
             race,
@@ -20,6 +22,15 @@ class TestParticipantFactory():
 class TestParticipantProps(unittest.TestCase):
     def setUp(self):
         self.participant_factory = TestParticipantFactory()
+
+    # Participant.id
+    def test_participant_id(self):
+        test_msg = 'Testing Participant.id being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, "ID `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.participant_factory.create_participant(id=value)
 
     # Participant.ethnicity
     def test_participant_ethnicity(self):

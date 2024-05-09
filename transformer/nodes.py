@@ -103,15 +103,25 @@ class Node:
     def merge(other_node):
         pass
 
+    # Override ==
+    def __eq__(self, other):
+        # Check if they're the same class
+        if type(self).__name__ != type(other).__name__:
+            return False
+
+        return 
+
 class Participant(Node):
     _PROPER_NAMES = {
+        'id': 'ID',
         'ethnicity': 'Ethnicity',
         'participant_id': 'Participant ID',
         'race': 'Race',
         'sex_at_birth': 'Sex at Birth',
     }
 
-    def __init__(self, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
+    def __init__(self, id, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
+        self.id = id
         self.ethnicity = ethnicity
         self.participant_id = participant_id
         self.race = race
@@ -127,11 +137,21 @@ class Participant(Node):
 
     def __str__(self):
         return ' | '.join([
+            self._id or '',
             self._participant_id or '',
             self._ethnicity or '',
             self._race or '',
             self._sex_at_birth or '',
         ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
 
     @property
     def ethnicity(self):
@@ -172,6 +192,7 @@ class Participant(Node):
     def to_list(self):
         return [
             'participant',
+            self._id,
             self._participant_id,
             ';'.join(self._race),
             self._sex_at_birth,
@@ -180,6 +201,7 @@ class Participant(Node):
 
 class Study(Node):
     _PROPER_NAMES = {
+        'id': 'ID',
         'acl': 'ACL',
         'consent': 'Consent',
         'consent_number': 'Consent Number',
@@ -191,9 +213,10 @@ class Study(Node):
         'study_short_title': 'Study Short Title',
     }
 
-    def __init__(self, acl, consent, consent_number, external_url,
+    def __init__(self, id, acl, consent, consent_number, external_url,
             phs_accession, study_acronym, study_description, study_id,
             study_short_title):
+        self.id = id
         self.acl = acl
         self.consent = consent
         self.consent_number = consent_number
@@ -206,6 +229,7 @@ class Study(Node):
 
     def __str__(self):
         return ' | '.join([
+            self._id,
             self._acl,
             self._consent,
             self._consent_number,
@@ -216,6 +240,15 @@ class Study(Node):
             self._study_id,
             self._study_short_title,
         ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
 
     @property
     def acl(self):
@@ -310,6 +343,7 @@ class Study(Node):
     def to_list(self):
         return [
             'study',
+            self._id,
             self._study_id,
             self._phs_accession,
             self._acl,
@@ -323,6 +357,7 @@ class Study(Node):
 
 class Diagnosis(Node):
     _PROPER_NAMES = {
+        'id': 'ID',
         'age_at_diagnosis': 'Age at Diagnosis',
         'anatomic_site': 'Anatomic Site',
         'diagnosis_basis': 'Diagnosis Basis',
@@ -339,12 +374,13 @@ class Diagnosis(Node):
         'tumor_stage_clinical_t': 'Tumor Clinical T Stage',
     }
 
-    def __init__(self, age_at_diagnosis, anatomic_site, diagnosis_basis,
+    def __init__(self, id, age_at_diagnosis, anatomic_site, diagnosis_basis,
             diagnosis, diagnosis_classification_system,
             diagnosis_comment, diagnosis_id, disease_phase,
             toronto_childhood_cancer_staging, tumor_classification,
             tumor_grade, tumor_stage_clinical_m, tumor_stage_clinical_n,
             tumor_stage_clinical_t):
+        self.id = id
         self.age_at_diagnosis = age_at_diagnosis
         self.anatomic_site = anatomic_site
         self.diagnosis_basis = diagnosis_basis
@@ -362,6 +398,7 @@ class Diagnosis(Node):
 
     def __str__(self):
         return ' | '.join([
+            self._id,
             self._age_at_diagnosis,
             self._anatomic_site,
             self._diagnosis_basis,
@@ -377,6 +414,15 @@ class Diagnosis(Node):
             self._tumor_stage_clinical_n,
             self._tumor_stage_clinical_t,
         ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
 
     @property
     def age_at_diagnosis(self):
@@ -507,6 +553,7 @@ class Diagnosis(Node):
     def to_list(self):
         return [
             'diagnosis',
+            self._id,
             self._diagnosis_id,
             self._diagnosis,
             self._diagnosis_classification_system,
@@ -525,6 +572,7 @@ class Diagnosis(Node):
 
 class ReferenceFile(Node):
     _PROPER_NAMES = {
+        'id': 'ID',
         'dcf_indexd_guid': 'DCF Index GUID',
         'file_category': 'File Category',
         'file_description': 'File Description',
@@ -536,9 +584,10 @@ class ReferenceFile(Node):
         'reference_file_url': 'Reference File URL',
     }
 
-    def __init__(self, dcf_indexd_guid, file_category, file_description,
+    def __init__(self, id, dcf_indexd_guid, file_category, file_description,
             file_name, file_size, file_type, md5sum, reference_file_id,
             reference_file_url):
+        self.id = id
         self.dcf_indexd_guid = dcf_indexd_guid
         self.file_category = file_category
         self.file_description = file_description
@@ -551,6 +600,7 @@ class ReferenceFile(Node):
 
     def __str__(self):
         return ' | '.join([
+            self.id,
             self.dcf_indexd_guid,
             self.file_category,
             self.file_description,
@@ -561,6 +611,15 @@ class ReferenceFile(Node):
             self.reference_file_id,
             self.reference_file_url,
         ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
 
     @property
     def dcf_indexd_guid(self):
@@ -646,6 +705,7 @@ class ReferenceFile(Node):
     def to_list(self):
         return [
             'reference_file',
+            self.id,
             self.reference_file_id,
             self.file_category,
             self.file_name,
@@ -659,6 +719,7 @@ class ReferenceFile(Node):
 
 class Survival(Node):
     _PROPER_NAMES = {
+        'id': 'ID',
         'age_at_event_free_survival_status': 'Age at Event Free Survival Status',
         'age_at_last_known_survival_status': 'Age at Last Known Survival Status',
         'event_free_survival_status': 'Event Free Survival Status',
@@ -667,9 +728,10 @@ class Survival(Node):
         'survival_id': 'Survival ID',
     }
 
-    def __init__(self, age_at_event_free_survival_status,
+    def __init__(self, id, age_at_event_free_survival_status,
             age_at_last_known_survival_status, event_free_survival_status,
             first_event, last_known_survival_status, survival_id):
+        self.id = id
         self.age_at_event_free_survival_status = age_at_event_free_survival_status
         self.age_at_last_known_survival_status = age_at_last_known_survival_status
         self.event_free_survival_status = event_free_survival_status
@@ -679,6 +741,7 @@ class Survival(Node):
 
     def __str__(self):
         return ' | '.join([
+            self.id,
             self.age_at_event_free_survival_status,
             self.age_at_last_known_survival_status,
             self.event_free_survival_status,
@@ -686,6 +749,15 @@ class Survival(Node):
             self.last_known_survival_status,
             self.survival_id,
         ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
 
     @property
     def age_at_event_free_survival_status(self):
@@ -744,6 +816,7 @@ class Survival(Node):
     def to_list(self):
         return [
             'survival',
+            self.id,
             self.survival_id,
             self.last_known_survival_status,
             self.event_free_survival_status,
