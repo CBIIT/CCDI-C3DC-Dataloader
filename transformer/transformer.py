@@ -347,10 +347,9 @@ def write_participants():
 
         for participant_id, participant in participants.items():
             participant_row = participant.to_list()
-            participant_study_id = participants_to_studies[participant_id]
             row = [
                 *participant_row,
-                participant_study_id,
+                study.id,
             ]
             tsv_writer.writerow(row)
 
@@ -361,6 +360,7 @@ def parse_reference_files(study_id):
 
     for reference_file_data in all_reference_file_data:
         reference_file_id = reference_file_data['reference_file_id']
+        reference_file_study_id = reference_file_data.get('study.study_id', None)
         reference_file_uuid = make_uuid(
             NODE_TYPES.REFERENCE_FILE.value,
             study_id,
@@ -372,11 +372,10 @@ def parse_reference_files(study_id):
             logging.warning(f'Reference File {reference_file_id} exists!')
             logging.warning(f'Skipping Reference File {reference_file_id}...')
 
-        # Warning for not having a foreign key to Study
-        if 'study.study_id' not in reference_file_data:
-            logging.warning(f'Reference File {reference_file_id} does not have a Study ID!')
-        else:
-            reference_files_to_studies[reference_file_id] = reference_file_data['study.study_id']
+        # Skip reference file if it doesn't have a study
+        if reference_file_study_id is None:
+            logging.warning(f'Reference File {reference_file_id} has no Study ID! Skipping...')
+            continue
 
         try:
             reference_file = ReferenceFile(
@@ -392,6 +391,7 @@ def parse_reference_files(study_id):
                 reference_file_url = reference_file_data.get('reference_file_url', None)
             )
             reference_files[reference_file_id] = reference_file
+            reference_files_to_studies[reference_file_id] = reference_file_study_id
         except TypeError as e:
             logging.error('Wrong data type for Reference File %s: %s', reference_file_id, e)
         except ValueError as e:
@@ -416,10 +416,9 @@ def write_reference_files():
 
         for reference_file_id, reference_file in reference_files.items():
             reference_file_row = reference_file.to_list()
-            reference_file_study_id = reference_files_to_studies[reference_file_id]
             row = [
                 *reference_file_row,
-                reference_file_study_id,
+                study.id,
             ]
             tsv_writer.writerow(row)
 
@@ -532,10 +531,11 @@ def write_survivals():
         for survival_id, survival in survivals.items():
             survival_row = survival.to_list()
             participant_id = survivals_to_participants[survival_id]
+            participant = participants[participant_id]
 
             row = [
                 *survival_row,
-                participant_id,
+                participant.id,
             ]
             tsv_writer.writerow(row)
 
