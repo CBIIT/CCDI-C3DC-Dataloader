@@ -34,7 +34,7 @@ DIAGNOSIS_HEADERS = [
     'tumor_stage_clinical_t',
     'tumor_stage_clinical_n',
     'tumor_stage_clinical_m',
-    'participant.participant_id',
+    'participant.id',
 ]
 
 PARTICIPANT_HEADERS = [
@@ -44,7 +44,7 @@ PARTICIPANT_HEADERS = [
     'race',
     'sex_at_birth',
     'ethnicity',
-    'study.study_id',
+    'study.id',
 ]
 
 REFERENCE_FILE_HEADERS = [
@@ -59,7 +59,7 @@ REFERENCE_FILE_HEADERS = [
     'md5sum',
     'reference_file_url',
     'dcf_indexd_guid',
-    'study.study_id',
+    'study.id',
 ]
 
 STUDY_HEADERS = [
@@ -85,7 +85,7 @@ SURVIVAL_HEADERS = [
     'first_event',
     'age_at_last_known_survival_status',
     'age_at_event_free_survival_status',
-    'participant.participant_id',
+    'participant.id',
 ]
 
 node_names = [
