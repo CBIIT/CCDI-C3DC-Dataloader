@@ -313,7 +313,7 @@ def parse_participants():
             )
             participants[participant_id] = participant
 
-            # Warn if the participant's study doesn't exist
+            # Error if the participant's study doesn't exist - there should only be one study
             if participant_study_id != study_id:
                 raise ValueError(f'Participant {participant_id} references Study {participant_study_id}, not Study {study_id}!')
 
