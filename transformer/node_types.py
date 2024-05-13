@@ -1,4 +1,7 @@
 # Enum of node types in the datamodel
+
+from enum import Enum
+
 class NODE_TYPES(Enum):
     DIAGNOSIS = "Diagnosis"
     PARTICIPANT = "Participant"

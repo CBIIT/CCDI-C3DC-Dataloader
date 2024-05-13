@@ -1,5 +1,3 @@
-# Run this script once per study
-
 import csv
 import json
 import logging
@@ -7,7 +5,6 @@ import os
 import sys
 import time
 import uuid
-from enum import Enum
 from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 from node_types import NODE_TYPES
 from tsv_headers import DIAGNOSIS_HEADERS, PARTICIPANT_HEADERS, REFERENCE_FILE_HEADERS, STUDY_HEADERS, SURVIVAL_HEADERS
@@ -56,7 +53,7 @@ study = None # There should be only one Study record
 survivals = {}
 survivals_to_participants = {} # Map of survival ids to participant ids
 
-def transform():
+def main():
     logging.info('Parsing Study record from JSON...')
     parse_study()
     logging.info('Finished parsing Study record\n')
@@ -474,4 +471,4 @@ def make_uuid(node_type, study_id, record_id):
 
     return str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_name))
 
-transform()
+main()
