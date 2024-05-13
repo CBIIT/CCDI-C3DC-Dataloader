@@ -4,6 +4,7 @@ from transformer.nodes import ReferenceFile
 class TestReferenceFileFactory():
     def create_reference_file(
             self,
+            id = 'abc-123',
             dcf_indexd_guid = '7c2abf1c-3d3e-45fb-94e4-99e705242bbf',
             file_category = 'programmatic source code',
             file_description = 'foo',
@@ -14,6 +15,7 @@ class TestReferenceFileFactory():
             reference_file_id = '9d35fb29-72f6-4d52-a13c-50fe10dbe2b1',
             reference_file_url = 'https://github.com/chicagopcdc/c3dc_etl/blob/main/etl/c3dc_etl.py'):
         reference_file = ReferenceFile(
+            id,
             dcf_indexd_guid,
             file_category,
             file_description,
@@ -30,6 +32,15 @@ class TestReferenceFileFactory():
 class TestReferenceFileProps(unittest.TestCase):
     def setUp(self):
         self.reference_file_factory = TestReferenceFileFactory()
+
+    # ReferenceFile.id
+    def test_reference_file_id(self):
+        test_msg = 'Testing ReferenceFile.id being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, "ID `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.reference_file_factory.create_reference_file(id=value)
 
     # ReferenceFile.dcf_indexd_guid
     def test_reference_file_dcf_indexd_guid(self):
@@ -86,7 +97,7 @@ class TestReferenceFileProps(unittest.TestCase):
         with self.assertRaisesRegex(TypeError, 'File Description is missing'):
             value = ''
             print(test_msg.format(value))
-            self.reference_file_factory.create_reference_file(file_desription=value)
+            self.reference_file_factory.create_reference_file(file_description=value)
 
         with self.assertRaisesRegex(TypeError, "File Description `3` must be of type <class 'str'>"):
             value = 3

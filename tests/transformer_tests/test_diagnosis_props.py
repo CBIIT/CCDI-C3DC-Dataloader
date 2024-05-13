@@ -4,6 +4,7 @@ from transformer.nodes import Diagnosis
 class TestDiagnosisFactory():
     def create_diagnosis(
             self,
+            id = 'abc-123',
             age_at_diagnosis = 96,
             anatomic_site = ['C74.9 : Adrenal gland, NOS'],
             diagnosis_basis = ['Not Reported'],
@@ -15,11 +16,12 @@ class TestDiagnosisFactory():
             toronto_childhood_cancer_staging = 'Neuroblastoma Stage M',
             tumor_classification = 'Primary',
             tumor_grade = 'High Grade',
-            tumor_stage_clinical_m = None,
-            tumor_stage_clinical_n = None,
-            tumor_stage_clinical_t = None):
+            tumor_stage_clinical_m = 'Not Reported',
+            tumor_stage_clinical_n = 'Not Reported',
+            tumor_stage_clinical_t = 'Not Reported'):
 
         diagnosis = Diagnosis(
+            id,
             age_at_diagnosis,
             anatomic_site,
             diagnosis_basis,
@@ -41,6 +43,15 @@ class TestDiagnosisFactory():
 class TestDiagnosisProps(unittest.TestCase):
     def setUp(self):
         self.diagnosis_factory = TestDiagnosisFactory()
+
+    # Diagnosis.id
+    def test_diagnosis_id(self):
+        test_msg = 'Testing Diagnosis.id being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, "ID `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.diagnosis_factory.create_diagnosis(id=value)
 
     # Diagnosis.age_at_diagnosis
     def test_diagnosis_age_at_diagnosis(self):
