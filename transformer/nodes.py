@@ -104,12 +104,12 @@ class Node:
         pass
 
     # Override ==
-    def __eq__(self, other):
-        # Check if they're the same class
-        if type(self).__name__ != type(other).__name__:
-            return False
+    # def __eq__(self, other):
+    #     # Check if they're the same class
+    #     if type(self).__name__ != type(other).__name__:
+    #         return False
 
-        return 
+    #     return 
 
 class Participant(Node):
     _PROPER_NAMES = {
