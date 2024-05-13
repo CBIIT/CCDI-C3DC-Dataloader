@@ -138,19 +138,19 @@ def transform():
     logging.info('Finished parsing Study record\n')
 
     logging.info('Parsing Participant records from JSON...')
-    parse_participants(study_id)
+    parse_participants()
     logging.info('Finished parsing Participant records\n')
 
     logging.info('Parsing Survival records from JSON...')
-    parse_survivals(study_id)
+    parse_survivals()
     logging.info('Finished parsing Survival records\n')
 
     logging.info('Parsing Diagnose records from JSON...')
-    parse_diagnoses(study_id)
+    parse_diagnoses()
     logging.info('Finished parsing Diagnose records\n')
 
     logging.info('Parsing Reference File records from JSON...')
-    parse_reference_files(study_id)
+    parse_reference_files()
     logging.info('Finished parsing Reference File records\n')
 
     logging.info('Verifying that each Participant record has a Study record...')
@@ -204,7 +204,7 @@ def transform():
         write_reference_files()
         logging.info('Finished writing Reference Files TSV')
 
-def parse_diagnoses(study_id):
+def parse_diagnoses():
     # Retrieve map of Diagnosis records
     all_diagnosis_data = all_json_data['diagnoses']
 
@@ -281,7 +281,7 @@ def write_diagnoses():
 
         diagnoses_file.close()
 
-def parse_participants(study_id):
+def parse_participants():
     all_participant_data = all_json_data['participants']
 
     for participant_data in all_participant_data:
@@ -355,7 +355,7 @@ def write_participants():
 
         participants_file.close()
 
-def parse_reference_files(study_id):
+def parse_reference_files():
     all_reference_file_data = all_json_data['reference_files']
 
     for reference_file_data in all_reference_file_data:
@@ -473,7 +473,7 @@ def write_studies():
 
         studies_file.close()
 
-def parse_survivals(study_id):
+def parse_survivals():
     all_survival_data = all_json_data['survivals']
 
     for survival_data in all_survival_data:
