@@ -25,16 +25,16 @@ Indices:
       num_survivals:
         type: integer
     cypher_query: >
-      MATCH (p:participant)-->(st:study)
-        OPTIONAL MATCH (st)<--(rf:reference_file)
-        OPTIONAL MATCH (p)<--(su:survival)
-        OPTIONAL MATCH (p)<--(d:diagnosis)
+      MATCH (p:participant)-[:of_participant]->(stu:study)
+        OPTIONAL MATCH (stu)<-[:of_reference_file]-(rf:reference_file)
+        OPTIONAL MATCH (p)<-[:of_survival]-(sur:survival)
+        OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
       RETURN
         COUNT(DISTINCT d.diagnosis) AS num_diseases,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT rf) AS num_reference_files,
-        COUNT(DISTINCT st) AS num_studies,
-        COUNT(DISTINCT su) AS num_survivals;
+        COUNT(DISTINCT stu) AS num_studies,
+        COUNT(DISTINCT sur) AS num_survivals;
 
   - index_name: diagnoses
     type: neo4j
@@ -116,8 +116,9 @@ Indices:
           last_known_survival_status:
             type: keyword
     cypher_query: >
-      MATCH (d:diagnosis)-->(p:participant)-->(stu:study)
-      OPTIONAL MATCH (p)<--(sur:survival)
+      MATCH (d:diagnosis)-[:of_diagnosis]->(p:participant),
+        (stu:study)<-[:of_participant]-(p)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       RETURN
         d.diagnosis_id AS diagnosis_pk,
         d.age_at_diagnosis as age_at_diagnosis,
@@ -207,9 +208,9 @@ Indices:
             type: keyword
     # Make sure Neo4j has APOC plugin installed
     cypher_query: >
-      MATCH (p:participant)-->(stu:study)
-      OPTIONAL MATCH (p)<--(sur:survival)
-      OPTIONAL MATCH (p)<--(d:diagnosis)
+      MATCH (p:participant)-[:of_participant]->(stu:study)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       RETURN
         p.participant_id AS participant_pk,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
@@ -306,8 +307,9 @@ Indices:
       num_survivals:
         type: integer
     cypher_query: >
-      MATCH (d:diagnosis)-->(p:participant)-->(s:study)
-      OPTIONAL MATCH (p)<--(su:survival)
+      MATCH (stu:study)<-[:of_participant]-(p:participant)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       RETURN
         s.study_id AS study_pk,
         s.acl as acl,
@@ -378,8 +380,8 @@ Indices:
       study_short_title:
         type: keyword
     cypher_query: >
-      MATCH (s:survival)-->(p:participant)-->(stu:study)
-      OPTIONAL MATCH (p)<--(d:diagnosis)
+      MATCH (s:survival)-[:of_survival]->(p:participant)-[:of_participant]->(stu:study)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       RETURN
         s.survival_id AS survival_pk,
         s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
