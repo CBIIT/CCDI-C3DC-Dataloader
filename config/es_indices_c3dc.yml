@@ -311,20 +311,20 @@ Indices:
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       RETURN
-        s.study_id AS study_pk,
-        s.acl as acl,
-        s.consent as consent,
-        s.consent_number as consent_number,
-        s.external_url as external_url,
-        s.phs_accession as phs_accession,
-        s.study_acronym as study_acronym,
-        s.study_description as study_description,
-        s.study_id as study_id,
-        s.study_short_title as study_short_title,
+        stu.study_id AS study_pk,
+        stu.acl AS acl,
+        stu.consent AS consent,
+        stu.consent_number AS consent_number,
+        stu.external_url AS external_url,
+        stu.phs_accession AS phs_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_description AS study_description,
+        stu.study_id AS study_id,
+        stu.study_short_title AS study_short_title,
         COUNT(DISTINCT p) AS num_participants,
         COUNT(DISTINCT d.diagnosis) AS num_diseases,
         COUNT(DISTINCT d.anatomic_site) AS num_anatomic_sites,
-        COUNT(DISTINCT su) AS num_survivals;
+        COUNT(DISTINCT sur) AS num_survivals;
 
   - index_name: survivals
     type: neo4j
@@ -380,17 +380,17 @@ Indices:
       study_short_title:
         type: keyword
     cypher_query: >
-      MATCH (s:survival)-[:of_survival]->(p:participant)-[:of_participant]->(stu:study)
+      MATCH (sur:survival)-[:of_survival]->(p:participant)-[:of_participant]->(stu:study)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       RETURN
-        s.survival_id AS survival_pk,
-        s.age_at_event_free_survival_status AS age_at_event_free_survival_status,
-        s.age_at_last_known_survival_status AS age_at_last_known_survival_status,
-        s.event_free_survival_status AS event_free_survival_status,
+        sur.survival_id AS survival_pk,
+        sur.age_at_event_free_survival_status AS age_at_event_free_survival_status,
+        sur.age_at_last_known_survival_status AS age_at_last_known_survival_status,
+        sur.event_free_survival_status AS event_free_survival_status,
         // first_event isn't required, so we must catch '' and turn them into 'Not Reported'
-        (CASE s.first_event WHEN '' THEN 'Not Reported' ELSE s.first_event END) AS first_event,
-        s.last_known_survival_status AS last_known_survival_status,
-        apoc.text.split(s.survival_id, '::')[0] AS survival_id,
+        (CASE sur.first_event WHEN '' THEN 'Not Reported' ELSE sur.first_event END) AS first_event,
+        sur.last_known_survival_status AS last_known_survival_status,
+        apoc.text.split(sur.survival_id, '::')[0] AS survival_id,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.participant_id AS participant_pk,
         p.ethnicity AS ethnicity_str,
