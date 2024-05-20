@@ -122,17 +122,16 @@ def processJsonData(data):
         checker(records, associations)
         logger.info(f'Finished checking each {node_name} record\'s foreign keys\n')
 
-    return
-
-    for node_name, node_func in node_funcs:
+    for node_name, node_func in node_funcs.items():
         writer = node_func.get('writer', None)
 
-        if len(records[node_name]) == 0:
+        if node_name != NODE_TYPES.STUDY.value and len(records[node_name]) == 0:
             logger.info(f'No {node_name} records. Skipping TSV...\n')
-        else:
-            logger.info(f'Writing {node_name} records to TSV...')
-            writer(records, associations)
-            logger.info(f'Finished writing {node_name} records to TSV\n')
+            continue
+
+        logger.info(f'Writing {node_name} records to TSV...')
+        writer(records, associations)
+        logger.info(f'Finished writing {node_name} records to TSV\n')
 
 if __name__ == '__main__':
     main()
