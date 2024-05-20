@@ -32,7 +32,7 @@ def main():
         if os.path.isdir(dir_path):
             dir_paths.append(dir_path)
 
-    logger.info(f'Found {len(dir_paths)} subdirectories')
+    logger.info(f'Found {len(dir_paths)} subdirectories\n')
 
     # Look at all the files in the data directory, grouping files within a subdirectory into a single study
     for dir_path in dir_paths:
@@ -49,7 +49,7 @@ def main():
         if len(file_paths) == 0:
             continue
         
-        logger.info(f'Found {len(file_paths)} JSON file(s) in subdirectory {dir_path}')
+        logger.info(f'Found {len(file_paths)} JSON file(s) in subdirectory {dir_path}\n')
 
         for file_path in file_paths:
             logger.info('Reading data from ' + file_path + '...')
@@ -64,7 +64,7 @@ def main():
                 all_json_data[node_name] = all_json_data[node_name] + json_data[node_name]
 
             json_file.close()
-            logger.info('Finished reading data from ' + file_path + '...')
+            logger.info('Finished reading data from ' + file_path + '...\n')
 
         processJsonData(all_json_data)
 
@@ -112,15 +112,17 @@ def processJsonData(data):
         parser(data, records, associations)
         logger.info(f'Finished parsing {node_name} records\n')
 
-    return
-
-    for node_name, node_func in node_funcs:
+    for node_name, node_func in node_funcs.items():
         checker = node_func.get('checker', None)
 
-        if checker is not None:
-            logger.info(f'Checking each {node_name} record\'s foreign keys...')
-            checker(records, associations)
-            logger.info(f'Finished checking each {node_name} record\'s foreign keys\n')
+        if checker is None:
+            continue
+
+        logger.info(f'Checking each {node_name} record\'s foreign keys...')
+        checker(records, associations)
+        logger.info(f'Finished checking each {node_name} record\'s foreign keys\n')
+
+    return
 
     for node_name, node_func in node_funcs:
         writer = node_func.get('writer', None)
