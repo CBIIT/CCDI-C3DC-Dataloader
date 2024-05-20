@@ -6,7 +6,7 @@ import os
 import sys
 import time
 from checkers import check_diagnoses_for_participants, check_participants_for_studies, check_reference_files_for_studies, check_survivals_for_participants
-from parsers import parse_diagnoses, parse_participants, parse_reference_files, parse_studies, parse_survivals
+from parsers import parse_diagnoses, parse_participants, parse_reference_files, parse_study, parse_survivals
 from node_types import NODE_TYPES
 from writers import write_diagnoses, write_participants, write_reference_files, write_studies, write_survivals
 logger = logging.getLogger(__name__)
@@ -26,7 +26,6 @@ def main():
 
     # Find subdirectories
     for dirname in os.listdir('data/'):
-        all_json_data = dict.fromkeys(node_names, [])
         dir_path = 'data/' + dirname
 
         # Add directory to visit later
@@ -37,6 +36,7 @@ def main():
 
     # Look at all the files in the data directory, grouping files within a subdirectory into a single study
     for dir_path in dir_paths:
+        all_json_data = dict.fromkeys(node_names, [])
         file_paths = []
 
         # Look in this subdirectory for individual JSON files to group into a single study
@@ -49,7 +49,7 @@ def main():
         if len(file_paths) == 0:
             continue
         
-        logger.info(f'Found {len(file_paths)} JSON file(s) in subdirectory')
+        logger.info(f'Found {len(file_paths)} JSON file(s) in subdirectory {dir_path}')
 
         for file_path in file_paths:
             logger.info('Reading data from ' + file_path + '...')
@@ -70,6 +70,7 @@ def main():
 
 def processJsonData(data):
     records = {node_type.value: {} for node_type in NODE_TYPES}
+    records[NODE_TYPES.STUDY.value] = None # Only one study record, so don't use a dict for study records
 
     # TODO crosscheck foreign keys (eg: check each participant's study ID consistent with study's participant ID's)
     associations = {
@@ -80,7 +81,7 @@ def processJsonData(data):
     }
     node_funcs = {
         NODE_TYPES.STUDY.value: {
-            'parser': parse_studies,
+            'parser': parse_study,
             'writer': write_studies,
         },
         NODE_TYPES.PARTICIPANT.value: {
@@ -106,13 +107,11 @@ def processJsonData(data):
     }
 
     for node_name, node_func in node_funcs.items():
-        print(f'[BEFORE]: {records}')
         parser = node_func.get('parser', None)
         logger.info(f'Parsing {node_name} records from JSON...')
         parser(data, records, associations)
         logger.info(f'Finished parsing {node_name} records\n')
 
-    print(f'[BEFORE]: {records}')
     return
 
     for node_name, node_func in node_funcs:

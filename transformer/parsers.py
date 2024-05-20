@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 def parse_diagnoses(data, records, associations):
     all_diagnosis_data = data.get('diagnoses', [])
-    study_id = records.get(NODE_TYPES.STUDY.value)[0]
+    study_id = records.get(NODE_TYPES.STUDY.value).study_id
 
     if len(all_diagnosis_data) == 0:
         logger.info(f'No {NODE_TYPES.DIAGNOSIS.value} records to parse. Skipping...\n')
@@ -69,7 +69,8 @@ def parse_participants(data, records, associations):
 
     for participant_data in all_participant_data:
         participant_id = participant_data.get('participant_id', None)
-        study_id = participant_data.get('study.study_id', None)
+        participant_study_id = participant_data.get('study.study_id', None)
+        study_id = records[NODE_TYPES.STUDY.value].study_id
         participant_uuid = make_uuid(
             NODE_TYPES.PARTICIPANT.value,
             study_id,
@@ -82,13 +83,13 @@ def parse_participants(data, records, associations):
             logger.warning(f'Skipping Participant {participant_id}...')
 
         # Map participant ID to study ID
-        if study_id is None:
+        if participant_study_id is None:
             logger.error(f'Participant {participant_id} has no Study ID! Skipping...')
             continue
-        elif study_id not in records.get(NODE_TYPES.STUDY.value).keys():
-            raise ValueError(f'Participant {participant_id} references nonexistent Study {study_id}!')
+        elif participant_study_id != study_id:
+            raise ValueError(f'Participant {participant_id} references nonexistent Study {participant_study_id}!')
         else:
-            associations['participants_to_studies'][participant_id] = study_id
+            associations['participants_to_studies'][participant_id] = participant_study_id
 
         try:
             participant = Participant(
@@ -113,7 +114,8 @@ def parse_reference_files(data, records, associations):
 
     for reference_file_data in all_reference_file_data:
         reference_file_id = reference_file_data['reference_file_id']
-        study_id = reference_file_data.get('study.study_id', None)
+        reference_file_study_id = reference_file_data.get('study.study_id', None)
+        study_id = records[NODE_TYPES.STUDY.value].study_id
         reference_file_uuid = make_uuid(
             NODE_TYPES.REFERENCE_FILE.value,
             study_id,
@@ -126,13 +128,13 @@ def parse_reference_files(data, records, associations):
             logger.warning(f'Skipping Reference File {reference_file_id}...')
 
         # Skip reference file if it doesn't have a study
-        if study_id is None:
+        if reference_file_study_id is None:
             logger.warning(f'Reference File {reference_file_id} has no Study ID! Skipping...')
             continue
-        elif study_id not in records.get(NODE_TYPES.STUDY.value).keys():
-            raise ValueError(f'Reference File {reference_file_id} references nonexistent Study {study_id}!')
+        elif reference_file_study_id != study_id:
+            raise ValueError(f'Reference File {reference_file_id} references nonexistent Study {reference_file_study_id}!')
         else:
-            associations['reference_files_to_studies'][reference_file_id] = study_id
+            associations['reference_files_to_studies'][reference_file_id] = reference_file_study_id
 
         try:
             reference_file = ReferenceFile(
@@ -153,48 +155,47 @@ def parse_reference_files(data, records, associations):
         except ValueError as e:
             logger.error('Invalid value for Reference File %s: %s', reference_file_id, e)
 
-def parse_studies(data, records, associations):
+def parse_study(data, records, associations):
     all_study_data = data.get('studies', [])
 
     if len(all_study_data) == 0:
-        logger.info(f'No {NODE_TYPES.STUDY.value} records to parse. Skipping...\n')
-        return
+        raise Exception(f'No {NODE_TYPES.STUDY.value} records to parse!')
 
-    for study_data in all_study_data:
-        study_id = study_data.get('study_id', None)
-        study_uuid = make_uuid(
-            NODE_TYPES.STUDY.value,
-            study_id,
-            study_id
+    study_data = all_study_data[0]
+    study_id = study_data.get('study_id', None)
+    study_uuid = make_uuid(
+        NODE_TYPES.STUDY.value,
+        study_id,
+        study_id
+    )
+
+    try:
+        study = Study(
+            id = study_uuid,
+            acl = study_data.get('acl', None),
+            consent = study_data.get('consent', None),
+            consent_number = study_data.get('consent_number', None),
+            external_url = study_data.get('external_url', None),
+            phs_accession = study_data.get('phs_accession', None),
+            study_acronym = study_data.get('study_acronym', None),
+            study_description = study_data.get('study_description', None),
+            study_id = study_id,
+            study_short_title = study_data.get('study_short_title', None),
         )
 
-        # Don't consider duplicate diagnosis ID as an error yet
-        if study_id in records.get(NODE_TYPES.STUDY.value):
-            logger.warning(f'Study {study_id} exists!')
-            logger.warning(f'Skipping Study {study_id}...')
+        if records[NODE_TYPES.STUDY.value] is not None and study.id != records[NODE_TYPES.STUDY.value].id:
+            raise Exception(f'More than one unique {NODE_TYPES.STUDY.value} record found: {[study_json["study_id"] for study_json in all_study_data]}')
 
-        try:
-            study = Study(
-                id = study_uuid,
-                acl = study_data.get('acl', None),
-                consent = study_data.get('consent', None),
-                consent_number = study_data.get('consent_number', None),
-                external_url = study_data.get('external_url', None),
-                phs_accession = study_data.get('phs_accession', None),
-                study_acronym = study_data.get('study_acronym', None),
-                study_description = study_data.get('study_description', None),
-                study_id = study_id,
-                study_short_title = study_data.get('study_short_title', None),
-            )
-            records[NODE_TYPES.STUDY.value][study_id] = study
-        except TypeError as e:
-            logger.error('Wrong data type for Study %s: %s', study, e)
-        except ValueError as e:
-            logger.error('Invalid value for Study %s: %s', study, e)
+        records[NODE_TYPES.STUDY.value] = study
+
+    except TypeError as e:
+        logger.error('Wrong data type for Study %s: %s', study, e)
+    except ValueError as e:
+        logger.error('Invalid value for Study %s: %s', study, e)
 
 def parse_survivals(data, records, associations):
     all_survival_data = data.get('survivals', [])
-    study_id = records.get(NODE_TYPES.STUDY.value)[0]
+    study_id = records.get(NODE_TYPES.STUDY.value).study_id
 
     if len(all_survival_data) == 0:
         logger.info(f'No {NODE_TYPES.SURVIVAL.value} records to parse. Skipping...\n')
