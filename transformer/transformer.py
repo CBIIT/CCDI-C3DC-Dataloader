@@ -12,9 +12,12 @@ from writers import write_diagnoses, write_participants, write_reference_files, 
 logger = logging.getLogger(__name__)
 
 def main():
+    # Set up logging
     timestr = time.strftime('%Y%m%d-%H%M%S')
     log_targets = logging.StreamHandler(sys.stdout), logging.FileHandler('tmp/transformer-' + timestr + '.log')
     logging.basicConfig(format='%(message)s', level=logging.INFO, handlers=log_targets)
+
+    # Node names we expect from the JSON files
     node_names = [
         'diagnoses',
         'participants',
@@ -24,7 +27,7 @@ def main():
     ]
     dir_paths = []
 
-    # Find subdirectories
+    # Find data subdirectories
     for dirname in os.listdir('data/'):
         dir_path = 'data/' + dirname
 
@@ -68,7 +71,9 @@ def main():
 
         processJsonData(all_json_data)
 
+# Runs the parsers, checkers, and writers
 def processJsonData(data):
+    # Big dict in which we save all the objects before writing them to TSV
     records = {node_type.value: {} for node_type in NODE_TYPES}
     records[NODE_TYPES.STUDY.value] = None # Only one study record, so don't use a dict for study records
 
@@ -106,15 +111,18 @@ def processJsonData(data):
         },
     }
 
+    # Run the parsers
     for node_name, node_func in node_funcs.items():
         parser = node_func.get('parser', None)
         logger.info(f'Parsing {node_name} records from JSON...')
         parser(data, records, associations)
         logger.info(f'Finished parsing {node_name} records\n')
 
+    # Run the checkers
     for node_name, node_func in node_funcs.items():
         checker = node_func.get('checker', None)
 
+        # Parent nodes (Study, for C3DC) don't have foreign keys to other nodes
         if checker is None:
             continue
 
@@ -122,6 +130,7 @@ def processJsonData(data):
         checker(records, associations)
         logger.info(f'Finished checking each {node_name} record\'s foreign keys\n')
 
+    # Run the writers
     for node_name, node_func in node_funcs.items():
         writer = node_func.get('writer', None)
 

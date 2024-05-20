@@ -6,6 +6,7 @@ from node_types import NODE_TYPES
 from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
 logger = logging.getLogger(__name__)
 
+# Reads Diagnosis records from JSON and saves them to a dict
 def parse_diagnoses(data, records, associations):
     all_diagnosis_data = data.get('diagnoses', [])
     study_id = records.get(NODE_TYPES.STUDY.value).study_id
@@ -14,6 +15,7 @@ def parse_diagnoses(data, records, associations):
         logger.info(f'No {NODE_TYPES.DIAGNOSIS.value} records to parse. Skipping...\n')
         return
 
+    # Save each Diagnosis record as a Diagnosis object
     for diagnosis_data in all_diagnosis_data:
         diagnosis_id = diagnosis_data.get('diagnosis_id', None)
         diagnosis_uuid = make_uuid(
@@ -60,6 +62,7 @@ def parse_diagnoses(data, records, associations):
         except ValueError as e:
             logger.error('Invalid value for Diagnosis %s: %s', diagnosis_id, e)
 
+# Reads Participant records from JSON and saves them to a dict
 def parse_participants(data, records, associations):
     all_participant_data = data.get('participants', [])
 
@@ -67,9 +70,15 @@ def parse_participants(data, records, associations):
         logger.info(f'No {NODE_TYPES.PARTICIPANT.value} records to parse. Skipping...\n')
         return
 
+    # Save each Participant record as a Participant object
     for participant_data in all_participant_data:
         participant_id = participant_data.get('participant_id', None)
+
+        # Study ID read from the Participant record
         participant_study_id = participant_data.get('study.study_id', None)
+
+        # Study ID from a previously read study
+        # Should be the same as the one read from the Participant record
         study_id = records[NODE_TYPES.STUDY.value].study_id
         participant_uuid = make_uuid(
             NODE_TYPES.PARTICIPANT.value,
@@ -105,6 +114,7 @@ def parse_participants(data, records, associations):
         except ValueError as e:
             logger.error('Invalid value for Participant %s: %s', participant_id, e)
 
+# Reads Reference File records from JSON and saves them to a dict
 def parse_reference_files(data, records, associations):
     all_reference_file_data = data.get('reference_files', [])
 
@@ -112,9 +122,15 @@ def parse_reference_files(data, records, associations):
         logger.info(f'No {NODE_TYPES.REFERENCE_FILE.value} records to parse. Skipping...\n')
         return
 
+    # Save each Reference File record as a Reference File object
     for reference_file_data in all_reference_file_data:
         reference_file_id = reference_file_data['reference_file_id']
+
+        # Study ID read from the Reference File record
         reference_file_study_id = reference_file_data.get('study.study_id', None)
+
+        # Study ID from a previously read study
+        # Should be the same as the one read from the Reference File record
         study_id = records[NODE_TYPES.STUDY.value].study_id
         reference_file_uuid = make_uuid(
             NODE_TYPES.REFERENCE_FILE.value,
@@ -155,6 +171,7 @@ def parse_reference_files(data, records, associations):
         except ValueError as e:
             logger.error('Invalid value for Reference File %s: %s', reference_file_id, e)
 
+# Reads Study records from JSON and saves them to a dict
 def parse_study(data, records, associations):
     all_study_data = data.get('studies', [])
 
@@ -193,6 +210,7 @@ def parse_study(data, records, associations):
     except ValueError as e:
         logger.error('Invalid value for Study %s: %s', study, e)
 
+# Reads Survival records from JSON and saves them to a dict
 def parse_survivals(data, records, associations):
     all_survival_data = data.get('survivals', [])
     study_id = records.get(NODE_TYPES.STUDY.value).study_id
@@ -201,6 +219,7 @@ def parse_survivals(data, records, associations):
         logger.info(f'No {NODE_TYPES.SURVIVAL.value} records to parse. Skipping...\n')
         return
 
+    # Save each Survival record as a Survival object
     for survival_data in all_survival_data:
         participant_id = survival_data.get('participant.participant_id', None)
         survival_id = survival_data.get('survival_id')

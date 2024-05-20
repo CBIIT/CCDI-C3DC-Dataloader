@@ -6,7 +6,9 @@ from node_types import NODE_TYPES
 from tsv_headers import DIAGNOSIS_HEADERS, PARTICIPANT_HEADERS, REFERENCE_FILE_HEADERS, STUDY_HEADERS, SURVIVAL_HEADERS
 logger = logging.getLogger(__name__)
 
+# Save Diagnosis records to a TSV file
 def write_diagnoses(records, associations):
+    # Obtain single study
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
@@ -14,11 +16,13 @@ def write_diagnoses(records, associations):
         tsv_writer = csv.writer(diagnoses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(DIAGNOSIS_HEADERS)
 
+        # Write each Diagnosis record to a TSV row
         for diagnosis_id, diagnosis in records[NODE_TYPES.DIAGNOSIS.value].items():
             diagnosis_row = diagnosis.to_list()
             participant_id = associations['diagnoses_to_participants'][diagnosis_id]
             participant = records[NODE_TYPES.PARTICIPANT.value][participant_id]
 
+            # Append foreign key to Participant record
             row = [
                 *diagnosis_row,
                 participant.id,
@@ -26,8 +30,9 @@ def write_diagnoses(records, associations):
             tsv_writer.writerow(row)
 
         diagnoses_file.close()
-
+# Save Participant records to a TSV file
 def write_participants(records, associations):
+    # Obtain single study
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
@@ -35,8 +40,11 @@ def write_participants(records, associations):
         tsv_writer = csv.writer(participants_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(PARTICIPANT_HEADERS)
 
+        # Write each Participant record to a TSV row
         for participant_id, participant in records[NODE_TYPES.PARTICIPANT.value].items():
             participant_row = participant.to_list()
+
+            # Append foreign key to Study record
             row = [
                 *participant_row,
                 study.id,
@@ -44,8 +52,9 @@ def write_participants(records, associations):
             tsv_writer.writerow(row)
 
         participants_file.close()
-
+# Save Reference File records to a TSV file
 def write_reference_files(records, associations):
+    # Obtain single study
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
@@ -53,8 +62,11 @@ def write_reference_files(records, associations):
         tsv_writer = csv.writer(reference_files_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(REFERENCE_FILE_HEADERS)
 
+        # Write each Reference File record to a TSV row
         for reference_file_id, reference_file in records[NODE_TYPES.REFERENCE_FILE.value].items():
             reference_file_row = reference_file.to_list()
+
+            # Append foreign key to Study record
             row = [
                 *reference_file_row,
                 study.id,
@@ -62,8 +74,9 @@ def write_reference_files(records, associations):
             tsv_writer.writerow(row)
 
         reference_files_file.close()
-
+# Save Study records to a TSV file
 def write_studies(records, associations):
+    # Obtain single study
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
@@ -75,8 +88,9 @@ def write_studies(records, associations):
         tsv_writer.writerow(row)
 
         studies_file.close()
-
+# Save Survival records to a TSV file
 def write_survivals(records, associations):
+    # Obtain single study
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
@@ -84,11 +98,13 @@ def write_survivals(records, associations):
         tsv_writer = csv.writer(survivals_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(SURVIVAL_HEADERS)
 
+        # Write each Survival record to a TSV row
         for survival_id, survival in records[NODE_TYPES.SURVIVAL.value].items():
             survival_row = survival.to_list()
             participant_id = associations['survivals_to_participants'][survival_id]
             participant = records[NODE_TYPES.PARTICIPANT.value][participant_id]
 
+            # Append foreign key to Participant record
             row = [
                 *survival_row,
                 participant.id,
