@@ -10,7 +10,7 @@ def write_diagnoses(records, associations):
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
-    with open(f'data/{study_acronym} diagnoses.tsv', 'w', newline='') as diagnoses_file:
+    with open(f'data/{study_acronym} diagnoses.tsv', 'w', encoding='utf-8', newline='') as diagnoses_file:
         tsv_writer = csv.writer(diagnoses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(DIAGNOSIS_HEADERS)
 
@@ -31,7 +31,7 @@ def write_participants(records, associations):
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
-    with open(f'data/{study_acronym} participants.tsv', 'w', newline='') as participants_file:
+    with open(f'data/{study_acronym} participants.tsv', 'w', encoding='utf-8', newline='') as participants_file:
         tsv_writer = csv.writer(participants_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(PARTICIPANT_HEADERS)
 
@@ -49,7 +49,7 @@ def write_reference_files(records, associations):
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
-    with open(f'data/{study_acronym} reference_files.tsv', 'w', newline='') as reference_files_file:
+    with open(f'data/{study_acronym} reference_files.tsv', 'w', encoding='utf-8', newline='') as reference_files_file:
         tsv_writer = csv.writer(reference_files_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(REFERENCE_FILE_HEADERS)
 
@@ -80,7 +80,7 @@ def write_survivals(records, associations):
     study = records[NODE_TYPES.STUDY.value]
     study_acronym = study.study_acronym
 
-    with open(f'data/{study_acronym} survivals.tsv', 'w', newline='') as survivals_file:
+    with open(f'data/{study_acronym} survivals.tsv', 'w', encoding='utf-8', newline='') as survivals_file:
         tsv_writer = csv.writer(survivals_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(SURVIVAL_HEADERS)
 
