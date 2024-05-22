@@ -79,7 +79,7 @@ def parse_participants(data, records, associations):
 
         # Study ID from a previously read study
         # Should be the same as the one read from the Participant record
-        study_id = records[NODE_TYPES.STUDY.value].study_id
+        study_id = records.get(NODE_TYPES.STUDY.value).study_id
         participant_uuid = make_uuid(
             NODE_TYPES.PARTICIPANT.value,
             study_id,
@@ -131,7 +131,7 @@ def parse_reference_files(data, records, associations):
 
         # Study ID from a previously read study
         # Should be the same as the one read from the Reference File record
-        study_id = records[NODE_TYPES.STUDY.value].study_id
+        study_id = records.get(NODE_TYPES.STUDY.value).study_id
         reference_file_uuid = make_uuid(
             NODE_TYPES.REFERENCE_FILE.value,
             study_id,
@@ -200,7 +200,7 @@ def parse_study(data, records, associations):
             study_short_title = study_data.get('study_short_title', None),
         )
 
-        if records[NODE_TYPES.STUDY.value] is not None and study.id != records[NODE_TYPES.STUDY.value].id:
+        if records.get(NODE_TYPES.STUDY.value) is not None and study.id != records.get(NODE_TYPES.STUDY.value).id:
             raise Exception(f'More than one unique {NODE_TYPES.STUDY.value} record found: {[study_json["study_id"] for study_json in all_study_data]}')
 
         records[NODE_TYPES.STUDY.value] = study

@@ -10,7 +10,7 @@ def check_diagnoses_for_participants(records, associations):
     diagnosis_ids_to_remove = []
 
     # Find Diagnosis records that lack a reference to a Participant record
-    for diagnosis_id in records[NODE_TYPES.DIAGNOSIS.value].keys():
+    for diagnosis_id in records.get(NODE_TYPES.DIAGNOSIS.value).keys():
         if diagnosis_id not in associations['diagnoses_to_participants'].keys():
             logger.warning(f'Diagnosis {diagnosis_id} does not have a Participant!')
             logger.warning(f'Skipping Diagnosis {diagnosis_id}...')
@@ -26,7 +26,7 @@ def check_participants_for_studies(records, associations):
     participant_ids_to_remove = []
 
     # Find Participant records that lack a reference to a Study record
-    for participant_id in records[NODE_TYPES.PARTICIPANT.value].keys():
+    for participant_id in records.get(NODE_TYPES.PARTICIPANT.value).keys():
         if participant_id not in associations['participants_to_studies'].keys():
             logger.warning(f'Participant {participant_id} does not have a Study!')
             logger.warning(f'Skipping Participant {participant_id}...')
@@ -42,7 +42,7 @@ def check_reference_files_for_studies(records, associations):
     reference_file_ids_to_remove = []
 
     # Find Reference File records that lack a reference to a Study record
-    for reference_file_id in records[NODE_TYPES.REFERENCE_FILE.value].keys():
+    for reference_file_id in records.get(NODE_TYPES.REFERENCE_FILE.value).keys():
         if reference_file_id not in associations['reference_files_to_studies'].keys():
             logger.warning(f'Reference File {reference_file_id} does not have a Study!')
             logger.warning(f'Skipping Reference File {reference_file_id}...')
@@ -58,7 +58,7 @@ def check_survivals_for_participants(records, associations):
     survival_ids_to_remove = []
 
     # Find Survival records that lack a reference to a Participant record
-    for survival_id in records[NODE_TYPES.SURVIVAL.value].keys():
+    for survival_id in records.get(NODE_TYPES.SURVIVAL.value).keys():
         if survival_id not in associations['survivals_to_participants'].keys():
             logger.warning(f'Survival {survival_id} does not have a Participant!')
             logger.warning(f'Skipping Survival {survival_id}...')
