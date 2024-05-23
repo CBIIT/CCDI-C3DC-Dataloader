@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 # Reads Diagnosis records from JSON and saves them to a dict
 def parse_diagnoses(data, records, associations):
     all_diagnosis_data = data.get('diagnoses', [])
-    study_id = records.get(NODE_TYPES.STUDY.value).study_id
+    study_id = list(records.get(NODE_TYPES.STUDY.value).keys())[0]
 
     if len(all_diagnosis_data) == 0:
         logger.info(f'No {NODE_TYPES.DIAGNOSIS.value} records to parse. Skipping...\n')
@@ -65,6 +65,7 @@ def parse_diagnoses(data, records, associations):
 # Reads Participant records from JSON and saves them to a dict
 def parse_participants(data, records, associations):
     all_participant_data = data.get('participants', [])
+    study_id = list(records.get(NODE_TYPES.STUDY.value).keys())[0]
 
     if len(all_participant_data) == 0:
         logger.info(f'No {NODE_TYPES.PARTICIPANT.value} records to parse. Skipping...\n')
@@ -77,9 +78,6 @@ def parse_participants(data, records, associations):
         # Study ID read from the Participant record
         participant_study_id = participant_data.get('study.study_id', None)
 
-        # Study ID from a previously read study
-        # Should be the same as the one read from the Participant record
-        study_id = records.get(NODE_TYPES.STUDY.value).study_id
         participant_uuid = make_uuid(
             NODE_TYPES.PARTICIPANT.value,
             study_id,
@@ -117,6 +115,7 @@ def parse_participants(data, records, associations):
 # Reads Reference File records from JSON and saves them to a dict
 def parse_reference_files(data, records, associations):
     all_reference_file_data = data.get('reference_files', [])
+    study_id = list(records.get(NODE_TYPES.STUDY.value).keys())[0]
 
     if len(all_reference_file_data) == 0:
         logger.info(f'No {NODE_TYPES.REFERENCE_FILE.value} records to parse. Skipping...\n')
@@ -129,9 +128,6 @@ def parse_reference_files(data, records, associations):
         # Study ID read from the Reference File record
         reference_file_study_id = reference_file_data.get('study.study_id', None)
 
-        # Study ID from a previously read study
-        # Should be the same as the one read from the Reference File record
-        study_id = records.get(NODE_TYPES.STUDY.value).study_id
         reference_file_uuid = make_uuid(
             NODE_TYPES.REFERENCE_FILE.value,
             study_id,
@@ -172,48 +168,50 @@ def parse_reference_files(data, records, associations):
             logger.error('Invalid value for Reference File %s: %s', reference_file_id, e)
 
 # Reads Study records from JSON and saves them to a dict
-def parse_study(data, records, associations):
+def parse_studies(data, records, associations):
     all_study_data = data.get('studies', [])
 
     if len(all_study_data) == 0:
         raise Exception(f'No {NODE_TYPES.STUDY.value} records to parse!')
 
-    study_data = all_study_data[0]
-    study_id = study_data.get('study_id', None)
-    study_uuid = make_uuid(
-        NODE_TYPES.STUDY.value,
-        study_id,
-        study_id
-    )
+    # Save each Study record as a Study object
+    for study_data in all_study_data:
+        study_id = study_data.get('study_id', None)
 
-    try:
-        study = Study(
-            id = study_uuid,
-            acl = study_data.get('acl', None),
-            consent = study_data.get('consent', None),
-            consent_number = study_data.get('consent_number', None),
-            external_url = study_data.get('external_url', None),
-            phs_accession = study_data.get('phs_accession', None),
-            study_acronym = study_data.get('study_acronym', None),
-            study_description = study_data.get('study_description', None),
-            study_id = study_id,
-            study_short_title = study_data.get('study_short_title', None),
-        )
-
-        if records.get(NODE_TYPES.STUDY.value) is not None and study.id != records.get(NODE_TYPES.STUDY.value).id:
+        # There should only be one unique Study record
+        if len(records.get(NODE_TYPES.STUDY.value)) > 0 and study_id not in records.get(NODE_TYPES.STUDY.value):
             raise Exception(f'More than one unique {NODE_TYPES.STUDY.value} record found: {[study_json["study_id"] for study_json in all_study_data]}')
 
-        records[NODE_TYPES.STUDY.value] = study
+        study_uuid = make_uuid(
+            NODE_TYPES.STUDY.value,
+            study_id,
+            study_id
+        )
 
-    except TypeError as e:
-        logger.error('Wrong data type for Study %s: %s', study, e)
-    except ValueError as e:
-        logger.error('Invalid value for Study %s: %s', study, e)
+        try:
+            study = Study(
+                id = study_uuid,
+                acl = study_data.get('acl', None),
+                consent = study_data.get('consent', None),
+                consent_number = study_data.get('consent_number', None),
+                external_url = study_data.get('external_url', None),
+                phs_accession = study_data.get('phs_accession', None),
+                study_acronym = study_data.get('study_acronym', None),
+                study_description = study_data.get('study_description', None),
+                study_id = study_id,
+                study_short_title = study_data.get('study_short_title', None),
+            )
+
+            records[NODE_TYPES.STUDY.value][study_id] = study
+        except TypeError as e:
+            logger.error('Wrong data type for Study %s: %s', study, e)
+        except ValueError as e:
+            logger.error('Invalid value for Study %s: %s', study, e)
 
 # Reads Survival records from JSON and saves them to a dict
 def parse_survivals(data, records, associations):
     all_survival_data = data.get('survivals', [])
-    study_id = records.get(NODE_TYPES.STUDY.value).study_id
+    study_id = list(records.get(NODE_TYPES.STUDY.value).keys())[0]
 
     if len(all_survival_data) == 0:
         logger.info(f'No {NODE_TYPES.SURVIVAL.value} records to parse. Skipping...\n')

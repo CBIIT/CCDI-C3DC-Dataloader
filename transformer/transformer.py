@@ -6,7 +6,7 @@ import os
 import sys
 import time
 from checkers import check_diagnoses_for_participants, check_participants_for_studies, check_reference_files_for_studies, check_survivals_for_participants
-from parsers import parse_diagnoses, parse_participants, parse_reference_files, parse_study, parse_survivals
+from parsers import parse_diagnoses, parse_participants, parse_reference_files, parse_studies, parse_survivals
 from node_types import NODE_TYPES
 from writers import write_diagnoses, write_participants, write_reference_files, write_studies, write_survivals
 logger = logging.getLogger(__name__)
@@ -64,10 +64,7 @@ def main():
                 if node_name not in json_data:
                     continue
 
-                all_json_data[node_name] = [
-                    *all_json_data[node_name],
-                    json_data[node_name]
-                ]
+                all_json_data[node_name] = all_json_data[node_name] + json_data[node_name]
 
             json_file.close()
             logger.info('Finished reading data from ' + file_path + '...\n')
@@ -78,7 +75,6 @@ def main():
 def processJsonData(data):
     # Big dict in which we save all the objects before writing them to TSV
     records = {node_type.value: {} for node_type in NODE_TYPES}
-    records[NODE_TYPES.STUDY.value] = None # Only one study record, so don't use a dict for study records
 
     # TODO crosscheck foreign keys (eg: check each participant's study ID consistent with study's participant ID's)
     associations = {
@@ -89,7 +85,7 @@ def processJsonData(data):
     }
     node_funcs = {
         NODE_TYPES.STUDY.value: {
-            'parser': parse_study,
+            'parser': parse_studies,
             'writer': write_studies,
         },
         NODE_TYPES.PARTICIPANT.value: {
