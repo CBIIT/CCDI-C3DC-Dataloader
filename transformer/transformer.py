@@ -64,7 +64,7 @@ def main():
                 if node_name not in json_data:
                     continue
 
-                all_json_data[node_name] = all_json_data[node_name] + json_data[node_name]
+                all_json_data[node_name] = all_json_data.get(node_name) + json_data.get(node_name)
 
             json_file.close()
             logger.info('Finished reading data from ' + file_path + '...\n')
@@ -112,7 +112,7 @@ def processJsonData(data):
 
     # Run the parsers
     for node_name, node_func in node_funcs.items():
-        parser = node_func.get('parser', None)
+        parser = node_func.get('parser')
 
         # Error if there is no parser for this node
         if parser is None:
@@ -124,7 +124,7 @@ def processJsonData(data):
 
     # Run the checkers
     for node_name, node_func in node_funcs.items():
-        checker = node_func.get('checker', None)
+        checker = node_func.get('checker')
 
         # Parent nodes (Study, for C3DC) don't have foreign keys to other nodes
         if checker is None:
@@ -136,9 +136,9 @@ def processJsonData(data):
 
     # Run the writers
     for node_name, node_func in node_funcs.items():
-        writer = node_func.get('writer', None)
+        writer = node_func.get('writer')
 
-        if node_name != NODE_TYPES.STUDY.value and len(records[node_name]) == 0:
+        if node_name != NODE_TYPES.STUDY.value and len(records.get(node_name)) == 0:
             logger.info(f'No {node_name} records. Skipping TSV...\n')
             continue
 

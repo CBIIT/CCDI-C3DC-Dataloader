@@ -17,13 +17,13 @@ def parse_diagnoses(data, records, associations):
 
     # Save each Diagnosis record as a Diagnosis object
     for diagnosis_data in all_diagnosis_data:
-        diagnosis_id = diagnosis_data.get('diagnosis_id', None)
+        diagnosis_id = diagnosis_data.get('diagnosis_id')
         diagnosis_uuid = make_uuid(
             NODE_TYPES.DIAGNOSIS.value,
             study_id,
             diagnosis_id
         )
-        participant_id = diagnosis_data.get('participant.participant_id', None)
+        participant_id = diagnosis_data.get('participant.participant_id')
 
         # Don't consider duplicate diagnosis ID as an error yet
         if diagnosis_id in records.get(NODE_TYPES.DIAGNOSIS.value):
@@ -41,20 +41,20 @@ def parse_diagnoses(data, records, associations):
         try:
             diagnosis = Diagnosis(
                 id = diagnosis_uuid,
-                age_at_diagnosis = diagnosis_data.get('age_at_diagnosis', None),
-                anatomic_site = diagnosis_data.get('anatomic_site', None),
-                diagnosis_basis = diagnosis_data.get('diagnosis_basis', None),
-                diagnosis = diagnosis_data.get('diagnosis', None),
-                diagnosis_classification_system = diagnosis_data.get('diagnosis_classification_system', None),
-                diagnosis_comment = diagnosis_data.get('diagnosis_comment', None),
+                age_at_diagnosis = diagnosis_data.get('age_at_diagnosis'),
+                anatomic_site = diagnosis_data.get('anatomic_site'),
+                diagnosis_basis = diagnosis_data.get('diagnosis_basis'),
+                diagnosis = diagnosis_data.get('diagnosis'),
+                diagnosis_classification_system = diagnosis_data.get('diagnosis_classification_system'),
+                diagnosis_comment = diagnosis_data.get('diagnosis_comment'),
                 diagnosis_id = diagnosis_id,
-                disease_phase = diagnosis_data.get('disease_phase', None),
-                toronto_childhood_cancer_staging = diagnosis_data.get('toronto_childhood_cancer_staging', None),
-                tumor_classification= diagnosis_data.get('tumor_classification', None),
-                tumor_grade = diagnosis_data.get('tumor_grade', None),
-                tumor_stage_clinical_m = diagnosis_data.get('tumor_stage_clinical_m', None),
-                tumor_stage_clinical_n = diagnosis_data.get('tumor_stage_clinical_n', None),
-                tumor_stage_clinical_t = diagnosis_data.get('tumor_stage_clinical_t', None)
+                disease_phase = diagnosis_data.get('disease_phase'),
+                toronto_childhood_cancer_staging = diagnosis_data.get('toronto_childhood_cancer_staging'),
+                tumor_classification= diagnosis_data.get('tumor_classification'),
+                tumor_grade = diagnosis_data.get('tumor_grade'),
+                tumor_stage_clinical_m = diagnosis_data.get('tumor_stage_clinical_m'),
+                tumor_stage_clinical_n = diagnosis_data.get('tumor_stage_clinical_n'),
+                tumor_stage_clinical_t = diagnosis_data.get('tumor_stage_clinical_t')
             )
             records[NODE_TYPES.DIAGNOSIS.value][diagnosis_id] = diagnosis
         except TypeError as e:
@@ -73,10 +73,10 @@ def parse_participants(data, records, associations):
 
     # Save each Participant record as a Participant object
     for participant_data in all_participant_data:
-        participant_id = participant_data.get('participant_id', None)
+        participant_id = participant_data.get('participant_id')
 
         # Study ID read from the Participant record
-        participant_study_id = participant_data.get('study.study_id', None)
+        participant_study_id = participant_data.get('study.study_id')
 
         participant_uuid = make_uuid(
             NODE_TYPES.PARTICIPANT.value,
@@ -101,10 +101,10 @@ def parse_participants(data, records, associations):
         try:
             participant = Participant(
                 id = participant_uuid,
-                ethnicity = participant_data.get('ethnicity', None),
+                ethnicity = participant_data.get('ethnicity'),
                 participant_id = participant_id,
-                race = participant_data.get('race', None),
-                sex_at_birth = participant_data.get('sex_at_birth', None)
+                race = participant_data.get('race'),
+                sex_at_birth = participant_data.get('sex_at_birth')
             )
             records[NODE_TYPES.PARTICIPANT.value][participant_id] = participant
         except TypeError as e:
@@ -123,10 +123,10 @@ def parse_reference_files(data, records, associations):
 
     # Save each Reference File record as a Reference File object
     for reference_file_data in all_reference_file_data:
-        reference_file_id = reference_file_data['reference_file_id']
+        reference_file_id = reference_file_data.get('reference_file_id')
 
         # Study ID read from the Reference File record
-        reference_file_study_id = reference_file_data.get('study.study_id', None)
+        reference_file_study_id = reference_file_data.get('study.study_id')
 
         reference_file_uuid = make_uuid(
             NODE_TYPES.REFERENCE_FILE.value,
@@ -151,15 +151,15 @@ def parse_reference_files(data, records, associations):
         try:
             reference_file = ReferenceFile(
                 id = reference_file_uuid,
-                dcf_indexd_guid = reference_file_data.get('dcf_indexd_guid', None),
-                file_category = reference_file_data.get('file_category', None),
-                file_description = reference_file_data.get('file_description', None),
-                file_name = reference_file_data.get('file_name', None),
-                file_size = reference_file_data.get('file_size', None),
-                file_type = reference_file_data.get('file_type', None),
-                md5sum = reference_file_data.get('md5sum', None),
+                dcf_indexd_guid = reference_file_data.get('dcf_indexd_guid'),
+                file_category = reference_file_data.get('file_category'),
+                file_description = reference_file_data.get('file_description'),
+                file_name = reference_file_data.get('file_name'),
+                file_size = reference_file_data.get('file_size'),
+                file_type = reference_file_data.get('file_type'),
+                md5sum = reference_file_data.get('md5sum'),
                 reference_file_id = reference_file_id,
-                reference_file_url = reference_file_data.get('reference_file_url', None)
+                reference_file_url = reference_file_data.get('reference_file_url')
             )
             records[NODE_TYPES.REFERENCE_FILE.value][reference_file_id] = reference_file
         except TypeError as e:
@@ -176,11 +176,11 @@ def parse_studies(data, records, associations):
 
     # Save each Study record as a Study object
     for study_data in all_study_data:
-        study_id = study_data.get('study_id', None)
+        study_id = study_data.get('study_id')
 
         # There should only be one unique Study record
         if len(records.get(NODE_TYPES.STUDY.value)) > 0 and study_id not in records.get(NODE_TYPES.STUDY.value):
-            raise Exception(f'More than one unique {NODE_TYPES.STUDY.value} record found: {[study_json["study_id"] for study_json in all_study_data]}')
+            raise Exception(f'More than one unique {NODE_TYPES.STUDY.value} record found: {[study_json.get("study_id") for study_json in all_study_data]}')
 
         study_uuid = make_uuid(
             NODE_TYPES.STUDY.value,
@@ -191,15 +191,15 @@ def parse_studies(data, records, associations):
         try:
             study = Study(
                 id = study_uuid,
-                acl = study_data.get('acl', None),
-                consent = study_data.get('consent', None),
-                consent_number = study_data.get('consent_number', None),
-                external_url = study_data.get('external_url', None),
-                phs_accession = study_data.get('phs_accession', None),
-                study_acronym = study_data.get('study_acronym', None),
-                study_description = study_data.get('study_description', None),
+                acl = study_data.get('acl'),
+                consent = study_data.get('consent'),
+                consent_number = study_data.get('consent_number'),
+                external_url = study_data.get('external_url'),
+                phs_accession = study_data.get('phs_accession'),
+                study_acronym = study_data.get('study_acronym'),
+                study_description = study_data.get('study_description'),
                 study_id = study_id,
-                study_short_title = study_data.get('study_short_title', None),
+                study_short_title = study_data.get('study_short_title'),
             )
 
             records[NODE_TYPES.STUDY.value][study_id] = study
@@ -219,7 +219,7 @@ def parse_survivals(data, records, associations):
 
     # Save each Survival record as a Survival object
     for survival_data in all_survival_data:
-        participant_id = survival_data.get('participant.participant_id', None)
+        participant_id = survival_data.get('participant.participant_id')
         survival_id = survival_data.get('survival_id')
         survival_uuid = make_uuid(
             NODE_TYPES.SURVIVAL.value,
@@ -243,12 +243,12 @@ def parse_survivals(data, records, associations):
         try:
             survival = Survival(
                 id = survival_uuid,
-                age_at_event_free_survival_status = survival_data.get('age_at_event_free_survival_status', None),
-                age_at_last_known_survival_status = survival_data.get('age_at_last_known_survival_status', None),
-                event_free_survival_status = survival_data.get('event_free_survival_status', None),
-                first_event = survival_data.get('first_event', None),
-                last_known_survival_status = survival_data.get('last_known_survival_status', None),
-                survival_id = survival_data.get('survival_id', None)
+                age_at_event_free_survival_status = survival_data.get('age_at_event_free_survival_status'),
+                age_at_last_known_survival_status = survival_data.get('age_at_last_known_survival_status'),
+                event_free_survival_status = survival_data.get('event_free_survival_status'),
+                first_event = survival_data.get('first_event'),
+                last_known_survival_status = survival_data.get('last_known_survival_status'),
+                survival_id = survival_data.get('survival_id')
             )
             records[NODE_TYPES.SURVIVAL.value][survival_id] = survival
         except TypeError as e:
