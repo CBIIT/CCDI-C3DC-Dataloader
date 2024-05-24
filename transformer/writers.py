@@ -18,15 +18,16 @@ def write_diagnoses(records, associations):
 
         # Write each Diagnosis record to a TSV row
         for diagnosis_id, diagnosis in records.get(NODE_TYPES.DIAGNOSIS.value).items():
-            diagnosis_row = diagnosis.to_list()
+            row = diagnosis.to_list()
             participant_id = associations.get('diagnoses_to_participants').get(diagnosis_id)
-            participant = records.get(NODE_TYPES.PARTICIPANT.value).get(participant_id)
 
-            # Append foreign key to Participant record
-            row = [
-                *diagnosis_row,
-                participant.id,
-            ]
+            if participant_id is not None:
+                participant = records.get(NODE_TYPES.PARTICIPANT.value).get(participant_id)
+
+                if participant is not None:
+                    # Append foreign key to Participant record
+                    row.append(participant.id)
+
             tsv_writer.writerow(row)
 
         diagnoses_file.close()
@@ -43,15 +44,16 @@ def write_participants(records, associations):
 
         # Write each Participant record to a TSV row
         for participant_id, participant in records.get(NODE_TYPES.PARTICIPANT.value).items():
-            participant_row = participant.to_list()
+            row = participant.to_list()
             participant_study_id = associations.get('participants_to_studies').get(participant_id)
-            participant_study = records.get(NODE_TYPES.STUDY.value).get(participant_study_id)
 
-            # Append foreign key to Study record
-            row = [
-                *participant_row,
-                participant_study.id,
-            ]
+            if participant_study_id is not None:
+                participant_study = records.get(NODE_TYPES.STUDY.value).get(participant_study_id)
+
+                if participant_study is not None:
+                    # Append foreign key to Study record
+                    row.append(participant_study.id)
+
             tsv_writer.writerow(row)
 
         participants_file.close()
@@ -68,15 +70,16 @@ def write_reference_files(records, associations):
 
         # Write each Reference File record to a TSV row
         for reference_file_id, reference_file in records.get(NODE_TYPES.REFERENCE_FILE.value).items():
-            reference_file_row = reference_file.to_list()
+            row = reference_file.to_list()
             reference_file_study_id = associations.get('reference_files_to_studies').get(reference_file_id)
-            reference_file_study = records.get(NODE_TYPES.STUDY.value).get(reference_file_study_id)
 
-            # Append foreign key to Study record
-            row = [
-                *reference_file_row,
-                reference_file_study.id,
-            ]
+            if reference_file_study_id is not None:
+                reference_file_study = records.get(NODE_TYPES.STUDY.value).get(reference_file_study_id)
+
+                if reference_file_study is not None:
+                    # Append foreign key to Study record
+                    row.append(reference_file_study.id)
+
             tsv_writer.writerow(row)
 
         reference_files_file.close()
@@ -110,15 +113,16 @@ def write_survivals(records, associations):
 
         # Write each Survival record to a TSV row
         for survival_id, survival in records.get(NODE_TYPES.SURVIVAL.value).items():
-            survival_row = survival.to_list()
+            row = survival.to_list()
             participant_id = associations.get('survivals_to_participants').get(survival_id)
-            participant = records.get(NODE_TYPES.PARTICIPANT.value).get(participant_id)
 
-            # Append foreign key to Participant record
-            row = [
-                *survival_row,
-                participant.id,
-            ]
+            if participant_id is not None:
+                participant = records.get(NODE_TYPES.PARTICIPANT.value).get(participant_id)
+
+                if participant is not None:
+                    # Append foreign key to Participant record
+                    row.append(participant.id)
+
             tsv_writer.writerow(row)
 
         survivals_file.close()
