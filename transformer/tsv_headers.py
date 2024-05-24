@@ -49,9 +49,9 @@ STUDY_HEADERS = [
     'type',
     'id',
     'study_id',
-    'phs_accession',
+    'dbgap_accession',
     'acl',
-    'study_short_title',
+    'study_name',
     'study_acronym',
     'study_description',
     'consent',
@@ -68,5 +68,27 @@ SURVIVAL_HEADERS = [
     'first_event',
     'age_at_last_known_survival_status',
     'age_at_event_free_survival_status',
+    'participant.id',
+]
+
+TREATMENT_HEADERS = [
+    'type',
+    'id',
+    'treatment_id',
+    'age_at_treatment_start',
+    'age_at_treatment_end',
+    'treatment_type',
+    'treatment_agent',
+    'participant.id',
+]
+
+TREATMENT_RESPONSE_HEADERS = [
+    'type',
+    'id ',
+    'treatment_response_id',
+    'response',
+    'age_at_response',
+    'response_category',
+    'response_system',
     'participant.id',
 ]
