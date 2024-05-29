@@ -206,26 +206,26 @@ class Study(Node):
         'consent': 'Consent',
         'consent_number': 'Consent Number',
         'external_url': 'External URL',
-        'phs_accession': 'PHS Accession',
+        'dbgap_accession': 'dbGaP Accession',
         'study_acronym': 'Study Acronym',
         'study_description': 'Study Description',
         'study_id': 'Study ID',
-        'study_short_title': 'Study Short Title',
+        'study_name': 'Study Name',
     }
 
     def __init__(self, id, acl, consent, consent_number, external_url,
-            phs_accession, study_acronym, study_description, study_id,
-            study_short_title):
+            dbgap_accession, study_acronym, study_description, study_id,
+            study_name):
         self.id = id
         self.acl = acl
         self.consent = consent
         self.consent_number = consent_number
         self.external_url = external_url
-        self.phs_accession = phs_accession
+        self.dbgap_accession = dbgap_accession
         self.study_acronym = study_acronym
         self.study_description = study_description
         self.study_id = study_id
-        self.study_short_title = study_short_title
+        self.study_name = study_name
 
     def __str__(self):
         return ' | '.join([
@@ -234,11 +234,11 @@ class Study(Node):
             self._consent,
             self._consent_number,
             self._external_url,
-            self._phs_accession,
+            self._dbgap_accession,
             self._study_acronym,
             self._study_description,
             self._study_id,
-            self._study_short_title,
+            self._study_name,
         ])
 
     @property
@@ -287,13 +287,13 @@ class Study(Node):
         self._external_url = value
 
     @property
-    def phs_accession(self):
-        return self._phs_accession
+    def dbgap_accession(self):
+        return self._dbgap_accession
 
-    @phs_accession.setter
-    def phs_accession(self, value):
-        self._validate_attr('phs_accession', value)
-        self._phs_accession = value
+    @dbgap_accession.setter
+    def dbgap_accession(self, value):
+        self._validate_attr('dbgap_accession', value)
+        self._dbgap_accession = value
 
     @property
     def study_acronym(self):
@@ -323,13 +323,13 @@ class Study(Node):
         self._study_id = value
 
     @property
-    def study_short_title(self):
-        return self._study_short_title
+    def study_name(self):
+        return self._study_name
 
-    @study_short_title.setter
-    def study_short_title(self, value):
-        self._validate_attr('study_short_title', value)
-        self._study_short_title = value
+    @study_name.setter
+    def study_name(self, value):
+        self._validate_attr('study_name', value)
+        self._study_name = value
 
     def merge(self, other_study):
         # Make sure that they share identifiers
@@ -345,9 +345,9 @@ class Study(Node):
             'study',
             self._id,
             self._study_id,
-            self._phs_accession,
+            self._dbgap_accession,
             self._acl,
-            self._study_short_title,
+            self._study_name,
             self._study_acronym,
             self._study_description,
             self._consent,
