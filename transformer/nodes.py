@@ -824,3 +824,97 @@ class Survival(Node):
             self.age_at_last_known_survival_status,
             self.age_at_event_free_survival_status,
         ]
+
+class Treatment(Node):
+    _PROPER_NAMES = {
+        'id': 'ID',
+        'age_at_treatment_end': 'Age at Treatment End',
+        'age_at_treatment_start': 'Age at Treatment Start',
+        'treatment_agent': 'Treatment Agent',
+        'treatment_id': 'Treatment ID',
+        'treatment_type': 'Treatment Type',
+    }
+
+    def __init__(self, id, age_at_treatment_end, age_at_treatment_start,
+            treatment_agent, treatment_id, treatment_type):
+        self.id = id
+        self.age_at_treatment_end = age_at_treatment_end
+        self.age_at_treatment_start = age_at_treatment_start
+        self.treatment_agent = treatment_agent
+        self.treatment_id = treatment_id
+        self.treatment_type = treatment_type
+
+    def __str__(self):
+        return ' | '.join([
+            self.id,
+            self.treatment_id,
+            self.age_at_treatment_start,
+            self.age_at_treatment_end,
+            self.treatment_type,
+            self.treatment_agent
+        ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
+
+    @property
+    def age_at_treatment_end(self):
+        return self._age_at_treatment_end
+
+    @age_at_treatment_end.setter
+    def age_at_treatment_end(self, value):
+        self._validate_attr('age_at_treatment_end', value)
+        self._age_at_treatment_end = value
+
+    @property
+    def age_at_treatment_start(self):
+        return self._age_at_treatment_start
+
+    @age_at_treatment_start.setter
+    def age_at_treatment_start(self, value):
+        self._validate_attr('age_at_treatment_start', value)
+        self._age_at_treatment_start = value
+
+    @property
+    def treatment_agent(self):
+        return self._treatment_agent
+
+    @treatment_agent.setter
+    def treatment_agent(self, value):
+        self._validate_attr('treatment_agent', value)
+        self._treatment_agent = value
+
+    @property
+    def treatment_id(self):
+        return self._treatment_id
+
+    @treatment_id.setter
+    def treatment_id(self, value):
+        self._treatment_id('treatment_id', value)
+        self._treatment_id = value
+
+    @property
+    def treatment_type(self):
+        return self._treatment_type
+
+    @treatment_type.setter
+    def treatment_type(self, value):
+        self._validate_attr('treatment_type', value)
+        self._treatment_type = value
+
+    def to_list(self):
+        return [
+            'survival',
+            self.id,
+            self.treatment_id,
+            self.age_at_treatment_start,
+            self.age_at_treatment_end,
+            self.treatment_type,
+            self.treatment_agent
+        ]
