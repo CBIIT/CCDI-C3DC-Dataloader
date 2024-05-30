@@ -9,22 +9,22 @@ class TestStudyFactory():
             consent = 'DS-PEDCR',
             consent_number = 1,
             external_url = 'foo',
-            phs_accession = "['phs000467']",
+            dbgap_accession = "['phs000467']",
             study_acronym = 'TARGET_NBL',
             study_description = 'foo',
             study_id = 'phs000467.v22.p8',
-            study_short_title = 'TARGET NBL'):
+            study_name = 'TARGET NBL'):
         study = Study(
             id,
             acl,
             consent,
             consent_number,
             external_url,
-            phs_accession,
+            dbgap_accession,
             study_acronym,
             study_description,
             study_id,
-            study_short_title
+            study_name
         )
 
         return study
@@ -118,24 +118,24 @@ class TestStudyProps(unittest.TestCase):
             print(test_msg.format(value))
             self.study_factory.create_study(external_url=value)
 
-    # Study.phs_accession
-    def test_study_phs_accession(self):
-        test_msg = 'Testing Study.phs_accession being <{}>...'
+    # Study.dbgap_accession
+    def test_study_dbgap_accession(self):
+        test_msg = 'Testing Study.dbgap_accession being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'PHS Accession is missing'):
+        with self.assertRaisesRegex(TypeError, 'dbGaP Accession is missing'):
             value = None
             print(test_msg.format(value))
-            self.study_factory.create_study(phs_accession=value)
+            self.study_factory.create_study(dbgap_accession=value)
 
-        with self.assertRaisesRegex(TypeError, 'PHS Accession is missing'):
+        with self.assertRaisesRegex(TypeError, 'dbGaP Accession is missing'):
             value = ''
             print(test_msg.format(value))
-            self.study_factory.create_study(phs_accession=value)
+            self.study_factory.create_study(dbgap_accession=value)
 
-        with self.assertRaisesRegex(TypeError, "PHS Accession `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(TypeError, "dbGaP Accession `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
-            self.study_factory.create_study(phs_accession=value)
+            self.study_factory.create_study(dbgap_accession=value)
 
     # Study.study_acronym
     def test_study_study_acronym(self):
@@ -194,24 +194,24 @@ class TestStudyProps(unittest.TestCase):
             print(test_msg.format(value))
             self.study_factory.create_study(study_id=value)
 
-    # Study.study_short_title
-    def test_study_study_short_title(self):
-        test_msg = 'Testing Study.study_short_title being <{}>...'
+    # Study.study_name
+    def test_study_study_name(self):
+        test_msg = 'Testing Study.study_name being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'Study Short Title is missing'):
+        with self.assertRaisesRegex(TypeError, 'Study Name is missing'):
             value = None
             print(test_msg.format(value))
-            self.study_factory.create_study(study_short_title=value)
+            self.study_factory.create_study(study_name=value)
 
-        with self.assertRaisesRegex(TypeError, 'Study Short Title is missing'):
+        with self.assertRaisesRegex(TypeError, 'Study Name is missing'):
             value = ''
             print(test_msg.format(value))
-            self.study_factory.create_study(study_short_title=value)
+            self.study_factory.create_study(study_name=value)
 
-        with self.assertRaisesRegex(TypeError, "Study Short Title `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(TypeError, "Study Name `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
-            self.study_factory.create_study(study_short_title=value)
+            self.study_factory.create_study(study_name=value)
 
 if __name__ == '__main__':
     unittest.main()
