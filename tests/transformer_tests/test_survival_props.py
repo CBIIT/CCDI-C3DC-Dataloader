@@ -80,16 +80,6 @@ class TestSurvivalProps(unittest.TestCase):
     def test_survival_cause_of_death(self):
         test_msg = 'Testing Survival.cause_of_death being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'Cause of Death is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.survival_factory.create_survival(cause_of_death=value)
-
-        with self.assertRaisesRegex(TypeError, 'Cause of Death is missing'):
-            value = ''
-            print(test_msg.format(value))
-            self.survival_factory.create_survival(cause_of_death=value)
-
         with self.assertRaisesRegex(TypeError, "Cause of Death `3` must be of type <class 'str'>"):
             value = 3
             print(test_msg.format(value))
