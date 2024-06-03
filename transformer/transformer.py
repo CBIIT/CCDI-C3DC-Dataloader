@@ -5,10 +5,29 @@ import logging
 import os
 import sys
 import time
-from checkers import check_diagnoses_for_participants, check_participants_for_studies, check_reference_files_for_studies, check_survivals_for_participants
-from parsers import parse_diagnoses, parse_participants, parse_reference_files, parse_studies, parse_survivals
+from checkers import (
+    check_diagnoses_for_participants,
+    check_participants_for_studies,
+    check_reference_files_for_studies,
+    check_survivals_for_participants,
+    check_treatments_for_participants,
+    check_treatment_responses_for_participants,
+)
+from parsers import (
+    parse_diagnoses,
+    parse_participants,
+    parse_reference_files,
+    parse_studies,
+    parse_survivals,
+)
 from node_types import NODE_TYPES
-from writers import write_diagnoses, write_participants, write_reference_files, write_studies, write_survivals
+from writers import (
+    write_diagnoses,
+    write_participants,
+    write_reference_files,
+    write_studies,
+    write_survivals,
+)
 logger = logging.getLogger(__name__)
 
 def main():
@@ -24,6 +43,8 @@ def main():
         'reference_files',
         'studies',
         'survivals',
+        'treatments',
+        'treatment_responses',
     ]
     dir_paths = []
 
@@ -82,6 +103,8 @@ def processJsonData(data):
         'participants_to_studies': {}, # Map of participant_id to study_id
         'reference_files_to_studies': {}, # Map of reference_file_id to study_id
         'survivals_to_participants': {}, # Map of survival_id to participant_id
+        'treatments_to_participants': {}, # Map of treatment_id to participant_id
+        'treatment_responses_to_participants': {}, # Map of treatment_response_id to participant_id
     }
     node_funcs = {
         NODE_TYPES.STUDY.value: {
@@ -105,6 +128,16 @@ def processJsonData(data):
         },
         NODE_TYPES.REFERENCE_FILE.value: {
             'checker': check_reference_files_for_studies,
+            'parser': parse_reference_files,
+            'writer': write_reference_files,
+        },
+        NODE_TYPES.TREATMENT.value: {
+            'checker': check_treatments_for_participants,
+            'parser': parse_reference_files,
+            'writer': write_reference_files,
+        },
+        NODE_TYPES.TREATMENT_RESPONSE.value: {
+            'checker': check_treatment_responses_for_participants,
             'parser': parse_reference_files,
             'writer': write_reference_files,
         },

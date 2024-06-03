@@ -9,6 +9,8 @@ Properties:
     study: studies
     survival: survivals
     reference_file: reference_files
+    treatment: treatments
+    treatment_response: treatment_responses
 
   type_mapping:
     list: String
@@ -29,3 +31,5 @@ Properties:
     sample: id
     study: id
     survival: id
+    treatment: id
+    treatment_response: id
