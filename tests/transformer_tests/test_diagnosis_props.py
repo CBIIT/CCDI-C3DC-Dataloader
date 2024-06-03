@@ -6,8 +6,8 @@ class TestDiagnosisFactory():
             self,
             id = 'abc-123',
             age_at_diagnosis = 96,
-            anatomic_site = ['C74.9 : Adrenal gland, NOS'],
-            diagnosis_basis = ['Not Reported'],
+            anatomic_site = 'C74.9 : Adrenal gland, NOS',
+            diagnosis_basis = 'Not Reported',
             diagnosis = '9500/3 : Neuroblastoma, NOS',
             diagnosis_classification_system = 'ICD-O-3.2',
             diagnosis_comment = 'Neuroblastoma',
@@ -81,18 +81,13 @@ class TestDiagnosisProps(unittest.TestCase):
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(anatomic_site=value)
 
-        with self.assertRaisesRegex(TypeError, "Anatomic Site `` must be of type <class 'list'>"):
+        with self.assertRaisesRegex(TypeError, "Anatomic Site is missing"):
             value = ''
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(anatomic_site=value)
 
-        with self.assertRaisesRegex(TypeError, "Anatomic Site `Foo` must be of type <class 'list'>"):
+        with self.assertRaisesRegex(ValueError, "Anatomic Site `Foo` must be one of the specified values"):
             value = 'Foo'
-            print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(anatomic_site=value)
-
-        with self.assertRaisesRegex(ValueError, "Anatomic Site `\['Foo'\]` must be a subset of the specified values"):
-            value = ['Foo']
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(anatomic_site=value)
 
@@ -105,18 +100,13 @@ class TestDiagnosisProps(unittest.TestCase):
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)
 
-        with self.assertRaisesRegex(TypeError, "Diagnosis Basis `` must be of type <class 'list'>"):
+        with self.assertRaisesRegex(TypeError, "Diagnosis Basis is missing"):
             value = ''
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)
 
-        with self.assertRaisesRegex(TypeError, "Diagnosis Basis `Foo` must be of type <class 'list'>"):
+        with self.assertRaisesRegex(ValueError, "Diagnosis Basis `Foo` must be one of the specified values"):
             value = 'Foo'
-            print(test_msg.format(value))
-            self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)
-
-        with self.assertRaisesRegex(ValueError, "Diagnosis Basis `\['Foo'\]` must be a subset of the specified values"):
-            value = ['Foo']
             print(test_msg.format(value))
             self.diagnosis_factory.create_diagnosis(diagnosis_basis=value)
 
