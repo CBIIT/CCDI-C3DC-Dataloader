@@ -896,7 +896,7 @@ class Treatment(Node):
 
     @treatment_id.setter
     def treatment_id(self, value):
-        self._treatment_id('treatment_id', value)
+        self._validate_attr('treatment_id', value)
         self._treatment_id = value
 
     @property
