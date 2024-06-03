@@ -19,6 +19,8 @@ from parsers import (
     parse_reference_files,
     parse_studies,
     parse_survivals,
+    parse_treatments,
+    parse_treatment_responses,
 )
 from node_types import NODE_TYPES
 from writers import (
@@ -27,6 +29,8 @@ from writers import (
     write_reference_files,
     write_studies,
     write_survivals,
+    write_treatments,
+    write_treatment_responses,
 )
 logger = logging.getLogger(__name__)
 
@@ -133,13 +137,13 @@ def processJsonData(data):
         },
         NODE_TYPES.TREATMENT.value: {
             'checker': check_treatments_for_participants,
-            'parser': parse_reference_files,
-            'writer': write_reference_files,
+            'parser': parse_treatments,
+            'writer': write_treatments,
         },
         NODE_TYPES.TREATMENT_RESPONSE.value: {
             'checker': check_treatment_responses_for_participants,
-            'parser': parse_reference_files,
-            'writer': write_reference_files,
+            'parser': parse_treatment_responses,
+            'writer': write_treatment_responses,
         },
     }
 
