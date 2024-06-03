@@ -167,7 +167,7 @@ def write_treatment_responses(records, associations):
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
     study_acronym = study.study_acronym
 
-    with open(f'data/{study_acronym} treatment responses.tsv', 'w', encoding='utf-8', newline='') as treatment_responses_file:
+    with open(f'data/{study_acronym} treatment_responses.tsv', 'w', encoding='utf-8', newline='') as treatment_responses_file:
         tsv_writer = csv.writer(treatment_responses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(TREATMENT_RESPONSE_HEADERS)
 
