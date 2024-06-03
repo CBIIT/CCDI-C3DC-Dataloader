@@ -5,4 +5,5 @@ __all__ = [
     'test_study_props',
     'test_survival_props',
     'test_treatment_props',
+    'test_treatment_response_props',
 ]
