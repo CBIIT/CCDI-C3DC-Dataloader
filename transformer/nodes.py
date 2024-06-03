@@ -910,11 +910,105 @@ class Treatment(Node):
 
     def to_list(self):
         return [
-            'survival',
+            'treatment',
             self.id,
             self.treatment_id,
             self.age_at_treatment_start,
             self.age_at_treatment_end,
             self.treatment_type,
             self.treatment_agent
+        ]
+
+class TreatmentResponse(Node):
+    _PROPER_NAMES = {
+        'id': 'ID',
+        'age_at_response': 'Age at Response',
+        'response': 'Response',
+        'response_category': 'Response Category',
+        'response_system': 'Response System',
+        'treatment_response_id': 'Treatment Response ID',
+    }
+
+    def __init__(self, id, age_at_response, response, response_category,
+            response_system, treatment_response_id):
+        self.id = id
+        self.age_at_response = age_at_response
+        self.response = response
+        self.response_category = response_category
+        self.response_system = response_system
+        self.treatment_response_id = treatment_response_id
+
+    def __str__(self):
+        return ' | '.join([
+            self.id,
+            self.age_at_response,
+            self.response,
+            self.response_category,
+            self.response_system,
+            self.treatment_response_id
+        ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
+
+    @property
+    def age_at_response(self):
+        return self._age_at_response
+
+    @age_at_response.setter
+    def age_at_response(self, value):
+        self._validate_attr('age_at_response', value)
+        self._age_at_response = value
+
+    @property
+    def response(self):
+        return self._response
+
+    @response.setter
+    def response(self, value):
+        self._validate_attr('response', value)
+        self._response = value
+
+    @property
+    def response_category(self):
+        return self._response_category
+
+    @response_category.setter
+    def response_category(self, value):
+        self._validate_attr('response_category', value)
+        self._response_category = value
+
+    @property
+    def response_system(self):
+        return self._response_system
+
+    @response_system.setter
+    def response_system(self, value):
+        self._validate_attr('response_system', value)
+        self._response_system = value
+
+    @property
+    def treatment_response_id(self):
+        return self._treatment_response_id
+
+    @treatment_response_id.setter
+    def treatment_response_id(self, value):
+        self._validate_attr('treatment_response_id', value)
+        self._treatment_response_id = value
+
+    def to_list(self):
+        return [
+            'treatment_response',
+            self.id,
+            self.treatment_response_id,
+            self.age_at_response,
+            self.response,
+            self.response_category,
+            self.response_system
         ]
