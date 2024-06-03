@@ -68,6 +68,7 @@ SURVIVAL_HEADERS = [
     'first_event',
     'age_at_last_known_survival_status',
     'age_at_event_free_survival_status',
+    'cause_of_death',
     'participant.id',
 ]
 

@@ -722,6 +722,7 @@ class Survival(Node):
         'id': 'ID',
         'age_at_event_free_survival_status': 'Age at Event Free Survival Status',
         'age_at_last_known_survival_status': 'Age at Last Known Survival Status',
+        'cause_of_death': 'Cause of Death',
         'event_free_survival_status': 'Event Free Survival Status',
         'first_event': 'First Event',
         'last_known_survival_status': 'Last Known Survival Status',
@@ -729,11 +730,13 @@ class Survival(Node):
     }
 
     def __init__(self, id, age_at_event_free_survival_status,
-            age_at_last_known_survival_status, event_free_survival_status,
-            first_event, last_known_survival_status, survival_id):
+            age_at_last_known_survival_status, cause_of_death,
+            event_free_survival_status, first_event, last_known_survival_status,
+            survival_id):
         self.id = id
         self.age_at_event_free_survival_status = age_at_event_free_survival_status
         self.age_at_last_known_survival_status = age_at_last_known_survival_status
+        self.cause_of_death = cause_of_death
         self.event_free_survival_status = event_free_survival_status
         self.first_event = first_event
         self.last_known_survival_status = last_known_survival_status
@@ -744,6 +747,7 @@ class Survival(Node):
             self.id,
             self.age_at_event_free_survival_status,
             self.age_at_last_known_survival_status,
+            self.cause_of_death,
             self.event_free_survival_status,
             self.first_event,
             self.last_known_survival_status,
@@ -776,6 +780,15 @@ class Survival(Node):
     def age_at_last_known_survival_status(self, value):
         self._validate_attr('age_at_last_known_survival_status', value)
         self._age_at_last_known_survival_status = value
+
+    @property
+    def cause_of_death(self):
+        return self._cause_of_death
+
+    @cause_of_death.setter
+    def cause_of_death(self, value):
+        self._validate_attr('cause_of_death', value)
+        self._cause_of_death = value
 
     @property
     def event_free_survival_status(self):
@@ -823,6 +836,7 @@ class Survival(Node):
             self.first_event,
             self.age_at_last_known_survival_status,
             self.age_at_event_free_survival_status,
+            self.cause_of_death,
         ]
 
 class Treatment(Node):

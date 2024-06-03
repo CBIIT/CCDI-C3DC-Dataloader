@@ -253,6 +253,7 @@ def parse_survivals(data, records, associations):
                 id = survival_uuid,
                 age_at_event_free_survival_status = survival_data.get('age_at_event_free_survival_status'),
                 age_at_last_known_survival_status = survival_data.get('age_at_last_known_survival_status'),
+                cause_of_death = survival_data.get('cause_of_death'),
                 event_free_survival_status = survival_data.get('event_free_survival_status'),
                 first_event = survival_data.get('first_event'),
                 last_known_survival_status = survival_data.get('last_known_survival_status'),
