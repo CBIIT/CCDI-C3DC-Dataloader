@@ -7,6 +7,7 @@ class TestSurvivalFactory():
             id = 'abc-123',
             age_at_event_free_survival_status = 3429,
             age_at_last_known_survival_status = 3429,
+            cause_of_death = 'Due to other cause',
             event_free_survival_status = 'Censored',
             first_event = "Not Applicable",
             last_known_survival_status = 'Alive',
@@ -15,6 +16,7 @@ class TestSurvivalFactory():
             id,
             age_at_event_free_survival_status,
             age_at_last_known_survival_status,
+            cause_of_death,
             event_free_survival_status,
             first_event,
             last_known_survival_status,
@@ -73,6 +75,20 @@ class TestSurvivalProps(unittest.TestCase):
             value = 'Foo'
             print(test_msg.format(value))
             self.survival_factory.create_survival(age_at_last_known_survival_status=value)
+
+    # Survival.cause_of_death
+    def test_survival_cause_of_death(self):
+        test_msg = 'Testing Survival.cause_of_death being <{}>...'
+
+        with self.assertRaisesRegex(TypeError, "Cause of Death `3` must be of type <class 'str'>"):
+            value = 3
+            print(test_msg.format(value))
+            self.survival_factory.create_survival(cause_of_death=value)
+
+        with self.assertRaisesRegex(ValueError, 'Cause of Death `Foo` must be one of the specified values'):
+            value = 'Foo'
+            print(test_msg.format(value))
+            self.survival_factory.create_survival(cause_of_death=value)
 
     # Survival.event_free_survival_status
     def test_survival_event_free_survival_status(self):

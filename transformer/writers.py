@@ -3,7 +3,15 @@
 import csv
 import logging
 from node_types import NODE_TYPES
-from tsv_headers import DIAGNOSIS_HEADERS, PARTICIPANT_HEADERS, REFERENCE_FILE_HEADERS, STUDY_HEADERS, SURVIVAL_HEADERS
+from tsv_headers import (
+    DIAGNOSIS_HEADERS,
+    PARTICIPANT_HEADERS,
+    REFERENCE_FILE_HEADERS,
+    STUDY_HEADERS,
+    SURVIVAL_HEADERS,
+    TREATMENT_HEADERS,
+    TREATMENT_RESPONSE_HEADERS,
+)
 logger = logging.getLogger(__name__)
 
 # Save Diagnosis records to a TSV file
@@ -126,3 +134,55 @@ def write_survivals(records, associations):
             tsv_writer.writerow(row)
 
         survivals_file.close()
+
+# Save Treatment records to a TSV file
+def write_treatments(records, associations):
+    # Obtain single study
+    study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
+    study_acronym = study.study_acronym
+
+    with open(f'data/{study_acronym} treatments.tsv', 'w', encoding='utf-8', newline='') as treatments_file:
+        tsv_writer = csv.writer(treatments_file, delimiter='\t', dialect='unix')
+        tsv_writer.writerow(TREATMENT_HEADERS)
+
+        # Write each Treatment record to a TSV row
+        for treatment_id, treatment in records.get(NODE_TYPES.TREATMENT.value).items():
+            row = treatment.to_list()
+            participant_id = associations.get('treatments_to_participants').get(treatment_id)
+
+            if participant_id is not None:
+                participant = records.get(NODE_TYPES.PARTICIPANT.value).get(participant_id)
+
+                if participant is not None:
+                    # Append foreign key to Participant record
+                    row.append(participant.id)
+
+            tsv_writer.writerow(row)
+
+        treatments_file.close()
+
+# Save Treatment Response records to a TSV file
+def write_treatment_responses(records, associations):
+    # Obtain single study
+    study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
+    study_acronym = study.study_acronym
+
+    with open(f'data/{study_acronym} treatment_responses.tsv', 'w', encoding='utf-8', newline='') as treatment_responses_file:
+        tsv_writer = csv.writer(treatment_responses_file, delimiter='\t', dialect='unix')
+        tsv_writer.writerow(TREATMENT_RESPONSE_HEADERS)
+
+        # Write each Treatment Response record to a TSV row
+        for treatment_response_id, treatment_response in records.get(NODE_TYPES.TREATMENT_RESPONSE.value).items():
+            row = treatment_response.to_list()
+            participant_id = associations.get('treatment_responses_to_participants').get(treatment_response_id)
+
+            if participant_id is not None:
+                participant = records.get(NODE_TYPES.PARTICIPANT.value).get(participant_id)
+
+                if participant is not None:
+                    # Append foreign key to Participant record
+                    row.append(participant.id)
+
+            tsv_writer.writerow(row)
+
+        treatment_responses_file.close()

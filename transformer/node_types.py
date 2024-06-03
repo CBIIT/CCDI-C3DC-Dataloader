@@ -8,3 +8,5 @@ class NODE_TYPES(Enum):
     REFERENCE_FILE = "Reference File"
     STUDY = "Study"
     SURVIVAL = "Survival"
+    TREATMENT = "Treatment"
+    TREATMENT_RESPONSE = "Treatment Response"

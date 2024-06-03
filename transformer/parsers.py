@@ -3,7 +3,15 @@
 import logging
 from make_uuid import make_uuid
 from node_types import NODE_TYPES
-from nodes import Diagnosis, Participant, ReferenceFile, Study, Survival
+from nodes import (
+    Diagnosis,
+    Participant,
+    ReferenceFile,
+    Study,
+    Survival,
+    Treatment,
+    TreatmentResponse,
+)
 logger = logging.getLogger(__name__)
 
 # Reads Diagnosis records from JSON and saves them to a dict
@@ -195,11 +203,11 @@ def parse_studies(data, records, associations):
                 consent = study_data.get('consent'),
                 consent_number = study_data.get('consent_number'),
                 external_url = study_data.get('external_url'),
-                phs_accession = study_data.get('phs_accession'),
+                dbgap_accession = study_data.get('dbgap_accession'),
                 study_acronym = study_data.get('study_acronym'),
                 study_description = study_data.get('study_description'),
                 study_id = study_id,
-                study_short_title = study_data.get('study_short_title'),
+                study_name = study_data.get('study_name'),
             )
 
             records[NODE_TYPES.STUDY.value][study_id] = study
@@ -245,6 +253,7 @@ def parse_survivals(data, records, associations):
                 id = survival_uuid,
                 age_at_event_free_survival_status = survival_data.get('age_at_event_free_survival_status'),
                 age_at_last_known_survival_status = survival_data.get('age_at_last_known_survival_status'),
+                cause_of_death = survival_data.get('cause_of_death'),
                 event_free_survival_status = survival_data.get('event_free_survival_status'),
                 first_event = survival_data.get('first_event'),
                 last_known_survival_status = survival_data.get('last_known_survival_status'),
@@ -255,3 +264,97 @@ def parse_survivals(data, records, associations):
             logger.error('Wrong data type for Survival %s: %s', survival_id, e)
         except ValueError as e:
             logger.error('Invalid value for Survival %s: %s', survival_id, e)
+
+# Reads Treatment records from JSON and saves them to a dict
+def parse_treatments(data, records, associations):
+    all_treatment_data = data.get('treatments', [])
+    study_id = list(records.get(NODE_TYPES.STUDY.value).keys())[0]
+
+    if len(all_treatment_data) == 0:
+        logger.info(f'No {NODE_TYPES.TREATMENT.value} records to parse. Skipping...\n')
+        return
+
+    # Save each Treatment record as a Treatment object
+    for treatment_data in all_treatment_data:
+        treatment_id = treatment_data.get('treatment_id')
+        treatment_uuid = make_uuid(
+            NODE_TYPES.TREATMENT.value,
+            study_id,
+            treatment_id
+        )
+        participant_id = treatment_data.get('participant.participant_id')
+
+        # Don't consider duplicate treatment ID as an error yet
+        if treatment_id in records.get(NODE_TYPES.TREATMENT.value):
+            logger.warning(f'Treatment {treatment_id} exists!')
+            logger.warning(f'Skipping Treatment {treatment_id}...')
+
+        # Map treatment ID to participant ID
+        if participant_id is None:
+            logger.warning(f'Treatment {treatment_id} does not have a Participant ID!')
+        elif participant_id not in records.get(NODE_TYPES.PARTICIPANT.value).keys():
+            raise ValueError(f'Treatment {treatment_id} references nonexistent Participant {participant_id}!')
+        else:
+            associations['treatments_to_participants'][treatment_id] = participant_id
+
+        try:
+            treatment = Treatment(
+                id = treatment_uuid,
+                age_at_treatment_end = treatment_data.get('age_at_treatment_end'),
+                age_at_treatment_start = treatment_data.get('age_at_treatment_start'),
+                treatment_agent = treatment_data.get('treatment_agent'),
+                treatment_id = treatment_data.get('treatment_id'),
+                treatment_type = treatment_data.get('treatment_type')
+            )
+            records[NODE_TYPES.TREATMENT.value][treatment_id] = treatment
+        except TypeError as e:
+            logger.error('Wrong data type for Treatment %s: %s', treatment_id, e)
+        except ValueError as e:
+            logger.error('Invalid value for Treatment %s: %s', treatment_id, e)
+
+# Reads TreatmentResponse records from JSON and saves them to a dict
+def parse_treatment_responses(data, records, associations):
+    all_treatment_response_data = data.get('treatment_responses', [])
+    study_id = list(records.get(NODE_TYPES.STUDY.value).keys())[0]
+
+    if len(all_treatment_response_data) == 0:
+        logger.info(f'No {NODE_TYPES.TREATMENT_RESPONSE.value} records to parse. Skipping...\n')
+        return
+
+    # Save each TreatmentResponse record as a TreatmentResponse object
+    for treatment_response_data in all_treatment_response_data:
+        treatment_response_id = treatment_response_data.get('treatment_response_id')
+        treatment_response_uuid = make_uuid(
+            NODE_TYPES.TREATMENT_RESPONSE.value,
+            study_id,
+            treatment_response_id
+        )
+        participant_id = treatment_response_data.get('participant.participant_id')
+
+        # Don't consider duplicate treatment response ID as an error yet
+        if treatment_response_id in records.get(NODE_TYPES.TREATMENT_RESPONSE.value):
+            logger.warning(f'Treatment Response {treatment_response_id} exists!')
+            logger.warning(f'Skipping Treatment Response {treatment_response_id}...')
+
+        # Map treatment response ID to participant ID
+        if participant_id is None:
+            logger.warning(f'Treatment Response {treatment_response_id} does not have a Participant ID!')
+        elif participant_id not in records.get(NODE_TYPES.PARTICIPANT.value).keys():
+            raise ValueError(f'Treatment Response {treatment_response_id} references nonexistent Participant {participant_id}!')
+        else:
+            associations['treatment_responses_to_participants'][treatment_response_id] = participant_id
+
+        try:
+            treatment_response = TreatmentResponse(
+                id = treatment_response_uuid,
+                age_at_response = treatment_response_data.get('age_at_response'),
+                response = treatment_response_data.get('response'),
+                response_category = treatment_response_data.get('response_category'),
+                response_system = treatment_response_data.get('response_system'),
+                treatment_response_id = treatment_response_data.get('treatment_response_id')
+            )
+            records[NODE_TYPES.TREATMENT_RESPONSE.value][treatment_response_id] = treatment_response
+        except TypeError as e:
+            logger.error('Wrong data type for Treatment Response %s: %s', treatment_response_id, e)
+        except ValueError as e:
+            logger.error('Invalid value for Treatment Response %s: %s', treatment_response_id, e)

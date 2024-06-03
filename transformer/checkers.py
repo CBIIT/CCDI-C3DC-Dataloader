@@ -67,3 +67,35 @@ def check_survivals_for_participants(records, associations):
     # Remove bad Survival records
     for survival_id in survival_ids_to_remove:
         del records[NODE_TYPES.SURVIVAL.value][survival_id]
+
+# Each Treatment record should reference a Participant record
+def check_treatments_for_participants(records, associations):
+    # Keep track of Treatment records to remove
+    treatment_ids_to_remove = []
+
+    # Find Treatment records that lack a reference to a Participant record
+    for treatment_id in records.get(NODE_TYPES.TREATMENT.value).keys():
+        if treatment_id not in associations['treatments_to_participants'].keys():
+            logger.warning(f'Treatment {treatment_id} does not have a Participant!')
+            logger.warning(f'Skipping Treatment {treatment_id}...')
+            treatment_ids_to_remove.append(treatment_id)
+
+    # Remove bad Treatment records
+    for treatment_id in treatment_ids_to_remove:
+        del records[NODE_TYPES.TREATMENT.value][treatment_id]
+
+# Each TreatmentResponse record should reference a Participant record
+def check_treatment_responses_for_participants(records, associations):
+    # Keep track of TreatmentResponse records to remove
+    treatment_response_ids_to_remove = []
+
+    # Find TreatmentResponse records that lack a reference to a Participant record
+    for treatment_response_id in records.get(NODE_TYPES.TREATMENT_RESPONSE.value).keys():
+        if treatment_response_id not in associations['treatment_responses_to_participants'].keys():
+            logger.warning(f'Treatment Response {treatment_response_id} does not have a Participant!')
+            logger.warning(f'Skipping Treatment Response {treatment_response_id}...')
+            treatment_response_ids_to_remove.append(treatment_response_id)
+
+    # Remove bad TreatmentResponse records
+    for treatment_response_id in treatment_response_ids_to_remove:
+        del records[NODE_TYPES.TREATMENT_RESPONSE.value][treatment_response_id]

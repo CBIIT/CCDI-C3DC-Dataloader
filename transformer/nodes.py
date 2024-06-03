@@ -206,26 +206,26 @@ class Study(Node):
         'consent': 'Consent',
         'consent_number': 'Consent Number',
         'external_url': 'External URL',
-        'phs_accession': 'PHS Accession',
+        'dbgap_accession': 'dbGaP Accession',
         'study_acronym': 'Study Acronym',
         'study_description': 'Study Description',
         'study_id': 'Study ID',
-        'study_short_title': 'Study Short Title',
+        'study_name': 'Study Name',
     }
 
     def __init__(self, id, acl, consent, consent_number, external_url,
-            phs_accession, study_acronym, study_description, study_id,
-            study_short_title):
+            dbgap_accession, study_acronym, study_description, study_id,
+            study_name):
         self.id = id
         self.acl = acl
         self.consent = consent
         self.consent_number = consent_number
         self.external_url = external_url
-        self.phs_accession = phs_accession
+        self.dbgap_accession = dbgap_accession
         self.study_acronym = study_acronym
         self.study_description = study_description
         self.study_id = study_id
-        self.study_short_title = study_short_title
+        self.study_name = study_name
 
     def __str__(self):
         return ' | '.join([
@@ -234,11 +234,11 @@ class Study(Node):
             self._consent,
             self._consent_number,
             self._external_url,
-            self._phs_accession,
+            self._dbgap_accession,
             self._study_acronym,
             self._study_description,
             self._study_id,
-            self._study_short_title,
+            self._study_name,
         ])
 
     @property
@@ -287,13 +287,13 @@ class Study(Node):
         self._external_url = value
 
     @property
-    def phs_accession(self):
-        return self._phs_accession
+    def dbgap_accession(self):
+        return self._dbgap_accession
 
-    @phs_accession.setter
-    def phs_accession(self, value):
-        self._validate_attr('phs_accession', value)
-        self._phs_accession = value
+    @dbgap_accession.setter
+    def dbgap_accession(self, value):
+        self._validate_attr('dbgap_accession', value)
+        self._dbgap_accession = value
 
     @property
     def study_acronym(self):
@@ -323,13 +323,13 @@ class Study(Node):
         self._study_id = value
 
     @property
-    def study_short_title(self):
-        return self._study_short_title
+    def study_name(self):
+        return self._study_name
 
-    @study_short_title.setter
-    def study_short_title(self, value):
-        self._validate_attr('study_short_title', value)
-        self._study_short_title = value
+    @study_name.setter
+    def study_name(self, value):
+        self._validate_attr('study_name', value)
+        self._study_name = value
 
     def merge(self, other_study):
         # Make sure that they share identifiers
@@ -345,9 +345,9 @@ class Study(Node):
             'study',
             self._id,
             self._study_id,
-            self._phs_accession,
+            self._dbgap_accession,
             self._acl,
-            self._study_short_title,
+            self._study_name,
             self._study_acronym,
             self._study_description,
             self._consent,
@@ -722,6 +722,7 @@ class Survival(Node):
         'id': 'ID',
         'age_at_event_free_survival_status': 'Age at Event Free Survival Status',
         'age_at_last_known_survival_status': 'Age at Last Known Survival Status',
+        'cause_of_death': 'Cause of Death',
         'event_free_survival_status': 'Event Free Survival Status',
         'first_event': 'First Event',
         'last_known_survival_status': 'Last Known Survival Status',
@@ -729,11 +730,13 @@ class Survival(Node):
     }
 
     def __init__(self, id, age_at_event_free_survival_status,
-            age_at_last_known_survival_status, event_free_survival_status,
-            first_event, last_known_survival_status, survival_id):
+            age_at_last_known_survival_status, cause_of_death,
+            event_free_survival_status, first_event, last_known_survival_status,
+            survival_id):
         self.id = id
         self.age_at_event_free_survival_status = age_at_event_free_survival_status
         self.age_at_last_known_survival_status = age_at_last_known_survival_status
+        self.cause_of_death = cause_of_death
         self.event_free_survival_status = event_free_survival_status
         self.first_event = first_event
         self.last_known_survival_status = last_known_survival_status
@@ -744,6 +747,7 @@ class Survival(Node):
             self.id,
             self.age_at_event_free_survival_status,
             self.age_at_last_known_survival_status,
+            self.cause_of_death,
             self.event_free_survival_status,
             self.first_event,
             self.last_known_survival_status,
@@ -776,6 +780,15 @@ class Survival(Node):
     def age_at_last_known_survival_status(self, value):
         self._validate_attr('age_at_last_known_survival_status', value)
         self._age_at_last_known_survival_status = value
+
+    @property
+    def cause_of_death(self):
+        return self._cause_of_death
+
+    @cause_of_death.setter
+    def cause_of_death(self, value):
+        self._validate_attr('cause_of_death', value)
+        self._cause_of_death = value
 
     @property
     def event_free_survival_status(self):
@@ -823,4 +836,193 @@ class Survival(Node):
             self.first_event,
             self.age_at_last_known_survival_status,
             self.age_at_event_free_survival_status,
+            self.cause_of_death,
+        ]
+
+class Treatment(Node):
+    _PROPER_NAMES = {
+        'id': 'ID',
+        'age_at_treatment_end': 'Age at Treatment End',
+        'age_at_treatment_start': 'Age at Treatment Start',
+        'treatment_agent': 'Treatment Agent',
+        'treatment_id': 'Treatment ID',
+        'treatment_type': 'Treatment Type',
+    }
+
+    def __init__(self, id, age_at_treatment_end, age_at_treatment_start,
+            treatment_agent, treatment_id, treatment_type):
+        self.id = id
+        self.age_at_treatment_end = age_at_treatment_end
+        self.age_at_treatment_start = age_at_treatment_start
+        self.treatment_agent = treatment_agent
+        self.treatment_id = treatment_id
+        self.treatment_type = treatment_type
+
+    def __str__(self):
+        return ' | '.join([
+            self.id,
+            self.treatment_id,
+            self.age_at_treatment_start,
+            self.age_at_treatment_end,
+            self.treatment_type,
+            self.treatment_agent
+        ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
+
+    @property
+    def age_at_treatment_end(self):
+        return self._age_at_treatment_end
+
+    @age_at_treatment_end.setter
+    def age_at_treatment_end(self, value):
+        self._validate_attr('age_at_treatment_end', value)
+        self._age_at_treatment_end = value
+
+    @property
+    def age_at_treatment_start(self):
+        return self._age_at_treatment_start
+
+    @age_at_treatment_start.setter
+    def age_at_treatment_start(self, value):
+        self._validate_attr('age_at_treatment_start', value)
+        self._age_at_treatment_start = value
+
+    @property
+    def treatment_agent(self):
+        return self._treatment_agent
+
+    @treatment_agent.setter
+    def treatment_agent(self, value):
+        self._validate_attr('treatment_agent', value)
+        self._treatment_agent = value
+
+    @property
+    def treatment_id(self):
+        return self._treatment_id
+
+    @treatment_id.setter
+    def treatment_id(self, value):
+        self._validate_attr('treatment_id', value)
+        self._treatment_id = value
+
+    @property
+    def treatment_type(self):
+        return self._treatment_type
+
+    @treatment_type.setter
+    def treatment_type(self, value):
+        self._validate_attr('treatment_type', value)
+        self._treatment_type = value
+
+    def to_list(self):
+        return [
+            'treatment',
+            self.id,
+            self.treatment_id,
+            self.age_at_treatment_start,
+            self.age_at_treatment_end,
+            self.treatment_type,
+            self.treatment_agent
+        ]
+
+class TreatmentResponse(Node):
+    _PROPER_NAMES = {
+        'id': 'ID',
+        'age_at_response': 'Age at Response',
+        'response': 'Response',
+        'response_category': 'Response Category',
+        'response_system': 'Response System',
+        'treatment_response_id': 'Treatment Response ID',
+    }
+
+    def __init__(self, id, age_at_response, response, response_category,
+            response_system, treatment_response_id):
+        self.id = id
+        self.age_at_response = age_at_response
+        self.response = response
+        self.response_category = response_category
+        self.response_system = response_system
+        self.treatment_response_id = treatment_response_id
+
+    def __str__(self):
+        return ' | '.join([
+            self.id,
+            self.age_at_response,
+            self.response,
+            self.response_category,
+            self.response_system,
+            self.treatment_response_id
+        ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
+
+    @property
+    def age_at_response(self):
+        return self._age_at_response
+
+    @age_at_response.setter
+    def age_at_response(self, value):
+        self._validate_attr('age_at_response', value)
+        self._age_at_response = value
+
+    @property
+    def response(self):
+        return self._response
+
+    @response.setter
+    def response(self, value):
+        self._validate_attr('response', value)
+        self._response = value
+
+    @property
+    def response_category(self):
+        return self._response_category
+
+    @response_category.setter
+    def response_category(self, value):
+        self._validate_attr('response_category', value)
+        self._response_category = value
+
+    @property
+    def response_system(self):
+        return self._response_system
+
+    @response_system.setter
+    def response_system(self, value):
+        self._validate_attr('response_system', value)
+        self._response_system = value
+
+    @property
+    def treatment_response_id(self):
+        return self._treatment_response_id
+
+    @treatment_response_id.setter
+    def treatment_response_id(self, value):
+        self._validate_attr('treatment_response_id', value)
+        self._treatment_response_id = value
+
+    def to_list(self):
+        return [
+            'treatment_response',
+            self.id,
+            self.treatment_response_id,
+            self.response,
+            self.age_at_response,
+            self.response_category,
+            self.response_system
         ]
