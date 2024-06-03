@@ -1007,8 +1007,8 @@ class TreatmentResponse(Node):
             'treatment_response',
             self.id,
             self.treatment_response_id,
-            self.age_at_response,
             self.response,
+            self.age_at_response,
             self.response_category,
             self.response_system
         ]
