@@ -410,3 +410,323 @@ Indices:
           diagnosis_classification_system: d.diagnosis_classification_system,
           disease_phase: d.disease_phase
         }) AS diagnoses;
+
+  - index_name: treatments
+    type: neo4j
+    mapping:
+      # Treatment fields
+      treatment_pk: # Primary key
+        type: keyword
+      age_at_treatment_end:
+        type: integer
+      age_at_treatment_start:
+        type: integer
+      treatment_agent:
+        type: keyword
+      treatment_id:
+        type: keyword
+      treatment_type:
+        type: keyword
+      # Participant fields
+      participant_pk:
+        type: keyword
+      ethnicity:
+        type: keyword
+      ethnicity_str:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      race_str:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      # Diagnosis records
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_comment:
+            type: keyword
+          diagnosis_id:
+            type: keyword
+          disease_phase:
+            type: keyword
+          toronto_childhood_cancer_staging:
+            type: keyword
+          tumor_classification:
+            type: keyword
+          tumor_grade:
+            type: keyword
+          tumor_stage_clinical_m:
+            type: keyword
+          tumor_stage_clinical_n:
+            type: keyword
+          tumor_stage_clinical_t:
+            type: keyword
+      # Survival records
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+      # Treatment Response records
+      treatment_responses:
+        type: nested
+        properties:
+          age_at_response:
+            type: integer
+          response:
+            type: keyword
+          response_category:
+            type: keyword
+          response_system:
+            type: keyword
+          treatment_response_id:
+            type: keyword
+    cypher_query: >
+      MATCH (t:treatment)-[:of_treatment]->(p:participant),
+        (stu:study)<-[:of_participant]-(p)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
+      RETURN
+        // Treatment fields
+        t.id AS treatment_pk,
+        t.age_at_treatment_end AS age_at_treatment_end,
+        t.age_at_treatment_start AS age_at_treatment_start,
+        t.treatment_agent AS treatment_agent,
+        t.treatment_id AS treatment_id,
+        t.treatment_type AS treatment_type,
+
+        // Participant fields
+        p.id AS participant_pk,
+        apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.ethnicity AS ethnicity_str,
+        p.participant_id AS participant_id,
+        apoc.text.split(p.race, ';') AS race,
+        p.race AS race_str,
+        p.sex_at_birth AS sex_at_birth,
+
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_id AS study_id,
+        stu.study_name AS study_short_name,
+
+        // Diagnosis records
+        COLLECT(DISTINCT {
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis: d.diagnosis,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_comment: d.diagnosis_comment,
+          diagnosis_id: d.diagnosis_id,
+          disease_phase: d.disease_phase,
+          toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
+          tumor_classification: d.tumor_classification,
+          tumor_grade: d.tumor_grade,
+          tumor_stage_clinical_m: d.tumor_stage_clinical_m,
+          tumor_stage_clinical_n: d.tumor_stage_clinical_n,
+          tumor_stage_clinical_t: d.tumor_stage_clinical_t
+        }) AS diagnoses,
+
+        // Survival records
+        COLLECT(DISTINCT {
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals,
+
+        // Treatment Response records
+        COLLECT(DISTINCT {
+          age_at_response: tresp.age_at_response,
+          response: tresp.response,
+          response_category: tresp.response_category,
+          response_system: tresp.response_system,
+          treatment_response_id: tresp.treatment_response_id
+        }) AS treatment_responses;
+
+  - index_name: treatment_responses
+    type: neo4j
+    mapping:
+      # Treatment Response fields
+      treatment_response_pk: # Primary key
+        type: keyword
+      age_at_response:
+        type: integer
+      response:
+        type: keyword
+      response_category:
+        type: keyword
+      response_system:
+        type: keyword
+      treatment_response_id:
+        type: keyword
+      # Participant fields
+      participant_pk:
+        type: keyword
+      ethnicity:
+        type: keyword
+      ethnicity_str:
+        type: keyword
+      participant_id:
+        type: keyword
+      race:
+        type: keyword
+      race_str:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_acronym:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      # Diagnosis records
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_comment:
+            type: keyword
+          diagnosis_id:
+            type: keyword
+          disease_phase:
+            type: keyword
+          toronto_childhood_cancer_staging:
+            type: keyword
+          tumor_classification:
+            type: keyword
+          tumor_grade:
+            type: keyword
+          tumor_stage_clinical_m:
+            type: keyword
+          tumor_stage_clinical_n:
+            type: keyword
+          tumor_stage_clinical_t:
+            type: keyword
+      # Survival records
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+      # Treatment records
+      treatments:
+        type: nested
+        properties:
+          age_at_treatment_end:
+            type: integer
+          age_at_treatment_start:
+            type: integer
+          treatment_agent:
+            type: keyword
+          treatment_id:
+            type: keyword
+          treatment_type:
+            type: keyword
+    cypher_query: >
+      MATCH (tresp:treatment_response)-[:of_treatment_response]->(p:participant),
+        (stu:study)<-[:of_participant]-(p)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
+      RETURN
+        // Treatment Response fields
+        tresp.id AS treatment_response_pk,
+        tresp.age_at_response AS age_at_response,
+        tresp.response AS response,
+        tresp.response_category AS response_category,
+        tresp.response_system AS response_system,
+        tresp.treatment_response_id AS treatment_response_id,
+
+        // Participant fields
+        p.id AS participant_pk,
+        apoc.text.split(p.ethnicity, ';') AS ethnicity,
+        p.ethnicity AS ethnicity_str,
+        p.participant_id AS participant_id,
+        apoc.text.split(p.race, ';') AS race,
+        p.race AS race_str,
+        p.sex_at_birth AS sex_at_birth,
+
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_acronym AS study_acronym,
+        stu.study_id AS study_id,
+        stu.study_name AS study_short_name,
+
+        // Diagnosis records
+        COLLECT(DISTINCT {
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis: d.diagnosis,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_comment: d.diagnosis_comment,
+          diagnosis_id: apoc.text.split(d.diagnosis_id, '::')[0],
+          disease_phase: d.disease_phase,
+          toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
+          tumor_classification: d.tumor_classification,
+          tumor_grade: d.tumor_grade,
+          tumor_stage_clinical_m: d.tumor_stage_clinical_m,
+          tumor_stage_clinical_n: d.tumor_stage_clinical_n,
+          tumor_stage_clinical_t: d.tumor_stage_clinical_t
+        }) AS diagnoses,
+
+        // Survival records
+        COLLECT(DISTINCT {
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals,
+
+        // Treatment records
+        COLLECT(DISTINCT {
+          age_at_treament_end: t.age_at_treatment_end,
+          age_at_treatment_start: t.age_at_treatment_start,
+          treatment_agent: t.treatment_agent,
+          treatment_id: t.treatment_id,
+          treatment_type: t.treatment_type
+        }) AS treatments;
