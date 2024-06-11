@@ -262,6 +262,34 @@ Indices:
             type: keyword
           last_known_survival_status:
             type: keyword
+      # Treatment records
+      treatments:
+        type: nested
+        properties:
+          age_at_treatment_end:
+            type: integer
+          age_at_treatment_start:
+            type: integer
+          treatment_agent:
+            type: keyword
+          treatment_id:
+            type: keyword
+          treatment_type:
+            type: keyword
+      # Treatment Response records
+      treatment_responses:
+        type: nested
+        properties:
+          age_at_response:
+            type: integer
+          response:
+            type: keyword
+          response_category:
+            type: keyword
+          response_system:
+            type: keyword
+          treatment_response_id:
+            type: keyword
     # Make sure Neo4j has APOC plugin installed
     cypher_query: >
       MATCH (p:participant)-[:of_participant]->(stu:study)
