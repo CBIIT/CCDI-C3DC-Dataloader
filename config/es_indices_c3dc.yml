@@ -43,9 +43,9 @@ Indices:
       diagnosis_pk: # Primary key
         type: keyword
       age_at_diagnosis:
-        type: keyword
-      age_at_diagnosis_sort:
         type: integer
+      age_at_diagnosis_str:
+        type: keyword
       anatomic_site:
         type: keyword
       diagnosis_basis:
@@ -155,12 +155,12 @@ Indices:
       RETURN
         // Diagnosis fields
         d.id AS diagnosis_pk,
+        d.age_at_diagnosis AS age_at_diagnosis,
         (CASE d.age_at_diagnosis
           WHEN -999 THEN "Not Reported"
           ELSE d.age_at_diagnosis
           END
-        ) AS age_at_diagnosis,
-        d.age_at_diagnosis AS age_at_diagnosis_sort,
+        ) AS age_at_diagnosis_str,
         d.anatomic_site AS anatomic_site,
         d.diagnosis_basis AS diagnosis_basis,
         d.diagnosis AS diagnosis,
@@ -239,7 +239,7 @@ Indices:
         type: nested
         properties:
           age_at_diagnosis:
-            type: keyword
+            type: integer
           anatomic_site:
             type: keyword
           diagnosis_basis:
@@ -329,12 +329,7 @@ Indices:
 
         // Diagnosis records
         COLLECT({
-          age_at_diagnosis: (
-            CASE d.age_at_diagnosis
-            WHEN -999 THEN "Not Reported"
-            ELSE d.age_at_diagnosis
-            END
-          ),
+          age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
           diagnosis: d.diagnosis,
@@ -477,7 +472,7 @@ Indices:
         type: nested
         properties:
           age_at_diagnosis:
-            type: keyword
+            type: integer
           anatomic_site:
             type: keyword
           diagnosis_basis:
@@ -569,12 +564,7 @@ Indices:
 
         // Diagnosis records
         COLLECT(DISTINCT {
-          age_at_diagnosis: (
-            CASE d.age_at_diagnosis
-            WHEN -999 THEN "Not Reported"
-            ELSE d.age_at_diagnosis
-            END
-          ),
+          age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
           diagnosis: d.diagnosis,
@@ -645,7 +635,7 @@ Indices:
         type: nested
         properties:
           age_at_diagnosis:
-            type: keyword
+            type: integer
           anatomic_site:
             type: keyword
           diagnosis_basis:
@@ -728,12 +718,7 @@ Indices:
 
         // Diagnosis records
         COLLECT(DISTINCT {
-          age_at_diagnosis: (
-            CASE d.age_at_diagnosis
-            WHEN -999 THEN "Not Reported"
-            ELSE d.age_at_diagnosis
-            END
-          ),
+          age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
           diagnosis: d.diagnosis,
@@ -810,7 +795,7 @@ Indices:
         type: nested
         properties:
           age_at_diagnosis:
-            type: keyword
+            type: integer
           anatomic_site:
             type: keyword
           diagnosis_basis:
@@ -893,12 +878,7 @@ Indices:
 
         // Diagnosis records
         COLLECT(DISTINCT {
-          age_at_diagnosis: (
-            CASE d.age_at_diagnosis
-            WHEN -999 THEN "Not Reported"
-            ELSE d.age_at_diagnosis
-            END
-          ),
+          age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
           diagnosis: d.diagnosis,
