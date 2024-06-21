@@ -44,6 +44,8 @@ Indices:
         type: keyword
       age_at_diagnosis:
         type: integer
+      age_at_diagnosis_str:
+        type: keyword
       anatomic_site:
         type: keyword
       diagnosis_basis:
@@ -154,6 +156,11 @@ Indices:
         // Diagnosis fields
         d.id AS diagnosis_pk,
         d.age_at_diagnosis AS age_at_diagnosis,
+        (CASE d.age_at_diagnosis
+          WHEN -999 THEN "Not Reported"
+          ELSE d.age_at_diagnosis
+          END
+        ) AS age_at_diagnosis_str,
         d.anatomic_site AS anatomic_site,
         d.diagnosis_basis AS diagnosis_basis,
         d.diagnosis AS diagnosis,
@@ -384,7 +391,12 @@ Indices:
         r.file_type AS file_type,
         r.md5sum as md5sum,
         r.reference_file_id AS reference_file_id,
-        r.reference_file_url AS reference_file_url;
+        (CASE
+          WHEN r.file_category = "input source data"
+            AND r.reference_file_url STARTS WITH "https://nih.sharepoint.com/"
+            THEN "See CCDI Hub at https://ccdi.cancer.gov/explore"
+          ELSE r.reference_file_url
+        END) AS reference_file_url;
 
   - index_name: studies
     type: neo4j
