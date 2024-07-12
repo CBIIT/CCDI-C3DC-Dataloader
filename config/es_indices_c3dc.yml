@@ -410,6 +410,8 @@ Indices:
         type: keyword
       consent_number:
         type: integer
+      consent_number_str:
+        type: integer
       external_url:
         type: keyword
       dbgap_accession:
@@ -441,6 +443,11 @@ Indices:
         stu.acl AS acl,
         stu.consent AS consent,
         stu.consent_number AS consent_number,
+        (CASE stu.consent_number
+          WHEN -999 THEN "Not Reported"
+          ELSE stu.consent_number
+          END
+        ) AS consent_number_str,
         stu.external_url AS external_url,
         stu.dbgap_accession AS dbgap_accession,
         stu.study_acronym AS study_acronym,
@@ -462,8 +469,12 @@ Indices:
         type: keyword
       age_at_event_free_survival_status:
         type: integer
+      age_at_event_free_survival_status_str:
+        type: keyword
       age_at_last_known_survival_status:
         type: integer
+      age_at_last_known_survival_status_str:
+        type: keyword
       event_free_survival_status:
         type: keyword
       first_event:
@@ -546,7 +557,17 @@ Indices:
         // Survival fields
         sur.id AS survival_pk,
         sur.age_at_event_free_survival_status AS age_at_event_free_survival_status,
+        (CASE sur.age_at_event_free_survival_status
+          WHEN -999 THEN "Not Reported"
+          ELSE sur.age_at_event_free_survival_status
+          END
+        ) AS age_at_event_free_survival_status_str,
         sur.age_at_last_known_survival_status AS age_at_last_known_survival_status,
+        (CASE sur.age_at_last_known_survival_status
+          WHEN -999 THEN "Not Reported"
+          ELSE sur.age_at_last_known_survival_status
+          END
+        ) AS age_at_last_known_survival_status_str,
         sur.event_free_survival_status AS event_free_survival_status,
         sur.first_event AS first_event,
         sur.last_known_survival_status AS last_known_survival_status,
