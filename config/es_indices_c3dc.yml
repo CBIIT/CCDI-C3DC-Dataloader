@@ -102,8 +102,6 @@ Indices:
       # Study fields
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_id:
         type: keyword
       study_name:
@@ -175,7 +173,8 @@ Indices:
         d.tumor_stage_clinical_t AS tumor_stage_clinical_t,
 
         // Participant fields
-        p.id AS participant_pk,
+        // p.id AS participant_pk,
+        ID(p) AS participant_pk,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
@@ -185,7 +184,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
@@ -257,8 +255,6 @@ Indices:
         type: keyword
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_name:
         type: keyword
       # Survival records
@@ -319,7 +315,6 @@ Indices:
         // Study fields
         stu.study_id AS study_id,
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_name AS study_name,
 
         // Survival records
@@ -330,7 +325,7 @@ Indices:
         }) AS survivals,
 
         // Diagnosis records
-        COLLECT({
+        COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
@@ -421,8 +416,6 @@ Indices:
         type: keyword
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_description:
         type: keyword
       study_id:
@@ -454,7 +447,6 @@ Indices:
         END) AS consent_number_str,
         stu.external_url AS external_url,
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_description AS study_description,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
@@ -516,8 +508,6 @@ Indices:
         type: keyword
       # Study fields
       dbgap_accession:
-        type: keyword
-      study_acronym:
         type: keyword
       study_id:
         type: keyword
@@ -586,7 +576,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
@@ -654,8 +643,6 @@ Indices:
         type: keyword
       # Study fields
       dbgap_accession:
-        type: keyword
-      study_acronym:
         type: keyword
       study_id:
         type: keyword
@@ -743,7 +730,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
@@ -814,8 +800,6 @@ Indices:
         type: keyword
       # Study fields
       dbgap_accession:
-        type: keyword
-      study_acronym:
         type: keyword
       study_id:
         type: keyword
@@ -903,7 +887,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 

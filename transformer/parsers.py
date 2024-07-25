@@ -204,7 +204,6 @@ def parse_studies(data, records, associations):
                 consent_number = study_data.get('consent_number'),
                 external_url = study_data.get('external_url'),
                 dbgap_accession = study_data.get('dbgap_accession'),
-                study_acronym = study_data.get('study_acronym'),
                 study_description = study_data.get('study_description'),
                 study_id = study_id,
                 study_name = study_data.get('study_name'),

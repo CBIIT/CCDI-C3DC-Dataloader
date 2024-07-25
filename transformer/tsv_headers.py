@@ -52,7 +52,6 @@ STUDY_HEADERS = [
     'dbgap_accession',
     'acl',
     'study_name',
-    'study_acronym',
     'study_description',
     'consent',
     'consent_number',

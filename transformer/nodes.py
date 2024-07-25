@@ -207,22 +207,19 @@ class Study(Node):
         'consent_number': 'Consent Number',
         'external_url': 'External URL',
         'dbgap_accession': 'dbGaP Accession',
-        'study_acronym': 'Study Acronym',
         'study_description': 'Study Description',
         'study_id': 'Study ID',
         'study_name': 'Study Name',
     }
 
     def __init__(self, id, acl, consent, consent_number, external_url,
-            dbgap_accession, study_acronym, study_description, study_id,
-            study_name):
+            dbgap_accession, study_description, study_id, study_name):
         self.id = id
         self.acl = acl
         self.consent = consent
         self.consent_number = consent_number
         self.external_url = external_url
         self.dbgap_accession = dbgap_accession
-        self.study_acronym = study_acronym
         self.study_description = study_description
         self.study_id = study_id
         self.study_name = study_name
@@ -235,7 +232,6 @@ class Study(Node):
             self._consent_number,
             self._external_url,
             self._dbgap_accession,
-            self._study_acronym,
             self._study_description,
             self._study_id,
             self._study_name,
@@ -296,15 +292,6 @@ class Study(Node):
         self._dbgap_accession = value
 
     @property
-    def study_acronym(self):
-        return self._study_acronym
-
-    @study_acronym.setter
-    def study_acronym(self, value):
-        self._validate_attr('study_acronym', value)
-        self._study_acronym = value
-
-    @property
     def study_description(self):
         return self._study_description
 
@@ -348,7 +335,6 @@ class Study(Node):
             self._dbgap_accession,
             self._acl,
             self._study_name,
-            self._study_acronym,
             self._study_description,
             self._consent,
             self._consent_number,
