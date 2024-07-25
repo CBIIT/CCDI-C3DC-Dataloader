@@ -10,7 +10,6 @@ class TestStudyFactory():
             consent_number = 1,
             external_url = 'foo',
             dbgap_accession = "['phs000467']",
-            study_acronym = 'TARGET_NBL',
             study_description = 'foo',
             study_id = 'phs000467.v22.p8',
             study_name = 'TARGET NBL'):
@@ -21,7 +20,6 @@ class TestStudyFactory():
             consent_number,
             external_url,
             dbgap_accession,
-            study_acronym,
             study_description,
             study_id,
             study_name
@@ -136,25 +134,6 @@ class TestStudyProps(unittest.TestCase):
             value = 3
             print(test_msg.format(value))
             self.study_factory.create_study(dbgap_accession=value)
-
-    # Study.study_acronym
-    def test_study_study_acronym(self):
-        test_msg = 'Testing Study.study_acronym being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, 'Study Acronym is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.study_factory.create_study(study_acronym=value)
-
-        with self.assertRaisesRegex(TypeError, 'Study Acronym is missing'):
-            value = ''
-            print(test_msg.format(value))
-            self.study_factory.create_study(study_acronym=value)
-
-        with self.assertRaisesRegex(TypeError, "Study Acronym `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.study_factory.create_study(study_acronym=value)
 
     # Study.study_description
     def test_study_study_description(self):
