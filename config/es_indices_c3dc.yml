@@ -126,7 +126,7 @@ Indices:
             type: integer
           age_at_treatment_start:
             type: integer
-          treatment_agent:
+          treatment_agent: # list
             type: keyword
           treatment_id:
             type: keyword
@@ -201,7 +201,7 @@ Indices:
         COLLECT(DISTINCT {
           age_at_treament_end: t.age_at_treatment_end,
           age_at_treatment_start: t.age_at_treatment_start,
-          treatment_agent: t.treatment_agent,
+          treatment_agent: apoc.text.split(t.treatment_agent, ';'),
           treatment_id: t.treatment_id,
           treatment_type: t.treatment_type
         }) AS treatments,
@@ -277,7 +277,7 @@ Indices:
             type: integer
           age_at_treatment_start:
             type: integer
-          treatment_agent:
+          treatment_agent: # list
             type: keyword
           treatment_id:
             type: keyword
@@ -341,7 +341,7 @@ Indices:
         COLLECT(DISTINCT {
           age_at_treament_end: t.age_at_treatment_end,
           age_at_treatment_start: t.age_at_treatment_start,
-          treatment_agent: t.treatment_agent,
+          treatment_agent: apoc.text.split(t.treatment_agent, ';'),
           treatment_id: t.treatment_id,
           treatment_type: t.treatment_type
         }) AS treatments,
@@ -527,7 +527,7 @@ Indices:
             type: integer
           age_at_treatment_start:
             type: integer
-          treatment_agent:
+          treatment_agent: # list
             type: keyword
           treatment_id:
             type: keyword
@@ -602,7 +602,7 @@ Indices:
         COLLECT(DISTINCT {
           age_at_treament_end: t.age_at_treatment_end,
           age_at_treatment_start: t.age_at_treatment_start,
-          treatment_agent: t.treatment_agent,
+          treatment_agent: apoc.text.split(t.treatment_agent, ';'),
           treatment_id: t.treatment_id,
           treatment_type: t.treatment_type
         }) AS treatments,
@@ -626,7 +626,7 @@ Indices:
         type: integer
       age_at_treatment_start:
         type: integer
-      treatment_agent:
+      treatment_agent: # list
         type: keyword
       treatment_id:
         type: keyword
@@ -723,7 +723,7 @@ Indices:
         t.id AS treatment_pk,
         t.age_at_treatment_end AS age_at_treatment_end,
         t.age_at_treatment_start AS age_at_treatment_start,
-        t.treatment_agent AS treatment_agent,
+        apoc.text.split(t.treatment_agent, ';') AS treatment_agent,
         t.treatment_id AS treatment_id,
         t.treatment_type AS treatment_type,
 
@@ -866,7 +866,7 @@ Indices:
             type: integer
           age_at_treatment_start:
             type: integer
-          treatment_agent:
+          treatment_agent: # list
             type: keyword
           treatment_id:
             type: keyword
@@ -931,7 +931,7 @@ Indices:
         COLLECT(DISTINCT {
           age_at_treament_end: t.age_at_treatment_end,
           age_at_treatment_start: t.age_at_treatment_start,
-          treatment_agent: t.treatment_agent,
+          treatment_agent: apoc.text.split(t.treatment_agent, ';'),
           treatment_id: t.treatment_id,
           treatment_type: t.treatment_type
         }) AS treatments;
