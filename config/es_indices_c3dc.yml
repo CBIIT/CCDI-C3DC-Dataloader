@@ -198,16 +198,16 @@ Indices:
         }) AS survivals,
 
         // Treatment records
-        CASE
+        (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
-            age_at_treament_end: t.age_at_treatment_end,
+            age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
             treatment_agent: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
           ELSE []
-        END AS treatments,
+        END) AS treatments,
 
         // Treatment Response records
         COLLECT(DISTINCT {
@@ -341,16 +341,16 @@ Indices:
         }) AS diagnoses,
 
         // Treatment records
-        CASE
+        (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
-            age_at_treament_end: t.age_at_treatment_end,
+            age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
             treatment_agent: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
           ELSE []
-        END AS treatments,
+        END) AS treatments,
 
         // Treatment Response records
         COLLECT(DISTINCT {
@@ -605,16 +605,16 @@ Indices:
         }) AS diagnoses,
 
         // Treatment records
-        CASE
+        (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
-            age_at_treament_end: t.age_at_treatment_end,
+            age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
             treatment_agent: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
           ELSE []
-        END AS treatments,
+        END) AS treatments,
 
         // Treatment Response records
         COLLECT(DISTINCT {
@@ -937,13 +937,13 @@ Indices:
         }) AS survivals,
 
         // Treatment records
-        CASE
+        (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
-            age_at_treament_end: t.age_at_treatment_end,
+            age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
             treatment_agent: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
           ELSE []
-        END AS treatments,
+        END) AS treatments,
