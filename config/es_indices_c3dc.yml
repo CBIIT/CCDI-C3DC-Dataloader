@@ -159,8 +159,7 @@ Indices:
         (CASE d.age_at_diagnosis
           WHEN -999 THEN "Not Reported"
           ELSE d.age_at_diagnosis
-          END
-        ) AS age_at_diagnosis_str,
+        END) AS age_at_diagnosis_str,
         d.anatomic_site AS anatomic_site,
         d.diagnosis_basis AS diagnosis_basis,
         d.diagnosis AS diagnosis,
@@ -452,8 +451,7 @@ Indices:
         (CASE stu.consent_number
           WHEN -999 THEN "Not Reported"
           ELSE stu.consent_number
-          END
-        ) AS consent_number_str,
+        END) AS consent_number_str,
         stu.external_url AS external_url,
         stu.dbgap_accession AS dbgap_accession,
         stu.study_acronym AS study_acronym,
@@ -566,14 +564,12 @@ Indices:
         (CASE sur.age_at_event_free_survival_status
           WHEN -999 THEN "Not Reported"
           ELSE sur.age_at_event_free_survival_status
-          END
-        ) AS age_at_event_free_survival_status_str,
+        END) AS age_at_event_free_survival_status_str,
         sur.age_at_last_known_survival_status AS age_at_last_known_survival_status,
         (CASE sur.age_at_last_known_survival_status
           WHEN -999 THEN "Not Reported"
           ELSE sur.age_at_last_known_survival_status
-          END
-        ) AS age_at_last_known_survival_status_str,
+        END) AS age_at_last_known_survival_status_str,
         sur.event_free_survival_status AS event_free_survival_status,
         sur.first_event AS first_event,
         sur.last_known_survival_status AS last_known_survival_status,
@@ -946,4 +942,4 @@ Indices:
             treatment_type: t.treatment_type
           })
           ELSE []
-        END) AS treatments,
+        END) AS treatments;
