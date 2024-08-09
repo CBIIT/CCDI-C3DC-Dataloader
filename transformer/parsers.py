@@ -109,7 +109,6 @@ def parse_participants(data, records, associations):
         try:
             participant = Participant(
                 id = participant_uuid,
-                ethnicity = participant_data.get('ethnicity'),
                 participant_id = participant_id,
                 race = participant_data.get('race'),
                 sex_at_birth = participant_data.get('sex_at_birth')
@@ -199,7 +198,6 @@ def parse_studies(data, records, associations):
         try:
             study = Study(
                 id = study_uuid,
-                acl = study_data.get('acl'),
                 consent = study_data.get('consent'),
                 consent_number = study_data.get('consent_number'),
                 external_url = study_data.get('external_url'),

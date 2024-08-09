@@ -5,13 +5,11 @@ class TestParticipantFactory():
     def create_participant(
             self,
             id = 'abc-123',
-            ethnicity = ['Not Hispanic or Latino'],
             participant_id = 'FOO-BAR-123',
             race = ['Asian'],
             sex_at_birth = 'Male'):
         participant = Participant(
             id,
-            ethnicity,
             participant_id,
             race,
             sex_at_birth
@@ -31,30 +29,6 @@ class TestParticipantProps(unittest.TestCase):
             value = 3
             print(test_msg.format(value))
             self.participant_factory.create_participant(id=value)
-
-    # Participant.ethnicity
-    def test_participant_ethnicity(self):
-        test_msg = 'Testing Participant.ethnicity being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, 'Ethnicity is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(ethnicity=value)
-
-        with self.assertRaisesRegex(TypeError, "Ethnicity `` must be of type <class 'list'>"):
-            value = ''
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(ethnicity=value)
-
-        with self.assertRaisesRegex(TypeError, "Ethnicity `Foo` must be of type <class 'list'>"):
-            value = 'Foo'
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(ethnicity=value)
-
-        with self.assertRaisesRegex(ValueError, "Ethnicity `\['Foo'\]` must be a subset of the specified values"):
-            value = ['Foo']
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(ethnicity=value)
 
     # Participant.participant_id
     def test_participant_id(self):

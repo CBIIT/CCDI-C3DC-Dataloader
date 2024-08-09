@@ -5,7 +5,6 @@ class TestStudyFactory():
     def create_study(
             self,
             id = 'abc-123',
-            acl = 'phs000467.v22.p8',
             consent = 'DS-PEDCR',
             consent_number = 1,
             external_url = 'foo',
@@ -15,7 +14,6 @@ class TestStudyFactory():
             study_name = 'TARGET NBL'):
         study = Study(
             id,
-            acl,
             consent,
             consent_number,
             external_url,
@@ -39,25 +37,6 @@ class TestStudyProps(unittest.TestCase):
             value = 3
             print(test_msg.format(value))
             self.study_factory.create_study(id=value)
-
-    # Study.acl
-    def test_study_acl(self):
-        test_msg = 'Testing Study.acl being <{}>...'
-
-        with self.assertRaisesRegex(TypeError, 'ACL is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.study_factory.create_study(acl=value)
-
-        with self.assertRaisesRegex(TypeError, 'ACL is missing'):
-            value = ''
-            print(test_msg.format(value))
-            self.study_factory.create_study(acl=value)
-
-        with self.assertRaisesRegex(TypeError, "ACL `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.study_factory.create_study(acl=value)
 
     # Study.consent
     def test_study_consent(self):
