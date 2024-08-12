@@ -175,8 +175,7 @@ Indices:
         d.tumor_stage_clinical_t AS tumor_stage_clinical_t,
 
         // Participant fields
-        // p.id AS participant_pk,
-        ID(p) AS participant_pk,
+        p.id AS participant_pk,
         apoc.text.split(p.ethnicity, ';') AS ethnicity,
         p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
