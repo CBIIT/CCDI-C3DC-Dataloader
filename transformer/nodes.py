@@ -114,15 +114,13 @@ class Node:
 class Participant(Node):
     _PROPER_NAMES = {
         'id': 'ID',
-        'ethnicity': 'Ethnicity',
         'participant_id': 'Participant ID',
         'race': 'Race',
         'sex_at_birth': 'Sex at Birth',
     }
 
-    def __init__(self, id, ethnicity, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
+    def __init__(self, id, participant_id, race, sex_at_birth, model_file_path=None, props_file_path=None):
         self.id = id
-        self.ethnicity = ethnicity
         self.participant_id = participant_id
         self.race = race
         self.sex_at_birth = sex_at_birth
@@ -139,7 +137,6 @@ class Participant(Node):
         return ' | '.join([
             self._id or '',
             self._participant_id or '',
-            self._ethnicity or '',
             self._race or '',
             self._sex_at_birth or '',
         ])
@@ -152,15 +149,6 @@ class Participant(Node):
     def id(self, value):
         self._validate_attr('id', value)
         self._id = value
-
-    @property
-    def ethnicity(self):
-        return self._ethnicity
-
-    @ethnicity.setter
-    def ethnicity(self, value):
-        self._validate_attr('ethnicity', value)
-        self._ethnicity = value
 
     @property
     def participant_id(self):
@@ -196,33 +184,27 @@ class Participant(Node):
             self._participant_id,
             ';'.join(self._race),
             self._sex_at_birth,
-            ';'.join(self._ethnicity),
         ]
 
 class Study(Node):
     _PROPER_NAMES = {
         'id': 'ID',
-        'acl': 'ACL',
         'consent': 'Consent',
         'consent_number': 'Consent Number',
         'external_url': 'External URL',
         'dbgap_accession': 'dbGaP Accession',
-        'study_acronym': 'Study Acronym',
         'study_description': 'Study Description',
         'study_id': 'Study ID',
         'study_name': 'Study Name',
     }
 
-    def __init__(self, id, acl, consent, consent_number, external_url,
-            dbgap_accession, study_acronym, study_description, study_id,
-            study_name):
+    def __init__(self, id, consent, consent_number, external_url,
+            dbgap_accession, study_description, study_id, study_name):
         self.id = id
-        self.acl = acl
         self.consent = consent
         self.consent_number = consent_number
         self.external_url = external_url
         self.dbgap_accession = dbgap_accession
-        self.study_acronym = study_acronym
         self.study_description = study_description
         self.study_id = study_id
         self.study_name = study_name
@@ -230,12 +212,10 @@ class Study(Node):
     def __str__(self):
         return ' | '.join([
             self._id,
-            self._acl,
             self._consent,
             self._consent_number,
             self._external_url,
             self._dbgap_accession,
-            self._study_acronym,
             self._study_description,
             self._study_id,
             self._study_name,
@@ -249,15 +229,6 @@ class Study(Node):
     def id(self, value):
         self._validate_attr('id', value)
         self._id = value
-
-    @property
-    def acl(self):
-        return self._acl
-
-    @acl.setter
-    def acl(self, value):
-        self._validate_attr('acl', value)
-        self._acl = value
 
     @property
     def consent(self):
@@ -294,15 +265,6 @@ class Study(Node):
     def dbgap_accession(self, value):
         self._validate_attr('dbgap_accession', value)
         self._dbgap_accession = value
-
-    @property
-    def study_acronym(self):
-        return self._study_acronym
-
-    @study_acronym.setter
-    def study_acronym(self, value):
-        self._validate_attr('study_acronym', value)
-        self._study_acronym = value
 
     @property
     def study_description(self):
@@ -346,9 +308,7 @@ class Study(Node):
             self._id,
             self._study_id,
             self._dbgap_accession,
-            self._acl,
             self._study_name,
-            self._study_acronym,
             self._study_description,
             self._consent,
             self._consent_number,

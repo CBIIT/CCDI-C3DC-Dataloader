@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 def write_diagnoses(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} diagnoses.tsv', 'w', encoding='utf-8', newline='') as diagnoses_file:
+    with open(f'data/{dbgap_accession} diagnoses.tsv', 'w', encoding='utf-8', newline='') as diagnoses_file:
         tsv_writer = csv.writer(diagnoses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(DIAGNOSIS_HEADERS)
 
@@ -44,9 +44,9 @@ def write_diagnoses(records, associations):
 def write_participants(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} participants.tsv', 'w', encoding='utf-8', newline='') as participants_file:
+    with open(f'data/{dbgap_accession} participants.tsv', 'w', encoding='utf-8', newline='') as participants_file:
         tsv_writer = csv.writer(participants_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(PARTICIPANT_HEADERS)
 
@@ -70,9 +70,9 @@ def write_participants(records, associations):
 def write_reference_files(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} reference_files.tsv', 'w', encoding='utf-8', newline='') as reference_files_file:
+    with open(f'data/{dbgap_accession} reference_files.tsv', 'w', encoding='utf-8', newline='') as reference_files_file:
         tsv_writer = csv.writer(reference_files_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(REFERENCE_FILE_HEADERS)
 
@@ -96,9 +96,9 @@ def write_reference_files(records, associations):
 def write_studies(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} studies.tsv', 'w', encoding='utf-8', newline='') as studies_file:
+    with open(f'data/{dbgap_accession} studies.tsv', 'w', encoding='utf-8', newline='') as studies_file:
         tsv_writer = csv.writer(studies_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(STUDY_HEADERS)
 
@@ -113,9 +113,9 @@ def write_studies(records, associations):
 def write_survivals(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} survivals.tsv', 'w', encoding='utf-8', newline='') as survivals_file:
+    with open(f'data/{dbgap_accession} survivals.tsv', 'w', encoding='utf-8', newline='') as survivals_file:
         tsv_writer = csv.writer(survivals_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(SURVIVAL_HEADERS)
 
@@ -139,9 +139,9 @@ def write_survivals(records, associations):
 def write_treatments(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} treatments.tsv', 'w', encoding='utf-8', newline='') as treatments_file:
+    with open(f'data/{dbgap_accession} treatments.tsv', 'w', encoding='utf-8', newline='') as treatments_file:
         tsv_writer = csv.writer(treatments_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(TREATMENT_HEADERS)
 
@@ -165,9 +165,9 @@ def write_treatments(records, associations):
 def write_treatment_responses(records, associations):
     # Obtain single study
     study = list(records.get(NODE_TYPES.STUDY.value).values())[0]
-    study_acronym = study.study_acronym
+    dbgap_accession = study.dbgap_accession
 
-    with open(f'data/{study_acronym} treatment_responses.tsv', 'w', encoding='utf-8', newline='') as treatment_responses_file:
+    with open(f'data/{dbgap_accession} treatment_responses.tsv', 'w', encoding='utf-8', newline='') as treatment_responses_file:
         tsv_writer = csv.writer(treatment_responses_file, delimiter='\t', dialect='unix')
         tsv_writer.writerow(TREATMENT_RESPONSE_HEADERS)
 

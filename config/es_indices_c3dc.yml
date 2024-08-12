@@ -102,8 +102,6 @@ Indices:
       # Study fields
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_id:
         type: keyword
       study_name:
@@ -114,6 +112,8 @@ Indices:
         properties:
           age_at_last_known_survival_status:
             type: integer
+          cause_of_death:
+            type: keyword
           first_event:
             type: keyword
           last_known_survival_status:
@@ -185,13 +185,13 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
         // Survival records
         COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,
@@ -257,8 +257,6 @@ Indices:
         type: keyword
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_name:
         type: keyword
       # Survival records
@@ -267,6 +265,8 @@ Indices:
         properties:
           age_at_last_known_survival_status:
             type: integer
+          cause_of_death:
+            type: keyword
           first_event:
             type: keyword
           last_known_survival_status:
@@ -319,18 +319,18 @@ Indices:
         // Study fields
         stu.study_id AS study_id,
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_name AS study_name,
 
         // Survival records
         COLLECT({
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,
 
         // Diagnosis records
-        COLLECT({
+        COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
           diagnosis_basis: d.diagnosis_basis,
@@ -421,8 +421,6 @@ Indices:
         type: keyword
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_description:
         type: keyword
       study_id:
@@ -454,7 +452,6 @@ Indices:
         END) AS consent_number_str,
         stu.external_url AS external_url,
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_description AS study_description,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
@@ -478,6 +475,8 @@ Indices:
       age_at_last_known_survival_status:
         type: integer
       age_at_last_known_survival_status_str:
+        type: keyword
+      cause_of_death:
         type: keyword
       event_free_survival_status:
         type: keyword
@@ -516,8 +515,6 @@ Indices:
         type: keyword
       # Study fields
       dbgap_accession:
-        type: keyword
-      study_acronym:
         type: keyword
       study_id:
         type: keyword
@@ -570,6 +567,7 @@ Indices:
           WHEN -999 THEN "Not Reported"
           ELSE sur.age_at_last_known_survival_status
         END) AS age_at_last_known_survival_status_str,
+        sur.cause_of_death AS cause_of_death,
         sur.event_free_survival_status AS event_free_survival_status,
         sur.first_event AS first_event,
         sur.last_known_survival_status AS last_known_survival_status,
@@ -586,7 +584,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
@@ -655,8 +652,6 @@ Indices:
       # Study fields
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_id:
         type: keyword
       study_name:
@@ -699,6 +694,8 @@ Indices:
         properties:
           age_at_last_known_survival_status:
             type: integer
+          cause_of_death:
+            type: keyword
           first_event:
             type: keyword
           last_known_survival_status:
@@ -743,7 +740,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
@@ -768,6 +764,7 @@ Indices:
         // Survival records
         COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,
@@ -815,8 +812,6 @@ Indices:
       # Study fields
       dbgap_accession:
         type: keyword
-      study_acronym:
-        type: keyword
       study_id:
         type: keyword
       study_name:
@@ -859,6 +854,8 @@ Indices:
         properties:
           age_at_last_known_survival_status:
             type: integer
+          cause_of_death:
+            type: keyword
           first_event:
             type: keyword
           last_known_survival_status:
@@ -903,7 +900,6 @@ Indices:
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
-        stu.study_acronym AS study_acronym,
         stu.study_id AS study_id,
         stu.study_name AS study_name,
 
@@ -928,6 +924,7 @@ Indices:
         // Survival records
         COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,

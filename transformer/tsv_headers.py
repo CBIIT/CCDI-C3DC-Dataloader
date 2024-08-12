@@ -26,7 +26,6 @@ PARTICIPANT_HEADERS = [
     'participant_id',
     'race',
     'sex_at_birth',
-    'ethnicity',
     'study.id',
 ]
 
@@ -50,9 +49,7 @@ STUDY_HEADERS = [
     'id',
     'study_id',
     'dbgap_accession',
-    'acl',
     'study_name',
-    'study_acronym',
     'study_description',
     'consent',
     'consent_number',
