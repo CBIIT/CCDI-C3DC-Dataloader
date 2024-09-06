@@ -1,9 +1,9 @@
 import yaml
 
 class Node:
-    with open('c3dc-model/model-desc/c3dc-model.yml', 'r') as file:
+    with open('c3dc-model/model-desc/c3dc-model.yml', 'r', encoding='utf8') as file:
         _NODEDEFS = yaml.safe_load(file)['Nodes']
-    with open('c3dc-model/model-desc/c3dc-model-props.yml', 'r') as file:
+    with open('c3dc-model/model-desc/c3dc-model-props.yml', 'r', encoding='utf8') as file:
         _PROPDEFS = yaml.safe_load(file)['PropDefinitions']
 
     _PROPER_NAMES = {}
@@ -37,6 +37,10 @@ class Node:
 
         # Error if it should be enum but doesn't have an Enum key
         if 'Enum' not in (key for key in type_desc.keys()):
+            # Not all list types are enum
+            if type_desc['value_type'] in ['list']:
+                return False
+
             raise ValueError('Missing `Enum` field in Model Description YAML')
 
         return True
@@ -53,15 +57,17 @@ class Node:
     def _determine_attr_type(self, yaml_node):
         type_literal = None
 
-        # Is not an enum or list
-        if not self._determine_attr_is_enum(yaml_node):
+        if type(yaml_node['Type']) is dict:
+            if 'value_type' not in (key for key in yaml_node['Type'].keys()):
+                raise ValueError('Missing `value_type` field in Model Description YAML')
+            elif type(yaml_node['Type']['value_type']) is str:
+                type_literal = yaml_node['Type']['value_type']
+            else:
+                raise TypeError('Invalid type value for `value_type` field in Model Description YAML')
+        elif type(yaml_node['Type']) is str:
             type_literal = yaml_node['Type']
-        elif 'value_type' not in (key for key in yaml_node['Type'].keys()):
-            raise ValueError('Missing `value_type` field in Model Description YAML')
-        elif yaml_node['Type']['value_type'] == 'list':
-            type_literal = 'list'
         else:
-            type_literal = yaml_node['Type']['value_type']
+            raise TypeError('Invalid type value for `Type` field in Model Description YAML')
 
         # Handle undefined type mapping
         if type_literal not in self._TYPE_MAP.keys():
