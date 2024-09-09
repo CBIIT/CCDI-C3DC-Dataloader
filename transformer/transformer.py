@@ -82,7 +82,7 @@ def main():
         for file_path in file_paths:
             logger.info('Reading data from ' + file_path + '...')
 
-            json_file = open(file_path)
+            json_file = open(file_path, encoding='utf8')
             json_data = json.load(json_file)
 
             for node_name in node_names:
