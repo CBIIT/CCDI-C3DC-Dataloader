@@ -75,10 +75,6 @@ Indices:
       # Participant fields
       participant_pk:
         type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
-        type: keyword
       participant_id:
         type: keyword
       race:
@@ -176,8 +172,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -222,10 +216,6 @@ Indices:
     mapping:
       # Participant fields
       participant_pk: # Primary key
-        type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
         type: keyword
       participant_id:
         type: keyword
@@ -309,8 +299,6 @@ Indices:
       RETURN
         // Participant fields  
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -505,8 +493,6 @@ Indices:
       # Participant fields
       participant_pk:
         type: keyword
-      ethnicity:
-        type: keyword
       participant_id:
         type: keyword
       race:
@@ -575,8 +561,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race as race_str,
@@ -636,10 +620,6 @@ Indices:
         type: keyword
       # Participant fields
       participant_pk:
-        type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
         type: keyword
       participant_id:
         type: keyword
@@ -731,8 +711,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -796,10 +774,6 @@ Indices:
         type: keyword
       # Participant fields
       participant_pk:
-        type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
         type: keyword
       participant_id:
         type: keyword
@@ -891,8 +865,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
