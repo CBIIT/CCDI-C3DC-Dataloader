@@ -75,15 +75,11 @@ Indices:
       # Participant fields
       participant_pk:
         type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
-        type: keyword
       participant_id:
         type: keyword
-      race:
+      race: # list
         type: keyword
-      race_str:
+      race_str: # for display
         type: keyword
       sex_at_birth:
         type: keyword
@@ -176,8 +172,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -223,16 +217,12 @@ Indices:
       # Participant fields
       participant_pk: # Primary key
         type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
-        type: keyword
       participant_id:
         type: keyword
         normalizer: lowercase
-      race:
+      race: # list
         type: keyword
-      race_str:
+      race_str: # for display
         type: keyword
       sex_at_birth:
         type: keyword
@@ -309,8 +299,6 @@ Indices:
       RETURN
         // Participant fields  
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -505,11 +493,11 @@ Indices:
       # Participant fields
       participant_pk:
         type: keyword
-      ethnicity:
-        type: keyword
       participant_id:
         type: keyword
-      race:
+      race: # list
+        type: keyword
+      race_str: # for display
         type: keyword
       sex_at_birth:
         type: keyword
@@ -575,8 +563,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race as race_str,
@@ -630,6 +616,8 @@ Indices:
         type: integer
       treatment_agent: # list
         type: keyword
+      treatment_agent_str: # for display
+        type: keyword
       treatment_id:
         type: keyword
       treatment_type:
@@ -637,15 +625,11 @@ Indices:
       # Participant fields
       participant_pk:
         type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
-        type: keyword
       participant_id:
         type: keyword
-      race:
+      race: # list
         type: keyword
-      race_str:
+      race_str: # for display
         type: keyword
       sex_at_birth:
         type: keyword
@@ -726,13 +710,12 @@ Indices:
         t.age_at_treatment_end AS age_at_treatment_end,
         t.age_at_treatment_start AS age_at_treatment_start,
         apoc.text.split(t.treatment_agent, ';') AS treatment_agent,
+        t.treatment_agent AS treatment_agent_str,
         t.treatment_id AS treatment_id,
         t.treatment_type AS treatment_type,
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -797,15 +780,11 @@ Indices:
       # Participant fields
       participant_pk:
         type: keyword
-      ethnicity:
-        type: keyword
-      ethnicity_str:
-        type: keyword
       participant_id:
         type: keyword
-      race:
+      race: # list
         type: keyword
-      race_str:
+      race_str: # for display
         type: keyword
       sex_at_birth:
         type: keyword
@@ -870,6 +849,8 @@ Indices:
             type: integer
           treatment_agent: # list
             type: keyword
+          treatment_agent_str: # for display
+            type: keyword
           treatment_id:
             type: keyword
           treatment_type:
@@ -891,8 +872,6 @@ Indices:
 
         // Participant fields
         p.id AS participant_pk,
-        apoc.text.split(p.ethnicity, ';') AS ethnicity,
-        p.ethnicity AS ethnicity_str,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -934,7 +913,8 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: t.treatment_agent,
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
+            treatment_agent_str: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
