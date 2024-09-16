@@ -896,7 +896,7 @@ class Treatment(Node):
             self.age_at_treatment_start,
             self.age_at_treatment_end,
             self.treatment_type,
-            self.treatment_agent
+            ';'.join(self.treatment_agent),
         ]
 
 class TreatmentResponse(Node):
