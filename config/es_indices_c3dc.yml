@@ -36,6 +36,174 @@ Indices:
         COUNT(DISTINCT stu) AS num_studies,
         COUNT(DISTINCT sur) AS num_survivals;
 
+  # Studies with nested participants with nested other records
+  - index_name: cohorts
+    type: neo4j
+    mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      # Participant fields
+      participant_pk:
+        type: keyword
+      participant_id:
+        type: keyword
+        normalizer: lowercase
+      race:
+        type: keyword
+      sex_at_birth:
+        type: keyword
+      # Diagnosis records
+      diagnoses:
+        type: nested
+        properties:
+          diagnosis_pk:
+            type: keyword
+          diagnosis_id:
+            type: keyword
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          diagnosis_comment:
+            type: keyword
+          disease_phase:
+            type: keyword
+          toronto_childhood_cancer_staging:
+            type: keyword
+          tumor_classification:
+            type: keyword
+          tumor_grade:
+            type: keyword
+          tumor_stage_clinical_m:
+            type: keyword
+          tumor_stage_clinical_n:
+            type: keyword
+          tumor_stage_clinical_t:
+            type: keyword
+      # Survival records
+      survivals:
+        type: nested
+        properties:
+          survival_pk:
+            type: keyword
+          survival_id:
+            type: keyword
+          age_at_event_free_survival_status:
+            type: integer
+          age_at_last_known_survival_status:
+            type: integer
+          cause_of_death:
+            type: keyword
+          event_free_survival_status:
+            type: keyword
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+      # Treatment records
+      treatments:
+        type: nested
+        properties:
+          treatment_pk:
+            type: keyword
+          treatment_id:
+            type: keyword
+          age_at_treatment_end:
+            type: integer
+          age_at_treatment_start:
+            type: integer
+          treatment_agent:
+            type: keyword
+          treatment_type:
+            type: keyword
+      # Treatment Response records
+      treatment_responses:
+        type: nested
+        properties:
+          treatment_response_pk:
+            type: keyword
+          treatment_response_id:
+            type: keyword
+          age_at_response:
+            type: integer
+          response:
+            type: keyword
+          response_category:
+            type: keyword
+          response_system:
+            type: keyword
+    cypher_query: >
+      MATCH (p:participant)-[:of_participant]->(stu:study)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
+      OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
+      RETURN
+        p.id AS participant_pk,
+        p.participant_id AS participant_id,
+        p.race AS race,
+        p.sex_at_birth AS sex_at_birth,
+
+        stu.dbgap_accession AS dbgap_accession,
+
+        // Diagnosis records
+        COLLECT({
+          diagnosis_pk: d.id,
+          diagnosis_id: d.diagnosis_id,
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis: d.diagnosis,
+          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_comment: d.diagnosis_comment,
+          disease_phase: d.disease_phase,
+          toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
+          tumor_classification: d.tumor_classification,
+          tumor_grade: d.tumor_grade,
+          tumor_stage_clinical_m: d.tumor_stage_clinical_m,
+          tumor_stage_clinical_n: d.tumor_stage_clinical_n,
+          tumor_stage_clinical_t: d.tumor_stage_clinical_t
+        }) AS diagnoses,
+
+        // Survival records
+        COLLECT({
+          survival_pk: sur.id,
+          survival_id: sur.survival_id,
+          age_at_event_free_survival_status: sur.age_at_event_free_survival_status,
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
+          event_free_survival_status: sur.event_free_survival_status,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals,
+
+        // Treatment records
+        COLLECT({
+          treatment_pk: t.id,
+          treatment_id: t.treatment_id,
+          age_at_treatment_end: t.age_at_treatment_end,
+          age_at_treatment_start: t.age_at_treatment_start,
+          treatment_agent: t.treatment_agent,
+          treatment_type: t.treatment_type
+        }) AS treatments,
+
+        // Treatment Response records
+        COLLECT({
+          treatment_response_pk: tresp.id,
+          treatment_response_id: tresp.treatment_response_id,
+          age_at_response: tresp.age_at_response,
+          response: tresp.response,
+          response_category: tresp.response_category,
+          response_system: tresp.response_system
+        }) AS treatment_responses;
+
   - index_name: diagnoses
     type: neo4j
     mapping:
