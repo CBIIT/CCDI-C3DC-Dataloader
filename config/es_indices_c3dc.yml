@@ -154,55 +154,67 @@ Indices:
         stu.dbgap_accession AS dbgap_accession,
 
         // Diagnosis records
-        COLLECT({
-          diagnosis_pk: d.id,
-          diagnosis_id: d.diagnosis_id,
-          age_at_diagnosis: d.age_at_diagnosis,
-          anatomic_site: d.anatomic_site,
-          diagnosis: d.diagnosis,
-          diagnosis_basis: d.diagnosis_basis,
-          diagnosis_classification_system: d.diagnosis_classification_system,
-          diagnosis_comment: d.diagnosis_comment,
-          disease_phase: d.disease_phase,
-          toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
-          tumor_classification: d.tumor_classification,
-          tumor_grade: d.tumor_grade,
-          tumor_stage_clinical_m: d.tumor_stage_clinical_m,
-          tumor_stage_clinical_n: d.tumor_stage_clinical_n,
-          tumor_stage_clinical_t: d.tumor_stage_clinical_t
-        }) AS diagnoses,
+        (CASE
+          WHEN COUNT(DISTINCT d) > 0 THEN COLLECT({
+            diagnosis_pk: d.id,
+            diagnosis_id: d.diagnosis_id,
+            age_at_diagnosis: d.age_at_diagnosis,
+            anatomic_site: d.anatomic_site,
+            diagnosis: d.diagnosis,
+            diagnosis_basis: d.diagnosis_basis,
+            diagnosis_classification_system: d.diagnosis_classification_system,
+            diagnosis_comment: d.diagnosis_comment,
+            disease_phase: d.disease_phase,
+            toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
+            tumor_classification: d.tumor_classification,
+            tumor_grade: d.tumor_grade,
+            tumor_stage_clinical_m: d.tumor_stage_clinical_m,
+            tumor_stage_clinical_n: d.tumor_stage_clinical_n,
+            tumor_stage_clinical_t: d.tumor_stage_clinical_t
+          })
+          ELSE []
+        END) AS diagnoses,
 
         // Survival records
-        COLLECT({
-          survival_pk: sur.id,
-          survival_id: sur.survival_id,
-          age_at_event_free_survival_status: sur.age_at_event_free_survival_status,
-          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
-          cause_of_death: sur.cause_of_death,
-          event_free_survival_status: sur.event_free_survival_status,
-          first_event: sur.first_event,
-          last_known_survival_status: sur.last_known_survival_status
-        }) AS survivals,
+        (CASE
+          WHEN COUNT(DISTINCT sur) > 0 THEN COLLECT({
+            survival_pk: sur.id,
+            survival_id: sur.survival_id,
+            age_at_event_free_survival_status: sur.age_at_event_free_survival_status,
+            age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+            cause_of_death: sur.cause_of_death,
+            event_free_survival_status: sur.event_free_survival_status,
+            first_event: sur.first_event,
+            last_known_survival_status: sur.last_known_survival_status
+          })
+          ELSE []
+        END) AS survivals,
 
         // Treatment records
-        COLLECT({
-          treatment_pk: t.id,
-          treatment_id: t.treatment_id,
-          age_at_treatment_end: t.age_at_treatment_end,
-          age_at_treatment_start: t.age_at_treatment_start,
-          treatment_agent: apoc.text.split(t.treatment_agent, ';'),
-          treatment_type: t.treatment_type
-        }) AS treatments,
+        (CASE
+          WHEN COUNT(DISTINCT t) > 0 THEN COLLECT({
+            treatment_pk: t.id,
+            treatment_id: t.treatment_id,
+            age_at_treatment_end: t.age_at_treatment_end,
+            age_at_treatment_start: t.age_at_treatment_start,
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
+            treatment_type: t.treatment_type
+          })
+          ELSE []
+        END) AS treatments,
 
         // Treatment Response records
-        COLLECT({
-          treatment_response_pk: tresp.id,
-          treatment_response_id: tresp.treatment_response_id,
-          age_at_response: tresp.age_at_response,
-          response: tresp.response,
-          response_category: tresp.response_category,
-          response_system: tresp.response_system
-        }) AS treatment_responses;
+        (CASE
+          WHEN COUNT(DISTINCT tresp) > 0 THEN COLLECT({
+            treatment_response_pk: tresp.id,
+            treatment_response_id: tresp.treatment_response_id,
+            age_at_response: tresp.age_at_response,
+            response: tresp.response,
+            response_category: tresp.response_category,
+            response_system: tresp.response_system
+          })
+          ELSE []
+        END) AS treatment_responses;
 
   - index_name: diagnoses
     type: neo4j
