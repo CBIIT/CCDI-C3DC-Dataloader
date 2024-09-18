@@ -363,7 +363,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: apoc(t.treatment_agent, ';'),
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
