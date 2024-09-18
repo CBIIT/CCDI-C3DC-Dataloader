@@ -119,7 +119,7 @@ Indices:
             type: integer
           age_at_treatment_start:
             type: integer
-          treatment_agent:
+          treatment_agent: # list
             type: keyword
           treatment_type:
             type: keyword
@@ -148,7 +148,7 @@ Indices:
       RETURN
         p.id AS participant_pk,
         p.participant_id AS participant_id,
-        p.race AS race,
+        apoc.text.split(p.race, ';') AS race,
         p.sex_at_birth AS sex_at_birth,
 
         stu.dbgap_accession AS dbgap_accession,
@@ -190,7 +190,7 @@ Indices:
           treatment_id: t.treatment_id,
           age_at_treatment_end: t.age_at_treatment_end,
           age_at_treatment_start: t.age_at_treatment_start,
-          treatment_agent: t.treatment_agent,
+          treatment_agent: apoc.text.split(t.treatment_agent, ';'),
           treatment_type: t.treatment_type
         }) AS treatments,
 
@@ -363,7 +363,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: t.treatment_agent,
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -500,7 +500,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: t.treatment_agent,
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -756,7 +756,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: t.treatment_agent,
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
