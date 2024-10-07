@@ -792,8 +792,12 @@ Indices:
         type: keyword
       age_at_treatment_end:
         type: integer
+      age_at_treatment_end_str:
+        type: keyword
       age_at_treatment_start:
         type: integer
+      age_at_treatment_start_str:
+        type: keyword
       treatment_agent: # list
         type: keyword
       treatment_agent_str: # for display
@@ -888,7 +892,15 @@ Indices:
         // Treatment fields
         t.id AS treatment_pk,
         t.age_at_treatment_end AS age_at_treatment_end,
+        (CASE t.age_at_treatment_end
+          WHEN -999 THEN "Not Reported"
+          ELSE t.age_at_treatment_end
+        END) AS age_at_treatment_end_str,
         t.age_at_treatment_start AS age_at_treatment_start,
+        (CASE t.age_at_treatment_start
+          WHEN -999 THEN "Not Reported"
+          ELSE t.age_at_treatment_start
+        END) AS age_at_treatment_start_str,
         apoc.text.split(t.treatment_agent, ';') AS treatment_agent,
         t.treatment_agent AS treatment_agent_str,
         t.treatment_id AS treatment_id,
@@ -949,6 +961,8 @@ Indices:
         type: keyword
       age_at_response:
         type: integer
+      age_at_response_str:
+        type: keyword
       response:
         type: keyword
       response_category:
@@ -1045,6 +1059,10 @@ Indices:
         // Treatment Response fields
         tresp.id AS treatment_response_pk,
         tresp.age_at_response AS age_at_response,
+        (CASE tresp.age_at_response
+          WHEN -999 THEN "Not Reported"
+          ELSE tresp.age_at_response
+        END) AS age_at_response_str,
         tresp.response AS response,
         tresp.response_category AS response_category,
         tresp.response_system AS response_system,
