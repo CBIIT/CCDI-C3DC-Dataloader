@@ -41,7 +41,10 @@ class ESLoader:
         return self.es_client.indices.create(
             index=index_name,
             body={
-                "settings": {"number_of_shards": 1},
+                "settings": {
+                    "number_of_shards": 1,
+                    "index.max_result_window": 60000
+                },
                 "mappings": {
                     "properties": mapping
                 },
