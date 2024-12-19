@@ -155,7 +155,7 @@ Indices:
 
         // Diagnosis records
         (CASE
-          WHEN COUNT(DISTINCT d) > 0 THEN COLLECT({
+          WHEN COUNT(DISTINCT d) > 0 THEN COLLECT(DISTINCT {
             diagnosis_pk: d.id,
             diagnosis_id: d.diagnosis_id,
             age_at_diagnosis: d.age_at_diagnosis,
@@ -177,7 +177,7 @@ Indices:
 
         // Survival records
         (CASE
-          WHEN COUNT(DISTINCT sur) > 0 THEN COLLECT({
+          WHEN COUNT(DISTINCT sur) > 0 THEN COLLECT(DISTINCT {
             survival_pk: sur.id,
             survival_id: sur.survival_id,
             age_at_event_free_survival_status: sur.age_at_event_free_survival_status,
@@ -192,7 +192,7 @@ Indices:
 
         // Treatment records
         (CASE
-          WHEN COUNT(DISTINCT t) > 0 THEN COLLECT({
+          WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             treatment_pk: t.id,
             treatment_id: t.treatment_id,
             age_at_treatment_end: t.age_at_treatment_end,
@@ -205,7 +205,7 @@ Indices:
 
         // Treatment Response records
         (CASE
-          WHEN COUNT(DISTINCT tresp) > 0 THEN COLLECT({
+          WHEN COUNT(DISTINCT tresp) > 0 THEN COLLECT(DISTINCT {
             treatment_response_pk: tresp.id,
             treatment_response_id: tresp.treatment_response_id,
             age_at_response: tresp.age_at_response,
@@ -490,7 +490,7 @@ Indices:
         stu.study_name AS study_name,
 
         // Survival records
-        COLLECT({
+        COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
           cause_of_death: sur.cause_of_death,
           first_event: sur.first_event,
