@@ -44,7 +44,7 @@ Indices:
       dbgap_accession:
         type: keyword
       # Participant fields
-      participant_pk:
+      id:
         type: keyword
       participant_id:
         type: keyword
@@ -57,7 +57,7 @@ Indices:
       diagnoses:
         type: nested
         properties:
-          diagnosis_pk:
+          id:
             type: keyword
           diagnosis_id:
             type: keyword
@@ -91,7 +91,7 @@ Indices:
       survivals:
         type: nested
         properties:
-          survival_pk:
+          id:
             type: keyword
           survival_id:
             type: keyword
@@ -111,7 +111,7 @@ Indices:
       treatments:
         type: nested
         properties:
-          treatment_pk:
+          id:
             type: keyword
           treatment_id:
             type: keyword
@@ -127,7 +127,7 @@ Indices:
       treatment_responses:
         type: nested
         properties:
-          treatment_response_pk:
+          id:
             type: keyword
           treatment_response_id:
             type: keyword
@@ -146,7 +146,7 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
-        p.id AS participant_pk,
+        p.id AS id,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.sex_at_birth AS sex_at_birth,
@@ -156,7 +156,7 @@ Indices:
         // Diagnosis records
         (CASE
           WHEN COUNT(DISTINCT d) > 0 THEN COLLECT(DISTINCT {
-            diagnosis_pk: d.id,
+            id: d.id,
             diagnosis_id: d.diagnosis_id,
             age_at_diagnosis: d.age_at_diagnosis,
             anatomic_site: d.anatomic_site,
@@ -178,7 +178,7 @@ Indices:
         // Survival records
         (CASE
           WHEN COUNT(DISTINCT sur) > 0 THEN COLLECT(DISTINCT {
-            survival_pk: sur.id,
+            id: sur.id,
             survival_id: sur.survival_id,
             age_at_event_free_survival_status: sur.age_at_event_free_survival_status,
             age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
@@ -193,7 +193,7 @@ Indices:
         // Treatment records
         (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
-            treatment_pk: t.id,
+            id: t.id,
             treatment_id: t.treatment_id,
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
@@ -206,7 +206,7 @@ Indices:
         // Treatment Response records
         (CASE
           WHEN COUNT(DISTINCT tresp) > 0 THEN COLLECT(DISTINCT {
-            treatment_response_pk: tresp.id,
+            id: tresp.id,
             treatment_response_id: tresp.treatment_response_id,
             age_at_response: tresp.age_at_response,
             response: tresp.response,
@@ -220,7 +220,7 @@ Indices:
     type: neo4j
     mapping:
       # Diagnosis fields
-      diagnosis_pk: # Primary key
+      id: # Primary key
         type: keyword
       age_at_diagnosis:
         type: integer
@@ -253,16 +253,19 @@ Indices:
       tumor_stage_clinical_t:
         type: keyword
       # Participant fields
-      participant_pk:
-        type: keyword
-      participant_id:
-        type: keyword
-      race: # list
-        type: keyword
-      race_str: # for display
-        type: keyword
-      sex_at_birth:
-        type: keyword
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Samples
       # samples:
       #   type: nested
@@ -330,7 +333,7 @@ Indices:
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
         // Diagnosis fields
-        d.id AS diagnosis_pk,
+        d.id AS id,
         d.age_at_diagnosis AS age_at_diagnosis,
         (CASE d.age_at_diagnosis
           WHEN -999 THEN "Not Reported"
@@ -351,11 +354,13 @@ Indices:
         d.tumor_stage_clinical_t AS tumor_stage_clinical_t,
 
         // Participant fields
-        p.id AS participant_pk,
-        p.participant_id AS participant_id,
-        apoc.text.split(p.race, ';') AS race,
-        p.race AS race_str,
-        p.sex_at_birth AS sex_at_birth,
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
@@ -395,7 +400,7 @@ Indices:
     type: neo4j
     mapping:
       # Participant fields
-      participant_pk: # Primary key
+      id: # Primary key
         type: keyword
       participant_id:
         type: keyword
@@ -478,7 +483,7 @@ Indices:
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
         // Participant fields  
-        p.id AS participant_pk,
+        p.id AS id,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
@@ -532,7 +537,7 @@ Indices:
     type: neo4j
     mapping:
       # Reference File fields
-      reference_file_pk: # Primary key
+      id: # Primary key
         type: keyword
       dcf_indexd_guid:
         type: keyword
@@ -555,7 +560,7 @@ Indices:
     cypher_query: >
       MATCH (r:reference_file)
       RETURN
-        r.id AS reference_file_pk,
+        r.id AS id,
         r.dcf_indexd_guid AS dcf_indexd_guid,
         r.file_category AS file_category,
         r.file_description AS file_description,
@@ -575,7 +580,7 @@ Indices:
     type: neo4j
     mapping:
       # Study fields
-      study_pk: # Primary key
+      id: # Primary key
         type: keyword
       acl:
         type: keyword
@@ -610,7 +615,7 @@ Indices:
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       RETURN
         // Study fields
-        stu.id AS study_pk,
+        stu.id AS id,
         stu.acl AS acl,
         stu.consent AS consent,
         stu.consent_number AS consent_number,
@@ -634,7 +639,7 @@ Indices:
     type: neo4j
     mapping:
       # Survival fields
-      survival_pk: # Primary key
+      id: # Primary key
         type: keyword
       age_at_event_free_survival_status:
         type: integer
@@ -671,16 +676,19 @@ Indices:
           disease_phase:
             type: keyword
       # Participant fields
-      participant_pk:
-        type: keyword
-      participant_id:
-        type: keyword
-      race: # list
-        type: keyword
-      race_str: # for display
-        type: keyword
-      sex_at_birth:
-        type: keyword
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Study fields
       dbgap_accession:
         type: keyword
@@ -724,7 +732,7 @@ Indices:
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
         // Survival fields
-        sur.id AS survival_pk,
+        sur.id AS id,
         sur.age_at_event_free_survival_status AS age_at_event_free_survival_status,
         (CASE sur.age_at_event_free_survival_status
           WHEN -999 THEN "Not Reported"
@@ -742,11 +750,13 @@ Indices:
         sur.survival_id AS survival_id,
 
         // Participant fields
-        p.id AS participant_pk,
-        p.participant_id AS participant_id,
-        apoc.text.split(p.race, ';') AS race,
-        p.race as race_str,
-        p.sex_at_birth AS sex_at_birth,
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
@@ -788,7 +798,7 @@ Indices:
     type: neo4j
     mapping:
       # Treatment fields
-      treatment_pk: # Primary key
+      id: # Primary key
         type: keyword
       age_at_treatment_end:
         type: integer
@@ -807,16 +817,19 @@ Indices:
       treatment_type:
         type: keyword
       # Participant fields
-      participant_pk:
-        type: keyword
-      participant_id:
-        type: keyword
-      race: # list
-        type: keyword
-      race_str: # for display
-        type: keyword
-      sex_at_birth:
-        type: keyword
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Study fields
       dbgap_accession:
         type: keyword
@@ -890,7 +903,7 @@ Indices:
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
         // Treatment fields
-        t.id AS treatment_pk,
+        t.id AS id,
         t.age_at_treatment_end AS age_at_treatment_end,
         (CASE t.age_at_treatment_end
           WHEN -999 THEN "Not Reported"
@@ -907,11 +920,13 @@ Indices:
         t.treatment_type AS treatment_type,
 
         // Participant fields
-        p.id AS participant_pk,
-        p.participant_id AS participant_id,
-        apoc.text.split(p.race, ';') AS race,
-        p.race AS race_str,
-        p.sex_at_birth AS sex_at_birth,
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
@@ -957,7 +972,7 @@ Indices:
     type: neo4j
     mapping:
       # Treatment Response fields
-      treatment_response_pk: # Primary key
+      id: # Primary key
         type: keyword
       age_at_response:
         type: integer
@@ -972,16 +987,19 @@ Indices:
       treatment_response_id:
         type: keyword
       # Participant fields
-      participant_pk:
-        type: keyword
-      participant_id:
-        type: keyword
-      race: # list
-        type: keyword
-      race_str: # for display
-        type: keyword
-      sex_at_birth:
-        type: keyword
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Study fields
       dbgap_accession:
         type: keyword
@@ -1057,7 +1075,7 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       RETURN
         // Treatment Response fields
-        tresp.id AS treatment_response_pk,
+        tresp.id AS id,
         tresp.age_at_response AS age_at_response,
         (CASE tresp.age_at_response
           WHEN -999 THEN "Not Reported"
@@ -1069,11 +1087,13 @@ Indices:
         tresp.treatment_response_id AS treatment_response_id,
 
         // Participant fields
-        p.id AS participant_pk,
-        p.participant_id AS participant_id,
-        apoc.text.split(p.race, ';') AS race,
-        p.race AS race_str,
-        p.sex_at_birth AS sex_at_birth,
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
 
         // Study fields
         stu.dbgap_accession AS dbgap_accession,
