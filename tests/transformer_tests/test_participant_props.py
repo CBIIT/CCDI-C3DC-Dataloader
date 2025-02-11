@@ -82,12 +82,12 @@ class TestParticipantProps(unittest.TestCase):
             print(test_msg.format(value))
             self.participant_factory.create_participant(sex_at_birth=value)
 
-        with self.assertRaisesRegex(TypeError, 'Sex at Birth is missing'):
+        with self.assertRaisesRegex(ValueError, 'Sex at Birth `` must be one of the specified values'):
             value = ''
             print(test_msg.format(value))
             self.participant_factory.create_participant(sex_at_birth=value)
 
-        with self.assertRaisesRegex(TypeError, "Sex at Birth `3` must be of type <class 'str'>"):
+        with self.assertRaisesRegex(ValueError, 'Sex at Birth `3` must be one of the specified values'):
             value = 3
             print(test_msg.format(value))
             self.participant_factory.create_participant(sex_at_birth=value)

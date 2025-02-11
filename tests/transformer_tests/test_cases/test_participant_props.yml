@@ -1,0 +1,24 @@
+participant_id:
+  id:
+    - test_value: null
+      error_type: null
+    - test_value: ''
+      error_type: null
+    - test_value: 3
+      error_msg: ID `3` must be of type <class 'str'>
+      error_type: type
+    - test_value: [3]
+      error_msg: ID `[3]` must be of type <class 'str'>
+      error_type: type
+  participant_id:
+    - test_value: null
+      error: Participant ID is missing
+    - test_value: ''
+      error: Participant ID is missing
+    - test_value: 3
+      error: Participant ID `3` must be of type <class 'str'>
+    - test_value: [3]
+      error_msg: Participant ID `[3]` must be of type <class 'str'>
+      error_type: type
+  race:
+  sex_at_birth:

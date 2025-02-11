@@ -13,61 +13,92 @@ class Node:
         'string': str,
     }
 
-    # Figures out an attribute's list of prescribed values
-    def _determine_attr_enum(self, yaml_node):
-        # Early error to catch not being an enum
-        if not self._determine_attr_is_enum(yaml_node):
-            raise ValueError('Trying to get prescribed values of a non-enum')
+    # Retrieves an attribute's list of prescribed values
+    def _get_permissible_values(self, yaml_node):
+        # Enum PVs are found under "Enum"
+        if self._is_enum(yaml_node):
+            return yaml_node['Enum']
 
-        return yaml_node['Type']['Enum']
+        # List PVs are found under "Type"->"item_type"
+        if self._is_list(yaml_node):
+            return yaml_node['Type']['item_type']
 
-    # Determines whether an attribute is an enum/list
-    def _determine_attr_is_enum(self, yaml_node):
+        # At this point, the attribute is neither an Enum nor a list
+        raise ValueError('Trying to get prescribed values of a non-enum or non-list')
+
+    # Determines whether a list/enum has permissible values
+    def _has_permissible_values(self, yaml_node):
+        if self._is_enum(yaml_node):
+            pv_list = yaml_node['Enum'] # Enums have the "Enum" key by definition
+
+            if not isinstance(pv_list, list) or len(pv_list) == 0:
+                return False
+
+            return True
+
+        if self._is_list(yaml_node):
+            type_desc = yaml_node['Type'] # Lists have the "Type"->"value_type" keys by definition
+
+            if 'item_type' not in type_desc.keys() or len(type_desc['item_type']) == 0:
+                return False
+
+            return True
+
+        # Should not reach this code if list or enum
+        raise RuntimeError('Cannot check permissible values for a non-enum or non-list')
+
+    # Determines whether an attribute is an enum
+    def _is_enum(self, yaml_node):
+        # We know it's an enum if there's an "Enum" key
+        if 'Enum' in yaml_node.keys():
+            return True
+
+        return False
+
+    # Determines whether an attribute is a list
+    def _is_list(self, yaml_node):
         type_desc = None
 
-        # Early error to catch invalid YAML
-        if not 'Type' in yaml_node.keys():
-            raise ValueError('Missing `Type` key in Model Description YAML')
+        # "Enum" is reserved to specifically not be a list, even if both can have PVs
+        if self._is_enum(yaml_node):
+            return False
+
+        if 'Type' not in yaml_node.keys():
+            raise ValueError('Attribute isn\'t an enum, but MDF is missing the \'Type\' key')
 
         type_desc = yaml_node['Type']
 
-        # Not en enum, because the type is expressed with a string literal
+        # Primitives are not lists
         if isinstance(type_desc, str):
             return False
 
-        # Error if it should be enum but doesn't have an Enum key
-        if 'Enum' not in (key for key in type_desc.keys()):
-            # Not all list types are enum
-            if type_desc['value_type'] in ['list']:
-                return False
+        if 'value_type' not in type_desc.keys():
+            raise ValueError('Attribute isn\'t an enum, but MDF is missing the \'value_type\' key')
 
-            raise ValueError('Missing `Enum` field in Model Description YAML')
+        # Lists are explicitly called "list"
+        if type_desc['value_type'] == 'list':
+            return True
 
-        return True
+        # We shouldn't reach this code
+        raise RuntimeError('Can\'t determine attribute type - unknown MDF format')
 
     # Returns a boolean indicating whether the attribute is required
-    def _determine_attr_req(self, yaml_node):
+    def _is_req(self, yaml_node):
         # Early error to catch invalid YAML
-        if not 'Req' in yaml_node.keys():
+        if 'Req' not in yaml_node.keys():
             raise ValueError('Missing `Req` key in Model Description YAML')
 
         return yaml_node['Req']
 
     # Figures out the Python type that an attribute should be
-    def _determine_attr_type(self, yaml_node):
+    def _get_type(self, yaml_node):
         type_literal = None
 
-        if type(yaml_node['Type']) is dict:
-            if 'value_type' not in (key for key in yaml_node['Type'].keys()):
-                raise ValueError('Missing `value_type` field in Model Description YAML')
-            elif type(yaml_node['Type']['value_type']) is str:
-                type_literal = yaml_node['Type']['value_type']
-            else:
-                raise TypeError('Invalid type value for `value_type` field in Model Description YAML')
-        elif type(yaml_node['Type']) is str:
-            type_literal = yaml_node['Type']
-        else:
-            raise TypeError('Invalid type value for `Type` field in Model Description YAML')
+        # Don't bother with the types of enums or lists. Just make sure their values are allowed.
+        if self._is_enum(yaml_node) or self._is_list(yaml_node):
+            raise RuntimeError('Invalid type check. For enums and lists, just make sure their values are permissible')
+
+        type_literal = yaml_node['Type']
 
         # Handle undefined type mapping
         if type_literal not in self._TYPE_MAP.keys():
@@ -77,33 +108,51 @@ class Node:
 
     def _validate_attr(self, attr_name, value):
         prop_def = self._PROPDEFS[attr_name]
-        is_required = self._determine_attr_req(prop_def)
-        type = self._determine_attr_type(prop_def)
+        is_required = self._is_req(prop_def)
 
         if is_required and value is None:
-            raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
-
-        if is_required and type == str and value == '':
             raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
         if not is_required and value is None:
             return
 
-        # Check that the value is the right type
-        if value is not None and not isinstance(value, type):
-            raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
+        # Validation for primitives
+        if not self._is_enum(prop_def) and not self._is_list(prop_def):
+            type = self._get_type(prop_def)
 
-        # Checks for enum/list
-        if self._determine_attr_is_enum(prop_def):
-            enum = self._determine_attr_enum(prop_def)
+            if is_required and type == str and value == '':
+                raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
-            # For list
-            if type == list and not all(item in enum for item in value):
+            # Check that the value is the right type
+            if value is not None and not isinstance(value, type):
+                raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
+
+            return
+
+        # Validation for enums
+        if self._is_enum(prop_def):
+            if not self._has_permissible_values(prop_def):
+                raise RuntimeError(f'{self._PROPER_NAMES[attr_name]} is an enum, but it has no permissible values')
+
+            if value not in self._get_permissible_values(prop_def):
+                raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be one of the specified values')
+
+            return
+
+
+        # Validation for lists
+        if self._is_list(prop_def):
+            # In rare cases, the MDF specifies no permissible values for a list
+            if not self._has_permissible_values(prop_def):
+                return
+
+            if not all(item in self._get_permissible_values(prop_def) for item in value):
                 raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be a subset of the specified values')
 
-            # For enum
-            if type != list and value not in enum:
-                raise ValueError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be one of the specified values')
+            return
+
+        # Shouldn't reach this code
+        raise RuntimeError('Unknown validation error')
 
     # Combine data with an existing Node
     def merge(other_node):
