@@ -110,24 +110,31 @@ class Node:
         prop_def = self._PROPDEFS[attr_name]
         is_required = self._is_req(prop_def)
 
-        if is_required and value is None:
-            raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
-
+        # Nothing to do if a non-required value is null
         if not is_required and value is None:
             return
+
+        # Required value is considered to be missing if it's null
+        if is_required and value is None:
+            raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
         # Validation for primitives
         if not self._is_enum(prop_def) and not self._is_list(prop_def):
             type = self._get_type(prop_def)
 
+            # Empty string for required String property is considered missing
             if is_required and type == str and value == '':
                 raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
-            # Check that the value is the right type
+            # Catch incorrect types, including empty string for non-string property
             if value is not None and not isinstance(value, type):
                 raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be of type {type}')
 
             return
+
+        # Consider empty string to be a missing value for required non-primitive properties
+        if is_required and value == '':
+            raise TypeError(f'{self._PROPER_NAMES[attr_name]} is missing')
 
         # Validation for enums
         if self._is_enum(prop_def):
@@ -142,6 +149,10 @@ class Node:
 
         # Validation for lists
         if self._is_list(prop_def):
+            # A list should be a list
+            if not isinstance(value, list):
+                raise TypeError(f'{self._PROPER_NAMES[attr_name]} `{value}` must be a list')
+
             # In rare cases, the MDF specifies no permissible values for a list
             if not self._has_permissible_values(prop_def):
                 return
