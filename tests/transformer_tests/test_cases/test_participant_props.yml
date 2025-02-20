@@ -1,24 +1,72 @@
+id:
+  - test_value: null
+    error_type: null
+  - test_value: ''
+    error_type: null
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: ID `\[3\]` must be of type <class 'str'>
+    error_type: type
 participant_id:
-  id:
-    - test_value: null
-      error_type: null
-    - test_value: ''
-      error_type: null
-    - test_value: 3
-      error_msg: ID `3` must be of type <class 'str'>
-      error_type: type
-    - test_value: [3]
-      error_msg: ID `[3]` must be of type <class 'str'>
-      error_type: type
-  participant_id:
-    - test_value: null
-      error: Participant ID is missing
-    - test_value: ''
-      error: Participant ID is missing
-    - test_value: 3
-      error: Participant ID `3` must be of type <class 'str'>
-    - test_value: [3]
-      error_msg: Participant ID `[3]` must be of type <class 'str'>
-      error_type: type
-  race:
-  sex_at_birth:
+  - test_value: null
+    error_msg: Participant ID is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Participant ID is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: Participant ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: Participant ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: Participant ID `\[3\]` must be of type <class 'str'>
+    error_type: type
+race:
+  - test_value: null
+    error_msg: Race is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Race is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Race `Foo` must be a list
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Race `\['Foo'\]` must be a subset of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Race `3` must be a list
+    error_type: type
+  - test_value: [3]
+    error_msg: Race `\[3\]` must be a subset of the specified values
+    error_type: value
+sex_at_birth:
+  - test_value: null
+    error_msg: Sex at Birth is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Sex at Birth is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Sex at Birth `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Sex at Birth `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Sex at Birth `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Sex at Birth `\[3\]` must be one of the specified values
+    error_type: value

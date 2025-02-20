@@ -1,5 +1,11 @@
 import unittest
+import yaml
 from transformer.nodes import Participant
+
+ERROR_MAP = {
+    'type': TypeError,
+    'value': ValueError
+}
 
 class TestParticipantFactory():
     def create_participant(
@@ -21,81 +27,60 @@ class TestParticipantProps(unittest.TestCase):
     def setUp(self):
         self.participant_factory = TestParticipantFactory()
 
+        with open('tests/transformer_tests/test_cases/test_participant_props.yml', 'r', encoding='utf8') as file:
+            self.test_cases = yaml.safe_load(file)
+
     # Participant.id
     def test_participant_id(self):
         test_msg = 'Testing Participant.id being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, "ID `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(id=value)
+        for test_case in self.test_cases['id']:
+            if test_case['error_type'] == None:
+                continue
+
+            with self.assertRaisesRegex(ERROR_MAP[test_case['error_type']], test_case['error_msg']):
+                value = test_case['test_value']
+                print(test_msg.format(value))
+                self.participant_factory.create_participant(id=value)
 
     # Participant.participant_id
-    def test_participant_id(self):
+    def test_participant_participant_id(self):
         test_msg = 'Testing Participant.participant_id being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'Participant ID is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(participant_id=value)
+        for test_case in self.test_cases['participant_id']:
+            if test_case['error_type'] == None:
+                continue
 
-        with self.assertRaisesRegex(TypeError, 'Participant ID is missing'):
-            value = ''
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(participant_id=value)
-
-        with self.assertRaisesRegex(TypeError, "Participant ID `3` must be of type <class 'str'>"):
-            value = 3
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(participant_id=value)
+            with self.assertRaisesRegex(ERROR_MAP[test_case['error_type']], test_case['error_msg']):
+                value = test_case['test_value']
+                print(test_msg.format(value))
+                self.participant_factory.create_participant(participant_id=value)
 
     # Participant.race
     def test_participant_race(self):
         test_msg = 'Testing Participant.race being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'Race is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(race=value)
+        for test_case in self.test_cases['race']:
+            if test_case['error_type'] == None:
+                continue
 
-        with self.assertRaisesRegex(TypeError, "Race `` must be of type <class 'list'>"):
-            value = ''
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(race=value)
-
-        with self.assertRaisesRegex(TypeError, "Race `Foo` must be of type <class 'list'>"):
-            value = 'Foo'
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(race=value)
-
-        with self.assertRaisesRegex(ValueError, "Race `\['Foo'\]` must be a subset of the specified values"):
-            value = ['Foo']
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(race=value)
+            with self.assertRaisesRegex(ERROR_MAP[test_case['error_type']], test_case['error_msg']):
+                value = test_case['test_value']
+                print(test_msg.format(value))
+                self.participant_factory.create_participant(race=value)
 
     # Participant.sex_at_birth
     def test_participant_sex_at_birth(self):
         test_msg = 'Testing Participant.sex_at_birth being <{}>...'
 
-        with self.assertRaisesRegex(TypeError, 'Sex at Birth is missing'):
-            value = None
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(sex_at_birth=value)
+        for test_case in self.test_cases['sex_at_birth']:
+            if test_case['error_type'] == None:
+                continue
 
-        with self.assertRaisesRegex(ValueError, 'Sex at Birth `` must be one of the specified values'):
-            value = ''
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(sex_at_birth=value)
-
-        with self.assertRaisesRegex(ValueError, 'Sex at Birth `3` must be one of the specified values'):
-            value = 3
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(sex_at_birth=value)
-
-        with self.assertRaisesRegex(ValueError, 'Sex at Birth `Foo` must be one of the specified values'):
-            value = 'Foo'
-            print(test_msg.format(value))
-            self.participant_factory.create_participant(sex_at_birth=value)
+            with self.assertRaisesRegex(ERROR_MAP[test_case['error_type']], test_case['error_msg']):
+                value = test_case['test_value']
+                print(test_msg.format(value))
+                self.participant_factory.create_participant(sex_at_birth=value)
 
 if __name__ == '__main__':
     unittest.main()
