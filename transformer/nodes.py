@@ -175,10 +175,10 @@ class Participant(Node):
         self._race = value
 
     @property
-    def gender(self):
-        return self._gender
+    def sex_at_birth(self):
+        return self._sex_at_birth
 
-    @gender.setter
+    @sex_at_birth.setter
     def sex_at_birth(self, value):
         self._validate_attr('sex_at_birth', value)
         self._sex_at_birth = value
