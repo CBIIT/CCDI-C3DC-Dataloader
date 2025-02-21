@@ -1,0 +1,279 @@
+id:
+  - test_value: null
+    error_type: null
+  - test_value: ''
+    error_type: null
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: ID `\[3\]` must be of type <class 'str'>
+    error_type: type
+age_at_diagnosis:
+  - test_value: null
+    error_msg: Age at Diagnosis is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Age at Diagnosis `` must be of type <class 'int'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Age at Diagnosis `Foo` must be of type <class 'int'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Age at Diagnosis `\['Foo'\]` must be of type <class 'int'>
+    error_type: type
+  - test_value: 3
+    error_type: null
+  - test_value: [3]
+    error_msg: Age at Diagnosis `\[3\]` must be of type <class 'int'>
+    error_type: type
+anatomic_site:
+  - test_value: null
+    error_msg: Anatomic Site is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Anatomic Site is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Anatomic Site `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Anatomic Site `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Anatomic Site `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Anatomic Site `\[3\]` must be one of the specified values
+    error_type: value
+diagnosis_basis:
+  - test_value: null
+    error_msg: Diagnosis Basis is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Diagnosis Basis is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Diagnosis Basis `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Diagnosis Basis `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Diagnosis Basis `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Diagnosis Basis `\[3\]` must be one of the specified values
+    error_type: value
+diagnosis:
+  - test_value: null
+    error_msg: Diagnosis is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Diagnosis is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Diagnosis `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Diagnosis `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Diagnosis `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Diagnosis `\[3\]` must be one of the specified values
+    error_type: value
+diagnosis_classification_system:
+  - test_value: null
+    error_msg: Diagnosis Classification System is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Diagnosis Classification System is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Diagnosis Classification System `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Diagnosis Classification System `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Diagnosis Classification System `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Diagnosis Classification System `\[3\]` must be one of the specified values
+    error_type: value
+diagnosis_comment:
+  - test_value: null
+    error_msg: Diagnosis Comment is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Diagnosis Comment is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: Diagnosis Comment `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: Diagnosis Comment `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: Diagnosis Comment `\[3\]` must be of type <class 'str'>
+    error_type: type
+diagnosis_id:
+  - test_value: null
+    error_msg: Diagnosis ID is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Diagnosis ID is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: Diagnosis ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: Diagnosis ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: Diagnosis ID `\[3\]` must be of type <class 'str'>
+    error_type: type
+disease_phase:
+  - test_value: null
+    error_msg: Disease Phase is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Disease Phase is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Disease Phase `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Disease Phase `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Disease Phase `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Disease Phase `\[3\]` must be one of the specified values
+    error_type: value
+toronto_childhood_cancer_staging:
+  - test_value: null
+    error_msg: Toronto Childhood Cancer Staging is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Toronto Childhood Cancer Staging is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Toronto Childhood Cancer Staging `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Toronto Childhood Cancer Staging `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Toronto Childhood Cancer Staging `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Toronto Childhood Cancer Staging `\[3\]` must be one of the specified values
+    error_type: value
+tumor_classification:
+  - test_value: null
+    error_msg: Tumor Classification is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Tumor Classification is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Tumor Classification `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Tumor Classification `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Tumor Classification `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Tumor Classification `\[3\]` must be one of the specified values
+    error_type: value
+tumor_grade:
+  - test_value: null
+    error_msg: Tumor Grade is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Tumor Grade is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Tumor Grade `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Tumor Grade `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Tumor Grade `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Tumor Grade `\[3\]` must be one of the specified values
+    error_type: value
+tumor_stage_clinical_m:
+  - test_value: null
+    error_msg: Tumor Clinical M Stage is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Tumor Clinical M Stage is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Tumor Clinical M Stage `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Tumor Clinical M Stage `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Tumor Clinical M Stage `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Tumor Clinical M Stage `\[3\]` must be one of the specified values
+    error_type: value
+tumor_stage_clinical_n:
+  - test_value: null
+    error_msg: Tumor Clinical N Stage is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Tumor Clinical N Stage is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Tumor Clinical N Stage `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Tumor Clinical N Stage `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Tumor Clinical N Stage `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Tumor Clinical N Stage `\[3\]` must be one of the specified values
+    error_type: value
+tumor_stage_clinical_t:
+  - test_value: null
+    error_msg: Tumor Clinical T Stage is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Tumor Clinical T Stage is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Tumor Clinical T Stage `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Tumor Clinical T Stage `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Tumor Clinical T Stage `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Tumor Clinical T Stage `\[3\]` must be one of the specified values
+    error_type: value
