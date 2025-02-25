@@ -393,20 +393,22 @@ class Diagnosis(Node):
         'diagnosis_comment': 'Diagnosis Comment',
         'diagnosis_id': 'Diagnosis ID',
         'disease_phase': 'Disease Phase',
+        'laterality': 'Laterality',
         'toronto_childhood_cancer_staging': 'Toronto Childhood Cancer Staging',
         'tumor_classification': 'Tumor Classification',
         'tumor_grade': 'Tumor Grade',
         'tumor_stage_clinical_m': 'Tumor Clinical M Stage',
         'tumor_stage_clinical_n': 'Tumor Clinical N Stage',
         'tumor_stage_clinical_t': 'Tumor Clinical T Stage',
+        'year_of_diagnosis': 'Year of Diagnosis',
     }
 
     def __init__(self, id, age_at_diagnosis, anatomic_site, diagnosis_basis,
-            diagnosis, diagnosis_classification_system,
-            diagnosis_comment, diagnosis_id, disease_phase,
-            toronto_childhood_cancer_staging, tumor_classification,
-            tumor_grade, tumor_stage_clinical_m, tumor_stage_clinical_n,
-            tumor_stage_clinical_t):
+            diagnosis, diagnosis_classification_system, diagnosis_comment,
+            diagnosis_id, disease_phase, laterality,
+            toronto_childhood_cancer_staging, tumor_classification, tumor_grade,
+            tumor_stage_clinical_m, tumor_stage_clinical_n,
+            tumor_stage_clinical_t, year_of_diagnosis):
         self.id = id
         self.age_at_diagnosis = age_at_diagnosis
         self.anatomic_site = anatomic_site
@@ -416,12 +418,14 @@ class Diagnosis(Node):
         self.diagnosis_comment = diagnosis_comment
         self.diagnosis_id = diagnosis_id
         self.disease_phase = disease_phase
+        self.laterality = laterality
         self.toronto_childhood_cancer_staging = toronto_childhood_cancer_staging
         self.tumor_classification = tumor_classification
         self.tumor_grade = tumor_grade
         self.tumor_stage_clinical_m = tumor_stage_clinical_m
         self.tumor_stage_clinical_n = tumor_stage_clinical_n
         self.tumor_stage_clinical_t = tumor_stage_clinical_t
+        self.year_of_diagnosis = year_of_diagnosis
 
     def __str__(self):
         return ' | '.join([
@@ -434,12 +438,14 @@ class Diagnosis(Node):
             self._diagnosis_comment,
             self._diagnosis_id,
             self._disease_phase,
+            self._laterality,
             self._toronto_childhood_cancer_staging,
             self._tumor_classification,
             self._tumor_grade,
             self._tumor_stage_clinical_m,
             self._tumor_stage_clinical_n,
             self._tumor_stage_clinical_t,
+            self._year_of_diagnosis,
         ])
 
     @property
@@ -524,6 +530,15 @@ class Diagnosis(Node):
         self._disease_phase = value
 
     @property
+    def laterality(self):
+        return self._laterality
+
+    @laterality.setter
+    def laterality(self, value):
+        self._validate_attr('laterality', value)
+        self._laterality = value
+
+    @property
     def toronto_childhood_cancer_staging(self):
         return self._toronto_childhood_cancer_staging
 
@@ -577,6 +592,15 @@ class Diagnosis(Node):
         self._validate_attr('tumor_stage_clinical_t', value)
         self._tumor_stage_clinical_t = value
 
+    @property
+    def year_of_diagnosis(self):
+        return self._year_of_diagnosis
+
+    @year_of_diagnosis.setter
+    def year_of_diagnosis(self, value):
+        self._validate_attr('year_of_diagnosis', value)
+        self._year_of_diagnosis = value
+
     def to_list(self):
         return [
             'diagnosis',
@@ -589,12 +613,14 @@ class Diagnosis(Node):
             self._disease_phase,
             self._anatomic_site,
             self._age_at_diagnosis,
+            self._laterality,
             self._toronto_childhood_cancer_staging,
             self._tumor_classification,
             self._tumor_grade,
             self._tumor_stage_clinical_t,
             self._tumor_stage_clinical_n,
             self._tumor_stage_clinical_m,
+            self._year_of_diagnosis,
         ]
 
 class GeneticAnalysis(Node):

@@ -163,6 +163,25 @@ disease_phase:
   - test_value: [3]
     error_msg: Disease Phase `\[3\]` must be one of the specified values
     error_type: value
+laterality:
+  - test_value: null
+    error_msg: Laterality is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Laterality is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Laterality `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Laterality `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Laterality `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Laterality `\[3\]` must be one of the specified values
+    error_type: value
 toronto_childhood_cancer_staging:
   - test_value: null
     error_msg: Toronto Childhood Cancer Staging is missing
@@ -277,3 +296,21 @@ tumor_stage_clinical_t:
   - test_value: [3]
     error_msg: Tumor Clinical T Stage `\[3\]` must be one of the specified values
     error_type: value
+year_of_diagnosis:
+  - test_value: null
+    error_msg: Year of Diagnosis is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Year of Diagnosis `` must be of type <class 'int'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Year of Diagnosis `Foo` must be of type <class 'int'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Year of Diagnosis `\['Foo'\]` must be of type <class 'int'>
+    error_type: type
+  - test_value: 3
+    error_type: null
+  - test_value: [3]
+    error_msg: Year of Diagnosis `\[3\]` must be of type <class 'int'>
+    error_type: type

@@ -19,12 +19,14 @@ class TestDiagnosisFactory():
             diagnosis_comment = 'Neuroblastoma',
             diagnosis_id = '328b01d8-b493-48fe-ba2d-0e2d30ca9883',
             disease_phase = 'Initial Diagnosis',
+            laterality = 'Bilateral',
             toronto_childhood_cancer_staging = 'Neuroblastoma Stage M',
             tumor_classification = 'Primary',
             tumor_grade = 'High Grade',
             tumor_stage_clinical_m = 'Not Reported',
             tumor_stage_clinical_n = 'Not Reported',
-            tumor_stage_clinical_t = 'Not Reported'):
+            tumor_stage_clinical_t = 'Not Reported',
+            year_of_diagnosis = 3):
         diagnosis = Diagnosis(
             id,
             age_at_diagnosis,
@@ -35,12 +37,14 @@ class TestDiagnosisFactory():
             diagnosis_comment,
             diagnosis_id,
             disease_phase,
+            laterality,
             toronto_childhood_cancer_staging,
             tumor_classification,
             tumor_grade,
             tumor_stage_clinical_m,
             tumor_stage_clinical_n,
-            tumor_stage_clinical_t
+            tumor_stage_clinical_t,
+            year_of_diagnosis
         )
 
         return diagnosis
@@ -169,6 +173,19 @@ class TestDiagnosisProps(unittest.TestCase):
                 print(test_msg.format(value))
                 self.diagnosis_factory.create_diagnosis(disease_phase=value)
 
+    # Diagnosis.laterality
+    def test_diagnosis_laterality(self):
+        test_msg = 'Testing Diagnosis.laterality being <{}>...'
+
+        for test_case in self.test_cases['laterality']:
+            if test_case['error_type'] == None:
+                continue
+
+            with self.assertRaisesRegex(ERROR_MAP[test_case['error_type']], test_case['error_msg']):
+                value = test_case['test_value']
+                print(test_msg.format(value))
+                self.diagnosis_factory.create_diagnosis(laterality=value)
+
     # Diagnosis.toronto_childhood_cancer_staging
     def test_diagnosis_toronto_childhood_cancer_staging(self):
         test_msg = 'Testing Diagnosis.toronto_childhood_cancer_staging being <{}>...'
@@ -246,6 +263,19 @@ class TestDiagnosisProps(unittest.TestCase):
                 value = test_case['test_value']
                 print(test_msg.format(value))
                 self.diagnosis_factory.create_diagnosis(tumor_stage_clinical_t=value)
+
+    # Diagnosis.year_of_diagnosis
+    def test_diagnosis_year_of_diagnosis(self):
+        test_msg = 'Testing Diagnosis.year_of_diagnosis being <{}>...'
+
+        for test_case in self.test_cases['year_of_diagnosis']:
+            if test_case['error_type'] == None:
+                continue
+
+            with self.assertRaisesRegex(ERROR_MAP[test_case['error_type']], test_case['error_msg']):
+                value = test_case['test_value']
+                print(test_msg.format(value))
+                self.diagnosis_factory.create_diagnosis(year_of_diagnosis=value)
 
 if __name__ == '__main__':
     unittest.main()
