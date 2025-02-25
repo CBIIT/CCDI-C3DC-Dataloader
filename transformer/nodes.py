@@ -8,6 +8,7 @@ class Node:
 
     _PROPER_NAMES = {}
     _TYPE_MAP = {
+        'decimal': float,
         'integer': int,
         'list': list,
         'string': str,
@@ -596,6 +597,357 @@ class Diagnosis(Node):
             self._tumor_stage_clinical_m,
         ]
 
+class GeneticAnalysis(Node):
+    _PROPER_NAMES = {
+        'id': 'ID',
+        'age_at_genetic_analysis': 'Age at Genetic Analysis',
+        'allelic_ratio': 'Allelic Ratio',
+        'alteration': 'Alteration',
+        'dna_index_numeric': 'Numeric DNA Index',
+        'genetic_analysis_id': 'Genetic Analysis ID',
+        'hgvs_coding': 'HGVS Coding',
+        'hgvs_protein': 'HGVS Protein',
+        'iscn': 'ISCN',
+        'status': 'Status',
+        'vaf_numeric': 'Numeric VAF',
+    }
+
+    def __init__(self, id, age_at_genetic_analysis, allelic_ratio, alteration,
+            dna_index_numeric, genetic_analysis_id, hgvs_coding, hgvs_protein,
+            iscn, status, vaf_numeric, model_file_path=None,
+            props_file_path=None):
+        self.id = id
+        self.age_at_genetic_analysis = age_at_genetic_analysis
+        self.allelic_ratio = allelic_ratio
+        self.alteration = alteration
+        self.dna_index_numeric = dna_index_numeric
+        self.genetic_analysis_id = genetic_analysis_id
+        self.hgvs_coding = hgvs_coding
+        self.hgvs_protein = hgvs_protein
+        self.iscn = iscn
+        self.status = status
+        self.vaf_numeric = vaf_numeric
+
+        if (not model_file_path is None):
+            with open(model_file_path, 'r') as file:
+                self._NODEDEFS = yaml.safe_load(file)['Nodes']
+
+        if (not props_file_path is None):
+            with open(props_file_path, 'r') as file:
+                self._PROPDEFS = yaml.safe_load(file)['PropDefinitions']
+
+    def __str__(self):
+        return ' | '.join([
+            self._id or '',
+            self._age_at_genetic_analysis or '',
+            self._allelic_ratio or '',
+            self._alteration or '',
+            self._dna_index_numeric or '',
+            self._genetic_analysis_id or '',
+            self._hgvs_coding or '',
+            self._hgvs_protein or '',
+            self._iscn or '',
+            self._status or '',
+            self._vaf_numeric or '',
+        ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
+
+    @property
+    def age_at_genetic_analysis(self):
+        return self._age_at_genetic_analysis
+
+    @age_at_genetic_analysis.setter
+    def age_at_genetic_analysis(self, value):
+        self._validate_attr('age_at_genetic_analysis', value)
+        self._age_at_genetic_analysis = value
+
+    @property
+    def allelic_ratio(self):
+        return self._allelic_ratio
+
+    @allelic_ratio.setter
+    def allelic_ratio(self, value):
+        self._validate_attr('allelic_ratio', value)
+        self._allelic_ratio = value
+
+    @property
+    def alteration(self):
+        return self._alteration
+
+    @alteration.setter
+    def alteration(self, value):
+        self._validate_attr('alteration', value)
+        self._alteration = value
+
+    @property
+    def dna_index_numeric(self):
+        return self._dna_index_numeric
+
+    @dna_index_numeric.setter
+    def dna_index_numeric(self, value):
+        self._validate_attr('dna_index_numeric', value)
+        self._dna_index_numeric = value
+
+    @property
+    def genetic_analysis_id(self):
+        return self._genetic_analysis_id
+
+    @genetic_analysis_id.setter
+    def genetic_analysis_id(self, value):
+        self._validate_attr('genetic_analysis_id', value)
+        self._genetic_analysis_id = value
+
+    @property
+    def hgvs_coding(self):
+        return self._hgvs_coding
+
+    @hgvs_coding.setter
+    def hgvs_coding(self, value):
+        self._validate_attr('hgvs_coding', value)
+        self._hgvs_coding = value
+
+    @property
+    def hgvs_protein(self):
+        return self._hgvs_protein
+
+    @hgvs_protein.setter
+    def hgvs_protein(self, value):
+        self._validate_attr('hgvs_protein', value)
+        self._hgvs_protein = value
+
+    @property
+    def iscn(self):
+        return self._iscn
+
+    @iscn.setter
+    def iscn(self, value):
+        self._validate_attr('iscn', value)
+        self._iscn = value
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        self._validate_attr('status', value)
+        self._status = value
+
+    @property
+    def vaf_numeric(self):
+        return self._vaf_numeric
+
+    @vaf_numeric.setter
+    def vaf_numeric(self, value):
+        self._validate_attr('vaf_numeric', value)
+        self._vaf_numeric = value
+
+    def to_list(self):
+        return [
+            'genetic_analysis',
+            self._id,
+            self._age_at_genetic_analysis,
+            self._allelic_ratio,
+            self._alteration,
+            self._dna_index_numeric,
+            self._genetic_analysis_id,
+            self._hgvs_coding,
+            self._hgvs_protein,
+            self._iscn,
+            self._status,
+            self._vaf_numeric,
+        ]
+
+class LaboratoryTest(Node):
+    _PROPER_NAMES = {
+        'id': 'ID',
+        'age_at_lab': 'Age at Lab',
+        'laboratory_test_id': 'Laboratory Test ID',
+        'method': 'Method',
+        'result': 'Result',
+        'result_modifier': 'Result Modifer',
+        'result_numeric': 'Result Numeric',
+        'result_text': 'Result Text',
+        'result_unit': 'Result Unit',
+        'sensitivity': 'Sensitivity',
+        'specimen': 'Specimen',
+        'test': 'Test',
+    }
+
+    def __init__(self, id, age_at_lab, laboratory_test_id, method, result,
+                result_modifier, result_numeric, result_text, result_unit,
+                sensitivity, specimen, test, model_file_path=None,
+                props_file_path=None):
+        self.id = id
+        self.age_at_lab = age_at_lab
+        self.laboratory_test_id = laboratory_test_id
+        self.method = method
+        self.result = result
+        self.result_modifier = result_modifier
+        self.result_numeric = result_numeric
+        self.result_text = result_text
+        self.result_unit = result_unit
+        self.sensitivity = sensitivity
+        self.specimen = specimen
+        self.test = test
+
+        if (not model_file_path is None):
+            with open(model_file_path, 'r') as file:
+                self._NODEDEFS = yaml.safe_load(file)['Nodes']
+
+        if (not props_file_path is None):
+            with open(props_file_path, 'r') as file:
+                self._PROPDEFS = yaml.safe_load(file)['PropDefinitions']
+
+    def __str__(self):
+        return ' | '.join([
+            self._id or '',
+            self._age_at_lab or '',
+            self._laboratory_test_id or '',
+            self._method or '',
+            self._result or '',
+            self._result_modifier or '',
+            self._result_numeric or '',
+            self._result_text or '',
+            self._result_unit or '',
+            self._sensitivity or '',
+            self._specimen or '',
+            self._test or '',
+        ])
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._validate_attr('id', value)
+        self._id = value
+
+    @property
+    def age_at_lab(self):
+        return self._age_at_lab
+
+    @age_at_lab.setter
+    def age_at_lab(self, value):
+        self._validate_attr('age_at_lab', value)
+        self._age_at_lab = value
+
+    @property
+    def laboratory_test_id(self):
+        return self._laboratory_test_id
+
+    @laboratory_test_id.setter
+    def laboratory_test_id(self, value):
+        self._validate_attr('laboratory_test_id', value)
+        self._laboratory_test_id = value
+
+    @property
+    def method(self):
+        return self._method
+
+    @method.setter
+    def method(self, value):
+        self._validate_attr('method', value)
+        self._method = value
+
+    @property
+    def result(self):
+        return self._result
+
+    @result.setter
+    def result(self, value):
+        self._validate_attr('result', value)
+        self._result = value
+
+    @property
+    def result_modifier(self):
+        return self._result_modifier
+
+    @result_modifier.setter
+    def result_modifier(self, value):
+        self._validate_attr('result_modifier', value)
+        self._result_modifier = value
+
+    @property
+    def result_numeric(self):
+        return self._result_numeric
+
+    @result_numeric.setter
+    def result_numeric(self, value):
+        self._validate_attr('result_numeric', value)
+        self._result_numeric = value
+
+    @property
+    def result_text(self):
+        return self._result_text
+
+    @result_text.setter
+    def result_text(self, value):
+        self._validate_attr('result_text', value)
+        self._result_text = value
+
+    @property
+    def result_unit(self):
+        return self._result_unit
+
+    @result_unit.setter
+    def result_unit(self, value):
+        self._validate_attr('result_unit', value)
+        self._result_unit = value
+
+    @property
+    def sensitivity(self):
+        return self._sensitivity
+
+    @sensitivity.setter
+    def sensitivity(self, value):
+        self._validate_attr('sensitivity', value)
+        self._sensitivity = value
+
+    @property
+    def specimen(self):
+        return self._specimen
+
+    @specimen.setter
+    def specimen(self, value):
+        self._validate_attr('specimen', value)
+        self._specimen = value
+
+    @property
+    def test(self):
+        return self._test
+
+    @test.setter
+    def test(self, value):
+        self._validate_attr('test', value)
+        self._test = value
+
+    def to_list(self):
+        return [
+            'genetic_analysis',
+            self._id,
+            self._age_at_lab,
+            self._laboratory_test_id,
+            self._method,
+            self._result,
+            self._result_modifier,
+            self._result_numeric,
+            self._result_text,
+            self._result_unit,
+            self._sensitivity,
+            self._specimen,
+            self._test,
+        ]
+
 class ReferenceFile(Node):
     _PROPER_NAMES = {
         'id': 'ID',
@@ -626,16 +978,16 @@ class ReferenceFile(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.id,
-            self.dcf_indexd_guid,
-            self.file_category,
-            self.file_description,
-            self.file_name,
-            self.file_size,
-            self.file_type,
-            self.md5sum,
-            self.reference_file_id,
-            self.reference_file_url,
+            self._id,
+            self._dcf_indexd_guid,
+            self._file_category,
+            self._file_description,
+            self._file_name,
+            self._file_size,
+            self._file_type,
+            self._md5sum,
+            self._reference_file_id,
+            self._reference_file_url,
         ])
 
     @property
@@ -731,16 +1083,16 @@ class ReferenceFile(Node):
     def to_list(self):
         return [
             'reference_file',
-            self.id,
-            self.reference_file_id,
-            self.file_category,
-            self.file_name,
-            self.file_type,
-            self.file_description,
-            self.file_size,
-            self.md5sum,
-            self.reference_file_url,
-            self.dcf_indexd_guid,
+            self._id,
+            self._reference_file_id,
+            self._file_category,
+            self._file_name,
+            self._file_type,
+            self._file_description,
+            self._file_size,
+            self._md5sum,
+            self._reference_file_url,
+            self._dcf_indexd_guid,
         ]
 
 class Survival(Node):
@@ -770,14 +1122,14 @@ class Survival(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.id,
-            self.age_at_event_free_survival_status,
-            self.age_at_last_known_survival_status,
-            self.cause_of_death,
-            self.event_free_survival_status,
-            self.first_event,
-            self.last_known_survival_status,
-            self.survival_id,
+            self._id,
+            self._age_at_event_free_survival_status,
+            self._age_at_last_known_survival_status,
+            self._cause_of_death,
+            self._event_free_survival_status,
+            self._first_event,
+            self._last_known_survival_status,
+            self._survival_id,
         ])
 
     @property
@@ -855,14 +1207,14 @@ class Survival(Node):
     def to_list(self):
         return [
             'survival',
-            self.id,
-            self.survival_id,
-            self.last_known_survival_status,
-            self.event_free_survival_status,
-            self.first_event,
-            self.age_at_last_known_survival_status,
-            self.age_at_event_free_survival_status,
-            self.cause_of_death,
+            self._id,
+            self._survival_id,
+            self._last_known_survival_status,
+            self._event_free_survival_status,
+            self._first_event,
+            self._age_at_last_known_survival_status,
+            self._age_at_event_free_survival_status,
+            self._cause_of_death,
         ]
 
 class Treatment(Node):
@@ -886,12 +1238,12 @@ class Treatment(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.id,
-            self.treatment_id,
-            self.age_at_treatment_start,
-            self.age_at_treatment_end,
-            self.treatment_type,
-            self.treatment_agent
+            self._id,
+            self._treatment_id,
+            self._age_at_treatment_start,
+            self._age_at_treatment_end,
+            self._treatment_type,
+            self._treatment_agent
         ])
 
     @property
@@ -951,12 +1303,12 @@ class Treatment(Node):
     def to_list(self):
         return [
             'treatment',
-            self.id,
-            self.treatment_id,
-            self.age_at_treatment_start,
-            self.age_at_treatment_end,
-            self.treatment_type,
-            ';'.join(self.treatment_agent),
+            self._id,
+            self._treatment_id,
+            self._age_at_treatment_start,
+            self._age_at_treatment_end,
+            self._treatment_type,
+            ';'.join(self._treatment_agent),
         ]
 
 class TreatmentResponse(Node):
@@ -980,12 +1332,12 @@ class TreatmentResponse(Node):
 
     def __str__(self):
         return ' | '.join([
-            self.id,
-            self.age_at_response,
-            self.response,
-            self.response_category,
-            self.response_system,
-            self.treatment_response_id
+            self._id,
+            self._age_at_response,
+            self._response,
+            self._response_category,
+            self._response_system,
+            self._treatment_response_id
         ])
 
     @property
@@ -1045,10 +1397,10 @@ class TreatmentResponse(Node):
     def to_list(self):
         return [
             'treatment_response',
-            self.id,
-            self.treatment_response_id,
-            self.response,
-            self.age_at_response,
-            self.response_category,
-            self.response_system
+            self._id,
+            self._treatment_response_id,
+            self._response,
+            self._age_at_response,
+            self._response_category,
+            self._response_system
         ]
