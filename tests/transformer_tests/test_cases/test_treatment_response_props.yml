@@ -1,0 +1,109 @@
+id:
+  - test_value: null
+    error_type: null
+  - test_value: ''
+    error_type: null
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: ID `\[3\]` must be of type <class 'str'>
+    error_type: type
+age_at_response:
+  - test_value: null
+    error_msg: Age at Response is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Age at Response `` must be of type <class 'int'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Age at Response `Foo` must be of type <class 'int'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Age at Response `\['Foo'\]` must be of type <class 'int'>
+    error_type: type
+  - test_value: 3
+    error_type: null
+  - test_value: [3]
+    error_msg: Age at Response `\[3\]` must be of type <class 'int'>
+    error_type: type
+response:
+  - test_value: null
+    error_msg: Response is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Response is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Response `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Response `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Response `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Response `\[3\]` must be one of the specified values
+    error_type: value
+response_category:
+  - test_value: null
+    error_msg: Response Category is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Response Category is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Response Category `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Response Category `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Response Category `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Response Category `\[3\]` must be one of the specified values
+    error_type: value
+response_system:
+  - test_value: null
+    error_msg: Response System is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Response System is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Response System `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Response System `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Response System `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Response System `\[3\]` must be one of the specified values
+    error_type: value
+treatment_response_id:
+  - test_value: null
+    error_msg: Treatment Response ID is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Treatment Response ID is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: Treatment Response ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: Treatment Response ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: Treatment Response ID `\[3\]` must be of type <class 'str'>
+    error_type: type

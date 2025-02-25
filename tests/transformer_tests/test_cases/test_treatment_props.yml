@@ -1,0 +1,106 @@
+id:
+  - test_value: null
+    error_type: null
+  - test_value: ''
+    error_type: null
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: ID `\[3\]` must be of type <class 'str'>
+    error_type: type
+age_at_treatment_end:
+  - test_value: null
+    error_msg: Age at Treatment End is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Age at Treatment End `` must be of type <class 'int'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Age at Treatment End `Foo` must be of type <class 'int'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Age at Treatment End `\['Foo'\]` must be of type <class 'int'>
+    error_type: type
+  - test_value: 3
+    error_type: null
+  - test_value: [3]
+    error_msg: Age at Treatment End `\[3\]` must be of type <class 'int'>
+    error_type: type
+age_at_treatment_start:
+  - test_value: null
+    error_msg: Age at Treatment Start is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Age at Treatment Start `` must be of type <class 'int'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Age at Treatment Start `Foo` must be of type <class 'int'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Age at Treatment Start `\['Foo'\]` must be of type <class 'int'>
+    error_type: type
+  - test_value: 3
+    error_type: null
+  - test_value: [3]
+    error_msg: Age at Treatment Start `\[3\]` must be of type <class 'int'>
+    error_type: type
+treatment_agent:
+  - test_value: null
+    error_msg: Treatment Agent is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Treatment Agent is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Treatment Agent `Foo` must be a list
+    error_type: type
+  - test_value: ['Foo']
+    error_type: null
+  - test_value: 3
+    error_msg: Treatment Agent `3` must be a list
+    error_type: type
+  - test_value: [3]
+    error_type: null
+treatment_id:
+  - test_value: null
+    error_msg: Treatment ID is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Treatment ID is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: Treatment ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: Treatment ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: [3]
+    error_msg: Treatment ID `\[3\]` must be of type <class 'str'>
+    error_type: type
+treatment_type:
+  - test_value: null
+    error_msg: Treatment Type is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Treatment Type is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Treatment Type `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Treatment Type `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Treatment Type `3` must be one of the specified values
+    error_type: value
+  - test_value: [3]
+    error_msg: Treatment Type `\[3\]` must be one of the specified values
+    error_type: value

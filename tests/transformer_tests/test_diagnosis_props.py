@@ -25,7 +25,6 @@ class TestDiagnosisFactory():
             tumor_stage_clinical_m = 'Not Reported',
             tumor_stage_clinical_n = 'Not Reported',
             tumor_stage_clinical_t = 'Not Reported'):
-
         diagnosis = Diagnosis(
             id,
             age_at_diagnosis,
