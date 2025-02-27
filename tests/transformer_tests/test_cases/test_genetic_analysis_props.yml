@@ -1,0 +1,198 @@
+id:
+  - test_value: null
+    error_type: null
+  - test_value: ''
+    error_type: null
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3.1
+    error_msg: ID `3.1` must be of type <class 'str'>
+    error_type: type
+age_at_genetic_analysis:
+  - test_value: null
+    error_msg: Age at Genetic Analysis is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Age at Genetic Analysis `` must be of type <class 'int'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Age at Genetic Analysis `Foo` must be of type <class 'int'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Age at Genetic Analysis `\['Foo'\]` must be of type <class 'int'>
+    error_type: type
+  - test_value: 3
+    error_type: null
+  - test_value: 3.1
+    error_msg: Age at Genetic Analysis `3.1` must be of type <class 'int'>
+    error_type: type
+allelic_ratio:
+  - test_value: null
+    error_msg: Allelic Ratio is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Allelic Ratio `` must be of type <class 'float'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Allelic Ratio `Foo` must be of type <class 'float'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Allelic Ratio `\['Foo'\]` must be of type <class 'float'>
+    error_type: type
+  - test_value: 3
+    error_msg: Allelic Ratio `3` must be of type <class 'float'>
+    error_type: type
+  - test_value: 3.1
+    error_type: null
+alteration:
+  - test_value: null
+    error_msg: Alteration is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Alteration is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Alteration `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Alteration `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Alteration `3` must be one of the specified values
+    error_type: value
+  - test_value: 3.1
+    error_msg: Alteration `3.1` must be one of the specified values
+    error_type: value
+dna_index_numeric:
+  - test_value: null
+    error_msg: Numeric DNA Index is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Numeric DNA Index `` must be of type <class 'float'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Numeric DNA Index `Foo` must be of type <class 'float'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Numeric DNA Index `\['Foo'\]` must be of type <class 'float'>
+    error_type: type
+  - test_value: 3
+    error_msg: Numeric DNA Index `3` must be of type <class 'float'>
+    error_type: type
+  - test_value: 3.1
+    error_type: null
+genetic_analysis_id:
+  - test_value: null
+    error_msg: Genetic Analysis ID is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Genetic Analysis ID is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: Genetic Analysis ID `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: Genetic Analysis ID `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3.1
+    error_msg: Genetic Analysis ID `3.1` must be of type <class 'str'>
+    error_type: type
+hgvs_coding:
+  - test_value: null
+    error_msg: HGVS Coding is missing
+    error_type: type
+  - test_value: ''
+    error_msg: HGVS Coding is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: HGVS Coding `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: HGVS Coding `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3.1
+    error_msg: HGVS Coding `3.1` must be of type <class 'str'>
+    error_type: type
+hgvs_protein:
+  - test_value: null
+    error_msg: HGVS Protein is missing
+    error_type: type
+  - test_value: ''
+    error_msg: HGVS Protein is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: HGVS Protein `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: HGVS Protein `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3.1
+    error_msg: HGVS Protein `3.1` must be of type <class 'str'>
+    error_type: type
+iscn:
+  - test_value: null
+    error_msg: ISCN is missing
+    error_type: type
+  - test_value: ''
+    error_msg: ISCN is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_type: null
+  - test_value: ['Foo']
+    error_msg: ISCN `\['Foo'\]` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3
+    error_msg: ISCN `3` must be of type <class 'str'>
+    error_type: type
+  - test_value: 3.1
+    error_msg: ISCN `3.1` must be of type <class 'str'>
+    error_type: type
+status:
+  - test_value: null
+    error_msg: Status is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Status is missing
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Status `Foo` must be one of the specified values
+    error_type: value
+  - test_value: ['Foo']
+    error_msg: Status `\['Foo'\]` must be one of the specified values
+    error_type: value
+  - test_value: 3
+    error_msg: Status `3` must be one of the specified values
+    error_type: value
+  - test_value: 3.1
+    error_msg: Status `3.1` must be one of the specified values
+    error_type: value
+vaf_numeric:
+  - test_value: null
+    error_msg: Numeric VAF is missing
+    error_type: type
+  - test_value: ''
+    error_msg: Numeric VAF `` must be of type <class 'float'>
+    error_type: type
+  - test_value: 'Foo'
+    error_msg: Numeric VAF `Foo` must be of type <class 'float'>
+    error_type: type
+  - test_value: ['Foo']
+    error_msg: Numeric VAF `\['Foo'\]` must be of type <class 'float'>
+    error_type: type
+  - test_value: 3
+    error_msg: Numeric VAF `3` must be of type <class 'float'>
+    error_type: type
+  - test_value: 3.1
+    error_type: null
