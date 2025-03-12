@@ -179,10 +179,10 @@ def prepare_plugin(config, schema):
 # Data loader will try to load all TSV(.TXT) files from given directory into Neo4j
 # optional arguments includes:
 # -i or --uri followed by Neo4j server address and port in format like bolt://12.34.56.78:7687
-def main():
+def main(args):
     log = get_logger('Loader')
     log_file = get_log_file()
-    config = process_arguments(parse_arguments(), log)
+    config = process_arguments(args, log)
     print_config(log, config)
 
     if not check_schema_files(config.schema_files, log):
