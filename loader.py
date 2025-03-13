@@ -22,6 +22,7 @@ from config import BentoConfig
 from data_loader import DataLoader
 from bento.common.s3 import S3Bucket, upload_log_file
 
+DEFAULT_TEMP_FOLDER = "tmp"
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Load TSV(TXT) files (from Pentaho) into Neo4j')
@@ -96,7 +97,7 @@ def process_arguments(args, log):
         config.no_backup = args.no_backup
     if args.backup_folder:
         config.backup_folder = args.backup_folder
-    #if config.split_transactions and config.no_backup:
+    # if config.split_transactions and config.no_backup:
     #    log.error('--split-transaction and --no-backup cannot both be enabled, a backup is required when running'
     #              ' in split transactions mode')
     #    sys.exit(1)
@@ -166,6 +167,18 @@ def process_arguments(args, log):
 
     if args.upload_log_dir:
         config.upload_log_dir = args.upload_log_dir
+
+    # Only applies when running in Prefect via loader_prefect.py, which doesn't have config files and temp_foldetemp_folderr
+    # So plugins have to be passed in from Prefect parameters
+    # In that case args is an object that contains all Prefect parameters
+    if hasattr(args, "plugins"):
+        config.plugins = args.plugins
+
+    if hasattr(args, "temp_folder"):
+        config.temp_folder = args.temp_folder
+
+    if not config.temp_folder:
+        config.temp_folder = DEFAULT_TEMP_FOLDER
 
     return config
 
