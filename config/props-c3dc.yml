@@ -1,13 +1,17 @@
 Properties:
   domain: c3dc.cancer.gov
   rel_prop_delimiter: "$"
+  delimiter: ";"
 
   plurals:
     diagnosis: diagnoses
+    genetic_analysis: genetic_analyses
+    laboratory_test: laboratory_tests
     participant: participants
     sample: samples
     study: studies
     survival: survivals
+    synonym: synonyms
     reference_file: reference_files
     treatment: treatments
     treatment_response: treatment_responses
@@ -26,10 +30,13 @@ Properties:
 
   id_fields:
     diagnosis: id
+    genetic_analysis: id
+    laboratory_test: id
     participant: id
     reference_file: id
     sample: id
     study: id
+    synonym: id
     survival: id
     treatment: id
     treatment_response: id
