@@ -446,6 +446,20 @@ Indices:
             type: keyword
           last_known_survival_status:
             type: keyword
+      # Synonym fields
+      cpi_data:
+        type: nested
+        properties:
+          associated_id:
+            type: keyword
+          data_location:
+            type: keyword
+          domain_category:
+            type: keyword
+          domain_description:
+            type: keyword
+          repository_of_synonym_id:
+            type: keyword
       # Treatment records
       treatments:
         type: nested
@@ -479,6 +493,7 @@ Indices:
       MATCH (p:participant)-[:of_participant]->(stu:study)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      OPTIONAL MATCH (syn:synonym)-[:of_synonym]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
@@ -501,6 +516,15 @@ Indices:
           first_event: sur.first_event,
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,
+
+        // Synonym records
+        COLLECT(DISTINCT {
+          associated_id: syn.associated_id,
+          data_location: syn.data_location,
+          domain_category: syn.domain_category,
+          domain_description: syn.domain_description,
+          repository_of_synonym_id: syn.repository_of_synonym_id
+        }) AS cpi_data,
 
         // Diagnosis records
         COLLECT(DISTINCT {
