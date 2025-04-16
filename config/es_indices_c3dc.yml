@@ -518,13 +518,16 @@ Indices:
         }) AS survivals,
 
         // Synonym records
-        COLLECT(DISTINCT {
-          associated_id: syn.associated_id,
-          data_location: syn.data_location,
-          domain_category: syn.domain_category,
-          domain_description: syn.domain_description,
-          repository_of_synonym_id: syn.repository_of_synonym_id
-        }) AS cpi_data,
+        (CASE
+          WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
+            associated_id: syn.associated_id,
+            data_location: syn.data_location,
+            domain_category: syn.domain_category,
+            domain_description: syn.domain_description,
+            repository_of_synonym_id: syn.repository_of_synonym_id
+          })
+          ELSE []
+        END) AS cpi_data,
 
         // Diagnosis records
         COLLECT(DISTINCT {
