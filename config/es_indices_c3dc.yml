@@ -521,11 +521,11 @@ Indices:
         (CASE
           WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
             associated_id: syn.associated_id,
-            data_location: CASE WHEN syn.data_location="Not Reported" THEN NULL ELSE syn.data_location END,
+            data_location: CASE WHEN syn.data_location='Not Reported' THEN NULL ELSE syn.data_location END,
             data_type: "external",
-            domain_category: CASE WHEN syn.domain_category="Not Reported" THEN NULL ELSE syn.domain_category END,
-            domain_description: CASE WHEN syn.domain_description="Not Reported" THEN NULL ELSE syn.domain_description END,
-            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id="Not Reported" THEN NULL ELSE syn.repository_of_synonym_id END
+            domain_category: CASE WHEN syn.domain_category='Not Reported' THEN NULL ELSE syn.domain_category END,
+            domain_description: CASE WHEN syn.domain_description='Not Reported' THEN NULL ELSE syn.domain_description END,
+            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id='Not Reported' THEN NULL ELSE syn.repository_of_synonym_id END
           })
           ELSE []
         END) AS cpi_data,
