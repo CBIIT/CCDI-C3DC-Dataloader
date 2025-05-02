@@ -446,9 +446,6 @@ Indices:
             type: keyword
           last_known_survival_status:
             type: keyword
-      # Synonym column
-      synonym_id:
-        type: keyword
       # Synonym fields
       cpi_data:
         type: nested
@@ -520,22 +517,15 @@ Indices:
           last_known_survival_status: sur.last_known_survival_status
         }) AS survivals,
 
-        // Synonym column
-        (CASE
-          WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
-            synonym_concat: apoc.text.join([syn.associated_id, syn.repository_of_synonym_id], ":")
-          })
-          ELSE NULL
-        END) AS synonyms,
-
         // Synonym records
         (CASE
           WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
             associated_id: syn.associated_id,
-            data_location: syn.data_location,
-            domain_category: syn.domain_category,
-            domain_description: syn.domain_description,
-            repository_of_synonym_id: syn.repository_of_synonym_id
+            data_location: CASE WHEN syn.data_location="Not Reported" THEN NULL ELSE syn.data_location END,
+            data_type: "external",
+            domain_category: CASE WHEN syn.domain_category="Not Reported" THEN NULL ELSE syn.domain_category END,
+            domain_description: CASE WHEN syn.domain_description="Not Reported" THEN NULL ELSE syn.domain_description END,
+            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id="Not Reported" THEN NULL ELSE syn.repository_of_synonym_id END
           })
           ELSE []
         END) AS cpi_data,
@@ -585,14 +575,6 @@ Indices:
 
         // Survival records
         survivals,
-
-        // Synonym column
-        (CASE
-          WHEN synonyms IS NOT NULL THEN
-            apoc.text.join(REDUCE(result = [], item IN synonyms | result + item.synonym_concat), ";")
-          ELSE
-            NULL
-        END) AS synonym_id,
 
         // Synonym records
         cpi_data,
