@@ -830,12 +830,14 @@ Indices:
       associated_id:
         type: keyword
     cypher_query: >
-      MATCH (syn:synonym)
+      MATCH (syn:synonym)-[:of_synonym]->(p:participant)
       WITH
+        p.participant_id AS participant_id,
         syn.associated_id AS associated_id
+
       RETURN
-        // Synonym fields
-        associated_id;
+        associated_id,
+        participant_id;
 
   - index_name: treatments
     type: neo4j
