@@ -26,15 +26,19 @@ Indices:
         type: integer
     cypher_query: >
       MATCH (p:participant)-[:of_participant]->(stu:study)
-        OPTIONAL MATCH (stu)<-[:of_reference_file]-(rf:reference_file)
-        OPTIONAL MATCH (p)<-[:of_survival]-(sur:survival)
-        OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
+      WITH COUNT(DISTINCT p) AS num_participants, COUNT(DISTINCT stu) AS num_studies
+      OPTIONAL MATCH (rf:reference_file)-[:of_reference_file]->(stu)
+      WITH num_participants, num_studies, COUNT(DISTINCT rf) AS num_reference_files
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      WITH num_participants, num_studies, num_reference_files, COUNT(DISTINCT sur) AS num_survivals
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      WITH num_participants, num_studies, num_reference_files, num_survivals, COUNT(DISTINCT d.diagnosis) AS num_diseases
       RETURN
-        COUNT(DISTINCT d.diagnosis) AS num_diseases,
-        COUNT(DISTINCT p) AS num_participants,
-        COUNT(DISTINCT rf) AS num_reference_files,
-        COUNT(DISTINCT stu) AS num_studies,
-        COUNT(DISTINCT sur) AS num_survivals;
+        num_diseases,
+        num_participants,
+        num_studies,
+        num_survivals,
+        num_reference_files;
 
   # Studies with nested participants with nested other records
   - index_name: cohorts
