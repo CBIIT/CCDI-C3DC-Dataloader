@@ -1003,7 +1003,7 @@ Indices:
         END) AS treatment_agent,
         (CASE t.treatment_agent
           WHEN '' THEN 'Not Reported'
-          ELSE apoc.text.split(t.treatment_agent, ';')
+          ELSE t.treatment_agent
         END) AS treatment_agent_str,
         t.treatment_id AS treatment_id,
         t.treatment_type AS treatment_type,
