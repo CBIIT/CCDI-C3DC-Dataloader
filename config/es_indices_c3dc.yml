@@ -197,7 +197,7 @@ Indices:
             treatment_id: t.treatment_id,
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
             treatment_type: t.treatment_type
           })
           ELSE []
@@ -380,7 +380,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -545,7 +545,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -833,7 +833,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -998,7 +998,7 @@ Indices:
           ELSE t.age_at_treatment_start
         END) AS age_at_treatment_start_str,
         (CASE t.treatment_agent
-          WHEN '' THEN 'Not Reported'
+          WHEN '' THEN ['Not Reported']
           ELSE apoc.text.split(t.treatment_agent, ';')
         END) AS treatment_agent,
         (CASE t.treatment_agent
@@ -1220,7 +1220,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
             treatment_agent_str: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE t.treatment_agent END),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
