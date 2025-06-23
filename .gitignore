@@ -1,5 +1,7 @@
 __pycache__/
+.devcontainer/
 .idea/
+.python-version
 .vscode/
 *.pyc
 **.DS_Store

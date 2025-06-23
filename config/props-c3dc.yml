@@ -1,16 +1,23 @@
 Properties:
   domain: c3dc.cancer.gov
   rel_prop_delimiter: "$"
+  delimiter: ";"
 
   plurals:
     diagnosis: diagnoses
+    genetic_analysis: genetic_analyses
+    laboratory_test: laboratory_tests
     participant: participants
     sample: samples
     study: studies
     survival: survivals
+    synonym: synonyms
     reference_file: reference_files
+    treatment: treatments
+    treatment_response: treatment_responses
 
   type_mapping:
+    list: String
     string: String
     number: Float
     integer: Int
@@ -22,9 +29,14 @@ Properties:
     TBD: String
 
   id_fields:
-    diagnosis: diagnosis_id
-    participant: participant_id
-    reference_file: reference_file_id
-    sample: sample_id
-    study: study_id
-    survival: survival_id
+    diagnosis: id
+    genetic_analysis: id
+    laboratory_test: id
+    participant: id
+    reference_file: id
+    sample: id
+    study: id
+    synonym: id
+    survival: id
+    treatment: id
+    treatment_response: id
