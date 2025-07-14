@@ -93,3 +93,5 @@ Run units tests on the transformation functionality with this command:
 ```bash
 sh transformer-unit-tests.sh
 ```
+
+<!-- TODO: C3DC-1646 - Update backend API to include CPI synonym values in JSON output -->
