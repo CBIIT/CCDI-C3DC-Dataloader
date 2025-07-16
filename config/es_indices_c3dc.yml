@@ -115,6 +115,8 @@ Indices:
       synonyms:
         type: nested
         properties:
+          id:
+            type: keyword
           associated_id:
             type: keyword
           data_location:
@@ -212,6 +214,7 @@ Indices:
         // Synonym records
         (CASE
           WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
+            id: syn.id,
             associated_id: syn.associated_id,
             data_location: CASE WHEN syn.data_location='Not Reported' THEN NULL ELSE syn.data_location END,
             domain_category: CASE WHEN syn.domain_category='Not Reported' THEN NULL ELSE syn.domain_category END,
