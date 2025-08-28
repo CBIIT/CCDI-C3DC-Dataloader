@@ -11,6 +11,19 @@ Indices:
       content:
         type: object
 
+  - index_name: consent_groups
+    type: neo4j
+    mapping:
+      consent:
+        type: keyword
+      consent_number:
+        type: keyword
+    cypher_query: >
+      MATCH (stu:study)<-[:of_consent_group]-(cg:consent_group)
+      RETURN
+        cg.consent_group_name AS consent_group_name,
+        cg.consent_group_number AS consent_group_number;
+
   - index_name: home_stats
     type: neo4j
     mapping:
@@ -25,7 +38,7 @@ Indices:
       num_survivals:
         type: integer
     cypher_query: >
-      MATCH (p:participant)-[:of_participant]->(stu:study)
+      MATCH (p:participant)-[:of_participant]->(cg:consent_group)-[:of_consent_group]->(stu:study)
       WITH COUNT(DISTINCT p) AS num_participants, COUNT(DISTINCT stu) AS num_studies
       OPTIONAL MATCH (rf:reference_file)-[:of_reference_file]->(stu)
       WITH num_participants, num_studies, COUNT(DISTINCT rf) AS num_reference_files
@@ -46,6 +59,11 @@ Indices:
     mapping:
       # Study fields
       dbgap_accession:
+        type: keyword
+      # Consent Group fields
+      consent_group_name:
+        type: keyword
+      consent_group_number:
         type: keyword
       # Participant fields
       id:
@@ -160,7 +178,7 @@ Indices:
           response_system:
             type: keyword
     cypher_query: >
-      MATCH (p:participant)-[:of_participant]->(stu:study)
+      MATCH (p:participant)-[:of_participant]->(cg:consent_group)-[:of_consent_group]->(stu:study)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (syn:synonym)-[:of_synonym]->(p)
@@ -173,6 +191,8 @@ Indices:
         p.sex_at_birth AS sex_at_birth,
 
         stu.dbgap_accession AS dbgap_accession,
+        cg.consent_group_name AS consent_group_name,
+        cg.consent_group_number AS consent_group_number,
 
         // Diagnosis records
         (CASE
@@ -361,7 +381,7 @@ Indices:
             type: keyword
     cypher_query: >
       MATCH (d:diagnosis)-[:of_diagnosis]->(p:participant),
-        (stu:study)<-[:of_participant]-(p)
+        (stu:study)<-[:of_consent_group]-(cg:consent_group)<-[:of_participant]-(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
@@ -524,7 +544,7 @@ Indices:
             type: keyword
     # Make sure Neo4j has APOC plugin installed
     cypher_query: >
-      MATCH (p:participant)-[:of_participant]->(stu:study)
+      MATCH (p:participant)-[:of_participant]->(cg:consent_group)-[:of_consent_group]->(stu:study)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (syn:synonym)-[:of_synonym]->(p)
@@ -671,14 +691,6 @@ Indices:
       # Study fields
       id: # Primary key
         type: keyword
-      acl:
-        type: keyword
-      consent:
-        type: keyword
-      consent_number:
-        type: integer
-      consent_number_str:
-        type: integer
       external_url:
         type: keyword
       dbgap_accession:
@@ -699,19 +711,12 @@ Indices:
       num_survivals:
         type: integer
     cypher_query: >
-      MATCH (stu:study)<-[:of_participant]-(p:participant)
+      MATCH (stu:study)<-[:of_consent_group]-(cg:consent_group)<-[:of_participant]-(p:participant)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       RETURN
         // Study fields
         stu.id AS id,
-        stu.acl AS acl,
-        stu.consent AS consent,
-        stu.consent_number AS consent_number,
-        (CASE stu.consent_number
-          WHEN -999 THEN "Not Reported"
-          ELSE stu.consent_number
-        END) AS consent_number_str,
         stu.external_url AS external_url,
         stu.dbgap_accession AS dbgap_accession,
         stu.study_description AS study_description,
@@ -815,7 +820,8 @@ Indices:
             type: keyword
     cypher_query: >
       MATCH (sur:survival)-[:of_survival]->(p:participant),
-        (stu:study)<-[:of_participant]-(p)
+        (cg:consent_group)<-[:of_participant]-(p),
+        (stu:study)<-[:of_consent_group]-(cg)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
@@ -1014,7 +1020,8 @@ Indices:
             type: keyword
     cypher_query: >
       MATCH (t:treatment)-[:of_treatment]->(p:participant),
-        (stu:study)<-[:of_participant]-(p)
+        (cg:consent_group)<-[:of_participant]-(p),
+        (stu:study)<-[:of_consent_group]-(cg)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
@@ -1192,7 +1199,8 @@ Indices:
             type: keyword
     cypher_query: >
       MATCH (tresp:treatment_response)-[:of_treatment_response]->(p:participant),
-        (stu:study)<-[:of_participant]-(p)
+        (cg:consent_group)<-[:of_participant]-(p),
+        (stu:study)<-[:of_consent_group]-(cg)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
