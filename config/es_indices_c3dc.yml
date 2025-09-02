@@ -202,8 +202,8 @@ Indices:
             age_at_diagnosis: d.age_at_diagnosis,
             anatomic_site: d.anatomic_site,
             diagnosis: d.diagnosis,
-            diagnosis_basis: d.diagnosis_basis,
-            diagnosis_classification_system: d.diagnosis_classification_system,
+            diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
+            diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
             diagnosis_comment: d.diagnosis_comment,
             disease_phase: d.disease_phase,
             toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
@@ -251,7 +251,7 @@ Indices:
             treatment_id: t.treatment_id,
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_type: t.treatment_type
           })
           ELSE []
@@ -394,9 +394,9 @@ Indices:
           ELSE d.age_at_diagnosis
         END) AS age_at_diagnosis_str,
         d.anatomic_site AS anatomic_site,
-        d.diagnosis_basis AS diagnosis_basis,
+        apoc.text.split(d.diagnosis_basis, ';') AS diagnosis_basis,
         d.diagnosis AS diagnosis,
-        d.diagnosis_classification_system AS diagnosis_classification_system,
+        apoc.text.split(d.diagnosis_classification_system, ';') AS diagnosis_classification_system,
         d.diagnosis_comment AS diagnosis_comment,
         d.diagnosis_id AS diagnosis_id,
         d.disease_phase AS disease_phase,
@@ -434,7 +434,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -588,9 +588,9 @@ Indices:
         COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
-          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
           diagnosis: d.diagnosis,
-          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
           disease_phase: d.disease_phase
         }) AS diagnoses,
 
@@ -599,7 +599,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -862,9 +862,9 @@ Indices:
         COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
-          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
           diagnosis: d.diagnosis,
-          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
           disease_phase: d.disease_phase
         }) AS diagnoses,
 
@@ -873,7 +873,7 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
@@ -1038,14 +1038,8 @@ Indices:
           WHEN -999 THEN "Not Reported"
           ELSE t.age_at_treatment_start
         END) AS age_at_treatment_start_str,
-        (CASE t.treatment_agent
-          WHEN '' THEN ['Not Reported']
-          ELSE apoc.text.split(t.treatment_agent, ';')
-        END) AS treatment_agent,
-        (CASE t.treatment_agent
-          WHEN '' THEN 'Not Reported'
-          ELSE t.treatment_agent
-        END) AS treatment_agent_str,
+        apoc.text.split(t.treatment_agent, ';') AS treatment_agent,
+        t.treatment_agent AS treatment_agent_str,
         t.treatment_id AS treatment_id,
         t.treatment_type AS treatment_type,
 
@@ -1067,9 +1061,9 @@ Indices:
         COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
-          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
           diagnosis: d.diagnosis,
-          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
           diagnosis_comment: d.diagnosis_comment,
           diagnosis_id: d.diagnosis_id,
           disease_phase: d.disease_phase,
@@ -1235,9 +1229,9 @@ Indices:
         COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
           anatomic_site: d.anatomic_site,
-          diagnosis_basis: d.diagnosis_basis,
+          diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
           diagnosis: d.diagnosis,
-          diagnosis_classification_system: d.diagnosis_classification_system,
+          diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
           diagnosis_comment: d.diagnosis_comment,
           diagnosis_id: d.diagnosis_id,
           disease_phase: d.disease_phase,
@@ -1262,8 +1256,8 @@ Indices:
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
-            treatment_agent: (CASE t.treatment_agent WHEN '' THEN ['Not Reported'] ELSE apoc.text.split(t.treatment_agent, ';') END),
-            treatment_agent_str: (CASE t.treatment_agent WHEN '' THEN 'Not Reported' ELSE t.treatment_agent END),
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
+            treatment_agent_str: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
