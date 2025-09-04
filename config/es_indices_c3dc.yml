@@ -450,6 +450,208 @@ Indices:
           treatment_response_id: tresp.treatment_response_id
         }) AS treatment_responses;
 
+  - index_name: genetic_analyses
+    mapping:
+      # Participant fields
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race:
+            type: keyword
+          sex_at_birth:
+            type: keyword
+      # Genetic Analysis fields
+      id:
+        type: keyword
+      genetic_analysis_id:
+        type: keyword
+      alteration:
+        type: keyword
+      cytoband:
+        type: keyword
+      gene_symbol:
+        type: keyword
+      genomic_source_category:
+        type: keyword
+      hgvs_coding:
+        type: keyword
+      hgvs_genome:
+        type: keyword
+      hgvs_protein:
+        type: keyword
+      status:
+        type: keyword
+      test:
+        type: keyword
+      reported_significance:
+        type: keyword
+      reported_significance_system:
+        type: keyword
+      # Diagnosis records
+      diagnoses:
+        type: nested
+        properties:
+          age_at_diagnosis:
+            type: integer
+          anatomic_site:
+            type: keyword
+          diagnosis_basis:
+            type: keyword
+          diagnosis:
+            type: keyword
+          diagnosis_classification_system:
+            type: keyword
+          disease_phase:
+            type: keyword
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      # Survival records
+      survivals:
+        type: nested
+        properties:
+          age_at_last_known_survival_status:
+            type: integer
+          cause_of_death:
+            type: keyword
+          first_event:
+            type: keyword
+          last_known_survival_status:
+            type: keyword
+      # Treatment records
+      treatments:
+        type: nested
+        properties:
+          age_at_treatment_end:
+            type: integer
+          age_at_treatment_start:
+            type: integer
+          treatment_agent: # list
+            type: keyword
+          treatment_id:
+            type: keyword
+          treatment_type:
+            type: keyword
+      # Treatment Response records
+      treatment_responses:
+        type: nested
+        properties:
+          age_at_response:
+            type: integer
+          response:
+            type: keyword
+          response_category:
+            type: keyword
+          response_system:
+            type: keyword
+          treatment_response_id:
+            type: keyword
+    type: neo4j
+    cypher_query: >
+      MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p:participant),
+        (cg:consent_group)<-[:of_participant]-(p),
+        (stu:study)<-[:of_consent_group]-(cg)
+      OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
+      OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
+      OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
+      WITH
+        // Participant fields
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
+        ga.id AS id,
+        ga.genetic_analysis_id AS genetic_analysis_id,
+        ga.alteration AS alteration,
+        ga.cytoband AS cytoband,
+        ga.gene_symbol AS gene_symbol,
+        ga.genomic_source_category AS genomic_source_category,
+        ga.hgvs_coding AS hgvs_coding,
+        ga.hgvs_genome AS hgvs_genome,
+        ga.hgvs_protein AS hgvs_protein,
+        ga.status AS status,
+        ga.test AS test,
+        ga.reported_significance AS reported_significance,
+        ga.reported_significance_system AS reported_significance_system,
+
+        // Diagnosis records
+        COLLECT(DISTINCT {
+          age_at_diagnosis: d.age_at_diagnosis,
+          anatomic_site: d.anatomic_site,
+          diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
+          diagnosis: d.diagnosis,
+          diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
+          disease_phase: d.disease_phase
+        }) AS diagnoses,
+
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_id AS study_id,
+        stu.study_name AS study_name,
+
+        // Survival records
+        COLLECT(DISTINCT {
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals,
+
+        // Treatment records
+        (CASE
+          WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
+            age_at_treatment_end: t.age_at_treatment_end,
+            age_at_treatment_start: t.age_at_treatment_start,
+            treatment_agent: apoc.text.split(t.treatment_agent, ';'),
+            treatment_id: t.treatment_id,
+            treatment_type: t.treatment_type
+          })
+          ELSE []
+        END) AS treatments,
+
+        // Treatment Response records
+        COLLECT(DISTINCT {
+          age_at_response: tresp.age_at_response,
+          response: tresp.response,
+          response_category: tresp.response_category,
+          response_system: tresp.response_system,
+          treatment_response_id: tresp.treatment_response_id
+        }) AS treatment_responses
+      RETURN
+        participant,
+        id,
+        genetic_analysis_id,
+        alteration,
+        cytoband,
+        gene_symbol,
+        genomic_source_category,
+        hgvs_coding,
+        hgvs_genome,
+        hgvs_protein,
+        status,
+        test,
+        reported_significance,
+        reported_significance_system,
+        diagnoses,
+        dbgap_accession,
+        study_id,
+        study_name,
+        survivals,
+        treatments,
+        treatment_responses;
+
   - index_name: participants
     type: neo4j
     mapping:
