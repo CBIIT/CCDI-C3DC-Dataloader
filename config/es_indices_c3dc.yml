@@ -497,6 +497,21 @@ Indices:
         type: keyword
       reported_significance_system:
         type: keyword
+      # Additional Genetic Analysis fields for download
+      alteration_effect:
+        type: keyword
+      alteration_type:
+        type: keyword
+      chromosome:
+        type: keyword
+      exon:
+        type: keyword
+      fusion_partner_exon:
+        type: keyword
+      fusion_partner_gene:
+        type: keyword
+      reference_genome:
+        type: keyword
       # Diagnosis records
       diagnoses:
         type: nested
@@ -578,6 +593,7 @@ Indices:
           sex_at_birth: p.sex_at_birth
         } AS participant,
 
+        // Genetic Analysis fields
         ga.id AS id,
         ga.genetic_analysis_id AS genetic_analysis_id,
         ga.alteration AS alteration,
@@ -591,6 +607,15 @@ Indices:
         ga.test AS test,
         ga.reported_significance AS reported_significance,
         ga.reported_significance_system AS reported_significance_system,
+
+        // Additional Genetic Analysis fields for download
+        ga.alteration_effect AS alteration_effect,
+        ga.alteration_type AS alteration_type,
+        ga.chromosome AS chromosome,
+        ga.exon AS exon,
+        ga.fusion_partner_exon AS fusion_partner_exon,
+        ga.fusion_partner_gene AS fusion_partner_gene,
+        ga.reference_genome AS reference_genome,
 
         // Diagnosis records
         COLLECT(DISTINCT {
