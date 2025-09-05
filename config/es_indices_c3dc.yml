@@ -14,9 +14,9 @@ Indices:
   - index_name: consent_groups
     type: neo4j
     mapping:
-      consent:
+      consent_group_name:
         type: keyword
-      consent_number:
+      consent_group_number:
         type: keyword
     cypher_query: >
       MATCH (stu:study)<-[:of_consent_group]-(cg:consent_group)
@@ -310,6 +310,24 @@ Indices:
         type: keyword
       tumor_stage_clinical_t:
         type: keyword
+      # Genetic Analysis fields
+      genetic_analyses:
+        type: nested
+        properties:
+          alteration:
+            type: keyword
+          alteration_type:
+            type: keyword
+          fusion_partner_gene:
+            type: keyword
+          gene_symbol:
+            type: keyword
+          reported_significance:
+            type: keyword
+          reported_significance_system:
+            type: keyword
+          status:
+            type: keyword
       # Participant fields
       participant:
         type: nested
@@ -386,6 +404,7 @@ Indices:
     cypher_query: >
       MATCH (d:diagnosis)-[:of_diagnosis]->(p:participant),
         (stu:study)<-[:of_consent_group]-(cg:consent_group)<-[:of_participant]-(p)
+      OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
@@ -412,6 +431,20 @@ Indices:
         d.tumor_stage_clinical_m AS tumor_stage_clinical_m,
         d.tumor_stage_clinical_n AS tumor_stage_clinical_n,
         d.tumor_stage_clinical_t AS tumor_stage_clinical_t,
+
+        // Genetic Analysis fields
+        (CASE
+          WHEN COUNT(DISTINCT ga) > 0 THEN COLLECT(DISTINCT {
+            alteration: ga.alteration,
+            alteration_type: ga.alteration_type,
+            fusion_partner_gene: ga.fusion_partner_gene,
+            gene_symbol: ga.gene_symbol,
+            reported_significance: ga.reported_significance,
+            reported_significance_system: ga.reported_significance_system,
+            status: ga.status
+          })
+          ELSE []
+        END) AS genetic_analyses,
 
         // Participant fields
         {
@@ -489,13 +522,13 @@ Indices:
         type: keyword
       hgvs_protein:
         type: keyword
-      status:
-        type: keyword
-      test:
-        type: keyword
       reported_significance:
         type: keyword
       reported_significance_system:
+        type: keyword
+      status:
+        type: keyword
+      test:
         type: keyword
       # Additional Genetic Analysis fields for download
       alteration_effect:
@@ -603,10 +636,10 @@ Indices:
         ga.hgvs_coding AS hgvs_coding,
         ga.hgvs_genome AS hgvs_genome,
         ga.hgvs_protein AS hgvs_protein,
-        ga.status AS status,
-        ga.test AS test,
         ga.reported_significance AS reported_significance,
         ga.reported_significance_system AS reported_significance_system,
+        ga.status AS status,
+        ga.test AS test,
 
         // Additional Genetic Analysis fields for download
         ga.alteration_effect AS alteration_effect,
@@ -671,10 +704,17 @@ Indices:
         hgvs_coding,
         hgvs_genome,
         hgvs_protein,
-        status,
-        test,
         reported_significance,
         reported_significance_system,
+        status,
+        test,
+        alteration_effect,
+        alteration_type,
+        chromosome,
+        exon,
+        fusion_partner_exon,
+        fusion_partner_gene,
+        reference_genome,
         diagnoses,
         dbgap_accession,
         study_id,
@@ -713,6 +753,24 @@ Indices:
           diagnosis_classification_system:
             type: keyword
           disease_phase:
+            type: keyword
+      # Genetic Analysis fields
+      genetic_analyses:
+        type: nested
+        properties:
+          alteration:
+            type: keyword
+          alteration_type:
+            type: keyword
+          fusion_partner_gene:
+            type: keyword
+          gene_symbol:
+            type: keyword
+          reported_significance:
+            type: keyword
+          reported_significance_system:
+            type: keyword
+          status:
             type: keyword
       # Study fields
       study_id:
@@ -779,6 +837,7 @@ Indices:
     cypher_query: >
       MATCH (p:participant)-[:of_participant]->(cg:consent_group)-[:of_consent_group]->(stu:study)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (syn:synonym)-[:of_synonym]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
@@ -827,6 +886,20 @@ Indices:
           disease_phase: d.disease_phase
         }) AS diagnoses,
 
+        // Genetic Analysis fields
+        (CASE
+          WHEN COUNT(DISTINCT ga) > 0 THEN COLLECT(DISTINCT {
+            alteration: ga.alteration,
+            alteration_type: ga.alteration_type,
+            fusion_partner_gene: ga.fusion_partner_gene,
+            gene_symbol: ga.gene_symbol,
+            reported_significance: ga.reported_significance,
+            reported_significance_system: ga.reported_significance_system,
+            status: ga.status
+          })
+          ELSE []
+        END) AS genetic_analyses,
+
         // Treatment records
         (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
@@ -868,6 +941,9 @@ Indices:
 
         // Diagnosis records
         diagnoses,
+
+        // Genetic Analysis records
+        genetic_analyses,
 
         // Treatment records
         treatments,
@@ -1002,6 +1078,24 @@ Indices:
             type: keyword
           disease_phase:
             type: keyword
+      # Genetic Analysis fields
+      genetic_analyses:
+        type: nested
+        properties:
+          alteration:
+            type: keyword
+          alteration_type:
+            type: keyword
+          fusion_partner_gene:
+            type: keyword
+          gene_symbol:
+            type: keyword
+          reported_significance:
+            type: keyword
+          reported_significance_system:
+            type: keyword
+          status:
+            type: keyword
       # Participant fields
       participant:
         type: nested
@@ -1056,6 +1150,7 @@ Indices:
         (cg:consent_group)<-[:of_participant]-(p),
         (stu:study)<-[:of_consent_group]-(cg)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
@@ -1100,6 +1195,20 @@ Indices:
           diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
           disease_phase: d.disease_phase
         }) AS diagnoses,
+
+        // Genetic Analysis fields
+        (CASE
+          WHEN COUNT(DISTINCT ga) > 0 THEN COLLECT(DISTINCT {
+            alteration: ga.alteration,
+            alteration_type: ga.alteration_type,
+            fusion_partner_gene: ga.fusion_partner_gene,
+            gene_symbol: ga.gene_symbol,
+            reported_significance: ga.reported_significance,
+            reported_significance_system: ga.reported_significance_system,
+            status: ga.status
+          })
+          ELSE []
+        END) AS genetic_analyses,
 
         // Treatment records
         (CASE
@@ -1225,6 +1334,24 @@ Indices:
             type: keyword
           tumor_stage_clinical_t:
             type: keyword
+      # Genetic Analysis fields
+      genetic_analyses:
+        type: nested
+        properties:
+          alteration:
+            type: keyword
+          alteration_type:
+            type: keyword
+          fusion_partner_gene:
+            type: keyword
+          gene_symbol:
+            type: keyword
+          reported_significance:
+            type: keyword
+          reported_significance_system:
+            type: keyword
+          status:
+            type: keyword
       # Survival records
       survivals:
         type: nested
@@ -1256,6 +1383,7 @@ Indices:
         (cg:consent_group)<-[:of_participant]-(p),
         (stu:study)<-[:of_consent_group]-(cg)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
@@ -1307,6 +1435,20 @@ Indices:
           tumor_stage_clinical_n: d.tumor_stage_clinical_n,
           tumor_stage_clinical_t: d.tumor_stage_clinical_t
         }) AS diagnoses,
+
+        // Genetic Analysis fields
+        (CASE
+          WHEN COUNT(DISTINCT ga) > 0 THEN COLLECT(DISTINCT {
+            alteration: ga.alteration,
+            alteration_type: ga.alteration_type,
+            fusion_partner_gene: ga.fusion_partner_gene,
+            gene_symbol: ga.gene_symbol,
+            reported_significance: ga.reported_significance,
+            reported_significance_system: ga.reported_significance_system,
+            status: ga.status
+          })
+          ELSE []
+        END) AS genetic_analyses,
 
         // Survival records
         COLLECT(DISTINCT {
@@ -1396,6 +1538,24 @@ Indices:
             type: keyword
           tumor_stage_clinical_t:
             type: keyword
+      # Genetic Analysis fields
+      genetic_analyses:
+        type: nested
+        properties:
+          alteration:
+            type: keyword
+          alteration_type:
+            type: keyword
+          fusion_partner_gene:
+            type: keyword
+          gene_symbol:
+            type: keyword
+          reported_significance:
+            type: keyword
+          reported_significance_system:
+            type: keyword
+          status:
+            type: keyword
       # Survival records
       survivals:
         type: nested
@@ -1429,6 +1589,7 @@ Indices:
         (cg:consent_group)<-[:of_participant]-(p),
         (stu:study)<-[:of_consent_group]-(cg)
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
+      OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       RETURN
@@ -1475,6 +1636,20 @@ Indices:
           tumor_stage_clinical_n: d.tumor_stage_clinical_n,
           tumor_stage_clinical_t: d.tumor_stage_clinical_t
         }) AS diagnoses,
+
+        // Genetic Analysis fields
+        (CASE
+          WHEN COUNT(DISTINCT ga) > 0 THEN COLLECT(DISTINCT {
+            alteration: ga.alteration,
+            alteration_type: ga.alteration_type,
+            fusion_partner_gene: ga.fusion_partner_gene,
+            gene_symbol: ga.gene_symbol,
+            reported_significance: ga.reported_significance,
+            reported_significance_system: ga.reported_significance_system,
+            status: ga.status
+          })
+          ELSE []
+        END) AS genetic_analyses,
 
         // Survival records
         COLLECT(DISTINCT {
