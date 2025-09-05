@@ -284,9 +284,13 @@ Indices:
         type: keyword
       diagnosis_basis:
         type: keyword
+      diagnosis_basis_str: # for display
+        type: keyword
       diagnosis:
         type: keyword
       diagnosis_classification_system:
+        type: keyword
+      diagnosis_classification_system_str: # for display
         type: keyword
       diagnosis_comment:
         type: keyword
@@ -395,8 +399,10 @@ Indices:
         END) AS age_at_diagnosis_str,
         d.anatomic_site AS anatomic_site,
         apoc.text.split(d.diagnosis_basis, ';') AS diagnosis_basis,
+        d.diagnosis_basis AS diagnosis_basis_str,
         d.diagnosis AS diagnosis,
         apoc.text.split(d.diagnosis_classification_system, ';') AS diagnosis_classification_system,
+        d.diagnosis_classification_system AS diagnosis_classification_system_str,
         d.diagnosis_comment AS diagnosis_comment,
         d.diagnosis_id AS diagnosis_id,
         d.disease_phase AS disease_phase,
