@@ -185,14 +185,14 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
+        stu.dbgap_accession AS dbgap_accession,
+        cg.consent_group_name AS consent_group_name,
+        cg.consent_group_number AS consent_group_number,
+
         p.id AS id,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.sex_at_birth AS sex_at_birth,
-
-        stu.dbgap_accession AS dbgap_accession,
-        cg.consent_group_name AS consent_group_name,
-        cg.consent_group_number AS consent_group_number,
 
         // Diagnosis records
         (CASE
@@ -273,6 +273,27 @@ Indices:
   - index_name: diagnoses
     type: neo4j
     mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      # Participant fields
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Diagnosis fields
       id: # Primary key
         type: keyword
@@ -328,39 +349,6 @@ Indices:
             type: keyword
           status:
             type: keyword
-      # Participant fields
-      participant:
-        type: nested
-        properties:
-          id:
-            type: keyword
-          participant_id:
-            type: keyword
-          race: # list
-            type: keyword
-          race_str: # for display
-            type: keyword
-          sex_at_birth:
-            type: keyword
-      # Samples
-      # samples:
-      #   type: nested
-      #   properties:
-      #     anatomic_site:
-      #       type: keyword
-      #     participant_age_at_collection:
-      #       type: integer
-      #     sample_tumor_status:
-      #       type: keyword
-      #     tumor_classification:
-      #       type: keyword
-      # Study fields
-      dbgap_accession:
-        type: keyword
-      study_id:
-        type: keyword
-      study_name:
-        type: keyword
       # Survival records
       survivals:
         type: nested
@@ -409,6 +397,20 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_id AS study_id,
+        stu.study_name AS study_name,
+
+        // Participant fields
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
         // Diagnosis fields
         d.id AS id,
         d.age_at_diagnosis AS age_at_diagnosis,
@@ -446,20 +448,6 @@ Indices:
           ELSE []
         END) AS genetic_analyses,
 
-        // Participant fields
-        {
-          id: p.id,
-          participant_id: p.participant_id,
-          race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
-          sex_at_birth: p.sex_at_birth
-        } AS participant,
-
-        // Study fields
-        stu.dbgap_accession AS dbgap_accession,
-        stu.study_id AS study_id,
-        stu.study_name AS study_name,
-
         // Survival records
         COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
@@ -491,6 +479,13 @@ Indices:
 
   - index_name: genetic_analyses
     mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
       # Participant fields
       participant:
         type: nested
@@ -499,7 +494,9 @@ Indices:
             type: keyword
           participant_id:
             type: keyword
-          race:
+          race: # list
+            type: keyword
+          race_str: # for display
             type: keyword
           sex_at_birth:
             type: keyword
@@ -561,13 +558,6 @@ Indices:
             type: keyword
           disease_phase:
             type: keyword
-      # Study fields
-      dbgap_accession:
-        type: keyword
-      study_id:
-        type: keyword
-      study_name:
-        type: keyword
       # Survival records
       survivals:
         type: nested
@@ -618,6 +608,11 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       WITH
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_id AS study_id,
+        stu.study_name AS study_name,
+
         // Participant fields
         {
           id: p.id,
@@ -660,11 +655,6 @@ Indices:
           disease_phase: d.disease_phase
         }) AS diagnoses,
 
-        // Study fields
-        stu.dbgap_accession AS dbgap_accession,
-        stu.study_id AS study_id,
-        stu.study_name AS study_name,
-
         // Survival records
         COLLECT(DISTINCT {
           age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
@@ -694,7 +684,15 @@ Indices:
           treatment_response_id: tresp.treatment_response_id
         }) AS treatment_responses
       RETURN
+        // Study fields
+        dbgap_accession,
+        study_id,
+        study_name,
+
+        // Participant fields
         participant,
+
+        // Genetic Analysis fields
         id,
         genetic_analysis_id,
         alteration,
@@ -708,6 +706,8 @@ Indices:
         reported_significance_system,
         status,
         test,
+
+        // Additional Genetic Analysis fields for download
         alteration_effect,
         alteration_type,
         chromosome,
@@ -715,17 +715,29 @@ Indices:
         fusion_partner_exon,
         fusion_partner_gene,
         reference_genome,
+
+        // Diagnosis fields
         diagnoses,
-        dbgap_accession,
-        study_id,
-        study_name,
+
+        // Survival fields
         survivals,
+
+        // Treatment fields
         treatments,
+
+        // Treatment Response fields
         treatment_responses;
 
   - index_name: participants
     type: neo4j
     mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
       # Participant fields
       id: # Primary key
         type: keyword
@@ -772,13 +784,6 @@ Indices:
             type: keyword
           status:
             type: keyword
-      # Study fields
-      study_id:
-        type: keyword
-      dbgap_accession:
-        type: keyword
-      study_name:
-        type: keyword
       # Survival records
       survivals:
         type: nested
@@ -843,38 +848,17 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       WITH
+        // Study fields
+        stu.study_id AS study_id,
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_name AS study_name,
+
         // Participant fields  
         p.id AS id,
         p.participant_id AS participant_id,
         apoc.text.split(p.race, ';') AS race,
         p.race AS race_str,
         p.sex_at_birth AS sex_at_birth,
-
-        // Study fields
-        stu.study_id AS study_id,
-        stu.dbgap_accession AS dbgap_accession,
-        stu.study_name AS study_name,
-
-        // Survival records
-        COLLECT(DISTINCT {
-          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
-          cause_of_death: sur.cause_of_death,
-          first_event: sur.first_event,
-          last_known_survival_status: sur.last_known_survival_status
-        }) AS survivals,
-
-        // Synonym records
-        (CASE
-          WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
-            associated_id: syn.associated_id,
-            data_location: CASE WHEN syn.data_location='Not Reported' THEN NULL ELSE syn.data_location END,
-            data_type: "external",
-            domain_category: CASE WHEN syn.domain_category='Not Reported' THEN NULL ELSE syn.domain_category END,
-            domain_description: CASE WHEN syn.domain_description='Not Reported' THEN NULL ELSE syn.domain_description END,
-            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id='Not Reported' THEN NULL ELSE syn.repository_of_synonym_id END
-          })
-          ELSE []
-        END) AS cpi_data,
 
         // Diagnosis records
         COLLECT(DISTINCT {
@@ -900,6 +884,27 @@ Indices:
           ELSE []
         END) AS genetic_analyses,
 
+        // Survival records
+        COLLECT(DISTINCT {
+          age_at_last_known_survival_status: sur.age_at_last_known_survival_status,
+          cause_of_death: sur.cause_of_death,
+          first_event: sur.first_event,
+          last_known_survival_status: sur.last_known_survival_status
+        }) AS survivals,
+
+        // Synonym records
+        (CASE
+          WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
+            associated_id: syn.associated_id,
+            data_location: CASE WHEN syn.data_location='Not Reported' THEN NULL ELSE syn.data_location END,
+            data_type: "external",
+            domain_category: CASE WHEN syn.domain_category='Not Reported' THEN NULL ELSE syn.domain_category END,
+            domain_description: CASE WHEN syn.domain_description='Not Reported' THEN NULL ELSE syn.domain_description END,
+            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id='Not Reported' THEN NULL ELSE syn.repository_of_synonym_id END
+          })
+          ELSE []
+        END) AS cpi_data,
+
         // Treatment records
         (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
@@ -921,6 +926,11 @@ Indices:
           treatment_response_id: tresp.treatment_response_id
         }) AS treatment_responses
       RETURN
+        // Study fields
+        study_id,
+        dbgap_accession,
+        study_name,
+
         // Participant fields  
         id,
         participant_id,
@@ -928,10 +938,11 @@ Indices:
         race_str,
         sex_at_birth,
 
-        // Study fields
-        study_id,
-        dbgap_accession,
-        study_name,
+        // Diagnosis records
+        diagnoses,
+
+        // Genetic Analysis records
+        genetic_analyses,
 
         // Survival records
         survivals,
@@ -939,60 +950,11 @@ Indices:
         // Synonym records
         cpi_data,
 
-        // Diagnosis records
-        diagnoses,
-
-        // Genetic Analysis records
-        genetic_analyses,
-
         // Treatment records
         treatments,
 
         // Treatment Response records
         treatment_responses;
-
-  - index_name: reference_files
-    type: neo4j
-    mapping:
-      # Reference File fields
-      id: # Primary key
-        type: keyword
-      dcf_indexd_guid:
-        type: keyword
-      file_category:
-        type: keyword
-      file_description:
-        type: keyword
-      file_name:
-        type: keyword
-      file_size:
-        type: long
-      file_type:
-        type: keyword
-      md5sum:
-        type: keyword
-      reference_file_id:
-        type: keyword
-      reference_file_url:
-        type: keyword
-    cypher_query: >
-      MATCH (r:reference_file)
-      RETURN
-        r.id AS id,
-        r.dcf_indexd_guid AS dcf_indexd_guid,
-        r.file_category AS file_category,
-        r.file_description AS file_description,
-        r.file_name AS file_name,
-        r.file_size AS file_size,
-        r.file_type AS file_type,
-        r.md5sum as md5sum,
-        r.reference_file_id AS reference_file_id,
-        (CASE
-          WHEN r.file_category = "input source data"
-            AND r.reference_file_url STARTS WITH "https://nih.sharepoint.com/"
-            THEN "See CCDI Hub at https://ccdi.cancer.gov/explore"
-          ELSE r.reference_file_url
-        END) AS reference_file_url;
 
   - index_name: studies
     type: neo4j
@@ -1041,6 +1003,27 @@ Indices:
   - index_name: survivals
     type: neo4j
     mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      # Participant fields
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Survival fields
       id: # Primary key
         type: keyword
@@ -1096,27 +1079,6 @@ Indices:
             type: keyword
           status:
             type: keyword
-      # Participant fields
-      participant:
-        type: nested
-        properties:
-          id:
-            type: keyword
-          participant_id:
-            type: keyword
-          race: # list
-            type: keyword
-          race_str: # for display
-            type: keyword
-          sex_at_birth:
-            type: keyword
-      # Study fields
-      dbgap_accession:
-        type: keyword
-      study_id:
-        type: keyword
-      study_name:
-        type: keyword
       # Treatment records
       treatments:
         type: nested
@@ -1154,6 +1116,20 @@ Indices:
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_id AS study_id,
+        stu.study_name AS study_name,
+
+        // Participant fields
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
         // Survival fields
         sur.id AS id,
         sur.age_at_event_free_survival_status AS age_at_event_free_survival_status,
@@ -1171,20 +1147,6 @@ Indices:
         sur.first_event AS first_event,
         sur.last_known_survival_status AS last_known_survival_status,
         sur.survival_id AS survival_id,
-
-        // Participant fields
-        {
-          id: p.id,
-          participant_id: p.participant_id,
-          race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
-          sex_at_birth: p.sex_at_birth
-        } AS participant,
-
-        // Study fields
-        stu.dbgap_accession AS dbgap_accession,
-        stu.study_id AS study_id,
-        stu.study_name AS study_name,
 
         // Diagnosis records
         COLLECT(DISTINCT {
@@ -1262,6 +1224,27 @@ Indices:
   - index_name: treatments
     type: neo4j
     mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      study_id:
+        type: keyword
+      study_name:
+        type: keyword
+      # Participant fields
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          race_str: # for display
+            type: keyword
+          sex_at_birth:
+            type: keyword
       # Treatment fields
       id: # Primary key
         type: keyword
@@ -1281,27 +1264,6 @@ Indices:
         type: keyword
       treatment_type:
         type: keyword
-      # Participant fields
-      participant:
-        type: nested
-        properties:
-          id:
-            type: keyword
-          participant_id:
-            type: keyword
-          race: # list
-            type: keyword
-          race_str: # for display
-            type: keyword
-          sex_at_birth:
-            type: keyword
-      # Study fields
-      dbgap_accession:
-        type: keyword
-      study_id:
-        type: keyword
-      study_name:
-        type: keyword
       # Diagnosis records
       diagnoses:
         type: nested
@@ -1316,23 +1278,7 @@ Indices:
             type: keyword
           diagnosis_classification_system:
             type: keyword
-          diagnosis_comment:
-            type: keyword
-          diagnosis_id:
-            type: keyword
           disease_phase:
-            type: keyword
-          toronto_childhood_cancer_staging:
-            type: keyword
-          tumor_classification:
-            type: keyword
-          tumor_grade:
-            type: keyword
-          tumor_stage_clinical_m:
-            type: keyword
-          tumor_stage_clinical_n:
-            type: keyword
-          tumor_stage_clinical_t:
             type: keyword
       # Genetic Analysis fields
       genetic_analyses:
@@ -1387,6 +1333,20 @@ Indices:
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       RETURN
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_id AS study_id,
+        stu.study_name AS study_name,
+
+        // Participant fields
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
         // Treatment fields
         t.id AS id,
         t.age_at_treatment_end AS age_at_treatment_end,
@@ -1404,20 +1364,6 @@ Indices:
         t.treatment_id AS treatment_id,
         t.treatment_type AS treatment_type,
 
-        // Participant fields
-        {
-          id: p.id,
-          participant_id: p.participant_id,
-          race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
-          sex_at_birth: p.sex_at_birth
-        } AS participant,
-
-        // Study fields
-        stu.dbgap_accession AS dbgap_accession,
-        stu.study_id AS study_id,
-        stu.study_name AS study_name,
-
         // Diagnosis records
         COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
@@ -1425,15 +1371,7 @@ Indices:
           diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
           diagnosis: d.diagnosis,
           diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
-          diagnosis_comment: d.diagnosis_comment,
-          diagnosis_id: d.diagnosis_id,
-          disease_phase: d.disease_phase,
-          toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
-          tumor_classification: d.tumor_classification,
-          tumor_grade: d.tumor_grade,
-          tumor_stage_clinical_m: d.tumor_stage_clinical_m,
-          tumor_stage_clinical_n: d.tumor_stage_clinical_n,
-          tumor_stage_clinical_t: d.tumor_stage_clinical_t
+          disease_phase: d.disease_phase
         }) AS diagnoses,
 
         // Genetic Analysis fields
@@ -1470,20 +1408,12 @@ Indices:
   - index_name: treatment_responses
     type: neo4j
     mapping:
-      # Treatment Response fields
-      id: # Primary key
+      # Study fields
+      dbgap_accession:
         type: keyword
-      age_at_response:
-        type: integer
-      age_at_response_str:
+      study_id:
         type: keyword
-      response:
-        type: keyword
-      response_category:
-        type: keyword
-      response_system:
-        type: keyword
-      treatment_response_id:
+      study_name:
         type: keyword
       # Participant fields
       participant:
@@ -1499,12 +1429,20 @@ Indices:
             type: keyword
           sex_at_birth:
             type: keyword
-      # Study fields
-      dbgap_accession:
+      # Treatment Response fields
+      id: # Primary key
         type: keyword
-      study_id:
+      age_at_response:
+        type: integer
+      age_at_response_str:
         type: keyword
-      study_name:
+      response:
+        type: keyword
+      response_category:
+        type: keyword
+      response_system:
+        type: keyword
+      treatment_response_id:
         type: keyword
       # Diagnosis records
       diagnoses:
@@ -1520,23 +1458,7 @@ Indices:
             type: keyword
           diagnosis_classification_system:
             type: keyword
-          diagnosis_comment:
-            type: keyword
-          diagnosis_id:
-            type: keyword
           disease_phase:
-            type: keyword
-          toronto_childhood_cancer_staging:
-            type: keyword
-          tumor_classification:
-            type: keyword
-          tumor_grade:
-            type: keyword
-          tumor_stage_clinical_m:
-            type: keyword
-          tumor_stage_clinical_n:
-            type: keyword
-          tumor_stage_clinical_t:
             type: keyword
       # Genetic Analysis fields
       genetic_analyses:
@@ -1593,6 +1515,20 @@ Indices:
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       RETURN
+        // Study fields
+        stu.dbgap_accession AS dbgap_accession,
+        stu.study_id AS study_id,
+        stu.study_name AS study_name,
+
+        // Participant fields
+        {
+          id: p.id,
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          race_str: p.race,
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
         // Treatment Response fields
         tresp.id AS id,
         tresp.age_at_response AS age_at_response,
@@ -1605,20 +1541,6 @@ Indices:
         tresp.response_system AS response_system,
         tresp.treatment_response_id AS treatment_response_id,
 
-        // Participant fields
-        {
-          id: p.id,
-          participant_id: p.participant_id,
-          race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
-          sex_at_birth: p.sex_at_birth
-        } AS participant,
-
-        // Study fields
-        stu.dbgap_accession AS dbgap_accession,
-        stu.study_id AS study_id,
-        stu.study_name AS study_name,
-
         // Diagnosis records
         COLLECT(DISTINCT {
           age_at_diagnosis: d.age_at_diagnosis,
@@ -1626,15 +1548,7 @@ Indices:
           diagnosis_basis: apoc.text.split(d.diagnosis_basis, ';'),
           diagnosis: d.diagnosis,
           diagnosis_classification_system: apoc.text.split(d.diagnosis_classification_system, ';'),
-          diagnosis_comment: d.diagnosis_comment,
-          diagnosis_id: d.diagnosis_id,
-          disease_phase: d.disease_phase,
-          toronto_childhood_cancer_staging: d.toronto_childhood_cancer_staging,
-          tumor_classification: d.tumor_classification,
-          tumor_grade: d.tumor_grade,
-          tumor_stage_clinical_m: d.tumor_stage_clinical_m,
-          tumor_stage_clinical_n: d.tumor_stage_clinical_n,
-          tumor_stage_clinical_t: d.tumor_stage_clinical_t
+          disease_phase: d.disease_phase
         }) AS diagnoses,
 
         // Genetic Analysis fields
