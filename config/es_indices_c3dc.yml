@@ -71,7 +71,7 @@ Indices:
       participant_id:
         type: keyword
         normalizer: lowercase
-      race:
+      race: # list
         type: keyword
       sex_at_birth:
         type: keyword
@@ -290,8 +290,6 @@ Indices:
             type: keyword
           race: # list
             type: keyword
-          race_str: # for display
-            type: keyword
           sex_at_birth:
             type: keyword
       # Diagnosis fields
@@ -303,15 +301,15 @@ Indices:
         type: keyword
       anatomic_site:
         type: keyword
-      diagnosis_basis:
+      diagnosis_basis: # for display
         type: keyword
-      diagnosis_basis_str: # for display
+      diagnosis_basis_str: # for sorting
         type: keyword
       diagnosis:
         type: keyword
-      diagnosis_classification_system:
+      diagnosis_classification_system: # for display
         type: keyword
-      diagnosis_classification_system_str: # for display
+      diagnosis_classification_system_str: # for sorting
         type: keyword
       diagnosis_comment:
         type: keyword
@@ -407,7 +405,6 @@ Indices:
           id: p.id,
           participant_id: p.participant_id,
           race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
           sex_at_birth: p.sex_at_birth
         } AS participant,
 
@@ -495,8 +492,6 @@ Indices:
           participant_id:
             type: keyword
           race: # list
-            type: keyword
-          race_str: # for display
             type: keyword
           sex_at_birth:
             type: keyword
@@ -617,7 +612,7 @@ Indices:
         {
           id: p.id,
           participant_id: p.participant_id,
-          race: p.race,
+          race: apoc.text.split(p.race, ';'),
           sex_at_birth: p.sex_at_birth
         } AS participant,
 
@@ -744,9 +739,9 @@ Indices:
       participant_id:
         type: keyword
         normalizer: lowercase
-      race: # list
+      race: # for display
         type: keyword
-      race_str: # for display
+      race_str: # for sorting
         type: keyword
       sex_at_birth:
         type: keyword
@@ -1020,8 +1015,6 @@ Indices:
             type: keyword
           race: # list
             type: keyword
-          race_str: # for display
-            type: keyword
           sex_at_birth:
             type: keyword
       # Survival fields
@@ -1126,7 +1119,6 @@ Indices:
           id: p.id,
           participant_id: p.participant_id,
           race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
           sex_at_birth: p.sex_at_birth
         } AS participant,
 
@@ -1241,8 +1233,6 @@ Indices:
             type: keyword
           race: # list
             type: keyword
-          race_str: # for display
-            type: keyword
           sex_at_birth:
             type: keyword
       # Treatment fields
@@ -1256,9 +1246,9 @@ Indices:
         type: integer
       age_at_treatment_start_str:
         type: keyword
-      treatment_agent: # list
+      treatment_agent: # for display
         type: keyword
-      treatment_agent_str: # for display
+      treatment_agent_str: # for sorting
         type: keyword
       treatment_id:
         type: keyword
@@ -1343,7 +1333,6 @@ Indices:
           id: p.id,
           participant_id: p.participant_id,
           race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
           sex_at_birth: p.sex_at_birth
         } AS participant,
 
@@ -1425,8 +1414,6 @@ Indices:
             type: keyword
           race: # list
             type: keyword
-          race_str: # for display
-            type: keyword
           sex_at_birth:
             type: keyword
       # Treatment Response fields
@@ -1500,8 +1487,6 @@ Indices:
             type: integer
           treatment_agent: # list
             type: keyword
-          treatment_agent_str: # for display
-            type: keyword
           treatment_id:
             type: keyword
           treatment_type:
@@ -1525,7 +1510,6 @@ Indices:
           id: p.id,
           participant_id: p.participant_id,
           race: apoc.text.split(p.race, ';'),
-          race_str: p.race,
           sex_at_birth: p.sex_at_birth
         } AS participant,
 
@@ -1579,7 +1563,6 @@ Indices:
             age_at_treatment_end: t.age_at_treatment_end,
             age_at_treatment_start: t.age_at_treatment_start,
             treatment_agent: apoc.text.split(t.treatment_agent, ';'),
-            treatment_agent_str: t.treatment_agent,
             treatment_id: t.treatment_id,
             treatment_type: t.treatment_type
           })
