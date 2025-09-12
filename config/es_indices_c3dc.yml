@@ -234,9 +234,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       RETURN
         stu.dbgap_accession AS dbgap_accession,
@@ -283,7 +292,7 @@ Indices:
             exon: ga.exon,
             fusion_partner_exon: ga.fusion_partner_exon,
             fusion_partner_gene: ga.fusion_partner_gene,
-            gene_symbol: gene_symbol_arr,
+            gene_symbol: apoc.coll.toSet(gene_symbol_arr),
             genomic_source_category: ga.genomic_source_category,
             hgvs_coding: ga.hgvs_coding,
             hgvs_genome: ga.hgvs_genome,
@@ -480,9 +489,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       RETURN
         // Study fields
@@ -527,7 +545,7 @@ Indices:
             alteration: ga.alteration,
             alteration_type: ga.alteration_type,
             fusion_partner_gene: ga.fusion_partner_gene,
-            gene_symbol: gene_symbol_arr,
+            gene_symbol: apoc.coll.toSet(gene_symbol_arr),
             reported_significance: ga.reported_significance,
             reported_significance_system: ga.reported_significance_system,
             status: ga.status
@@ -705,9 +723,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       WITH
         // Study fields
@@ -728,8 +755,8 @@ Indices:
         ga.genetic_analysis_id AS genetic_analysis_id,
         ga.alteration AS alteration,
         ga.cytoband AS cytoband,
-        gene_symbol_arr AS gene_symbol,
-        apoc.text.join(gene_symbol_arr, ';') AS gene_symbol_str,
+        apoc.coll.toSet(gene_symbol_arr) AS gene_symbol,
+        apoc.text.join(apoc.coll.toSet(gene_symbol_arr), ';') AS gene_symbol_str,
         ga.genomic_source_category AS genomic_source_category,
         ga.hgvs_coding AS hgvs_coding,
         ga.hgvs_genome AS hgvs_genome,
@@ -889,7 +916,7 @@ Indices:
             type: keyword
           fusion_partner_gene:
             type: keyword
-          gene_symbol:
+          gene_symbol: # list
             type: keyword
           reported_significance:
             type: keyword
@@ -965,9 +992,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       WITH
         // Study fields
@@ -1001,7 +1037,7 @@ Indices:
             alteration: ga.alteration,
             alteration_type: ga.alteration_type,
             fusion_partner_gene: ga.fusion_partner_gene,
-            gene_symbol: gene_symbol_arr,
+            gene_symbol: apoc.coll.toSet(gene_symbol_arr),
             reported_significance: ga.reported_significance,
             reported_significance_system: ga.reported_significance_system,
             status: ga.status
@@ -1249,9 +1285,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       RETURN
         // Study fields
@@ -1304,7 +1349,7 @@ Indices:
             alteration: ga.alteration,
             alteration_type: ga.alteration_type,
             fusion_partner_gene: ga.fusion_partner_gene,
-            gene_symbol: gene_symbol_arr,
+            gene_symbol: apoc.coll.toSet(gene_symbol_arr),
             reported_significance: ga.reported_significance,
             reported_significance_system: ga.reported_significance_system,
             status: ga.status
@@ -1478,9 +1523,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       RETURN
         // Study fields
@@ -1532,7 +1586,7 @@ Indices:
             alteration: ga.alteration,
             alteration_type: ga.alteration_type,
             fusion_partner_gene: ga.fusion_partner_gene,
-            gene_symbol: gene_symbol_arr,
+            gene_symbol: apoc.coll.toSet(gene_symbol_arr),
             reported_significance: ga.reported_significance,
             reported_significance_system: ga.reported_significance_system,
             status: ga.status
@@ -1673,9 +1727,18 @@ Indices:
         CASE
           WHEN ga.gene_symbol STARTS WITH '[' AND ga.gene_symbol ENDS WITH ']' THEN
             [x IN split(replace(substring(ga.gene_symbol, 1, size(ga.gene_symbol)-2), "'", ""), ",") | 
-              apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '')]
+              CASE 
+                WHEN apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') = '' 
+                THEN 'Not Reported' 
+                ELSE apoc.text.replace(trim(x), '^[^A-Za-z0-9]+', '') 
+              END
+            ]
           ELSE
-            [apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '')]
+            [CASE 
+              WHEN apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') = '' 
+              THEN 'Not Reported' 
+              ELSE apoc.text.replace(trim(ga.gene_symbol), '^[^A-Za-z0-9]+', '') 
+            END]
         END AS gene_symbol_arr
       RETURN
         // Study fields
@@ -1722,7 +1785,7 @@ Indices:
             alteration: ga.alteration,
             alteration_type: ga.alteration_type,
             fusion_partner_gene: ga.fusion_partner_gene,
-            gene_symbol: gene_symbol_arr,
+            gene_symbol: apoc.coll.toSet(gene_symbol_arr),
             reported_significance: ga.reported_significance,
             reported_significance_system: ga.reported_significance_system,
             status: ga.status
