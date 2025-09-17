@@ -894,7 +894,7 @@ Indices:
       WITH p, participant_ids, syn ORDER BY syn.associated_id
       WITH
         participant_ids,
-        COLLECT({
+        COLLECT(DISTINCT {
           associated_id: syn.associated_id,
           participant_id: p.participant_id
         }) AS associated_ids
