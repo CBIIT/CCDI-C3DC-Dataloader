@@ -835,6 +835,7 @@ Indices:
         study_name,
 
         // Participant fields
+        participant_pk,
         participant,
 
         // Genetic Analysis fields
