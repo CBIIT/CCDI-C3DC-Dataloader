@@ -1367,6 +1367,44 @@ Indices:
           ELSE []
         END) AS treatment_responses;
 
+  # Survivals for KM plot and risk table
+  # Excludes survival records with bad age_at_last_known_survival_status
+  # Excludes survival records associated with bad age_at_diagnosis
+  - index_name: survivals_km
+    type: neo4j
+    mapping:
+      # Participant fields
+      participant_pk:
+        type: keyword
+      # Survival fields
+      id: # Primary key
+        type: keyword
+      age_at_last_known_survival_status:
+        type: integer
+      last_known_survival_status:
+        type: keyword
+      survival_id:
+        type: keyword
+    cypher_query: >
+      MATCH (p:participant)<-[:of_survival]-(sur:survival)
+      OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
+      OPTIONAL MATCH (p)<-[:of_survival]-(allSur:survival)
+      WITH
+        p,
+        sur,
+        [a IN collect(d.age_at_diagnosis) WHERE a IS NOT NULL] AS diag_ages,
+        [a IN collect(allSur.age_at_last_known_survival_status) WHERE a IS NOT NULL] AS surv_ages
+      WHERE
+        NOT any(a IN diag_ages WHERE a = -999) AND
+        NOT any(s IN surv_ages WHERE s = -999) AND
+        NOT any(dAge IN diag_ages WHERE any(sAge IN surv_ages WHERE dAge > sAge))
+      RETURN
+        p.id AS participant_pk,
+        sur.id AS id,
+        sur.age_at_last_known_survival_status AS age_at_last_known_survival_status,
+        sur.last_known_survival_status AS last_known_survival_status,
+        sur.survival_id AS survival_id;
+
   - index_name: treatments
     type: neo4j
     mapping:
