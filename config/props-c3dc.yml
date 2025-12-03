@@ -4,6 +4,7 @@ Properties:
   delimiter: ";"
 
   plurals:
+    consent_group: consent_groups
     diagnosis: diagnoses
     genetic_analysis: genetic_analyses
     laboratory_test: laboratory_tests
@@ -29,6 +30,7 @@ Properties:
     TBD: String
 
   id_fields:
+    consent_group: id
     diagnosis: id
     genetic_analysis: id
     laboratory_test: id
