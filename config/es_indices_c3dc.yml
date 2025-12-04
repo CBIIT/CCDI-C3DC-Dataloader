@@ -863,10 +863,8 @@ Indices:
     cypher_query: >
       MATCH (p:participant)
       OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
-      WITH p, COLLECT(d) AS diagnoses
-
       OPTIONAL MATCH (p)<-[:of_survival]-(sur:survival)
-      WITH p, diagnoses, COLLECT(sur) AS survivals
+      WITH p, COLLECT(d) AS diagnoses, COLLECT(sur) AS survivals
 
       WITH
         p,
