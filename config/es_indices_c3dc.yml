@@ -917,7 +917,7 @@ Indices:
         p.id AS id,
         max_surv_age - max_diag_age AS time,
         CASE
-          WHEN max_surv.last_known_survival_status = "Dead" THEN 1
+          WHEN ANY(surv IN max_survs WHERE surv.last_known_survival_status = "Dead") THEN 1
           ELSE 0
         END AS event;
 
