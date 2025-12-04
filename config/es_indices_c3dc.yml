@@ -848,6 +848,81 @@ Indices:
         // Treatment Response fields
         treatment_responses;
 
+  # Data points for KM plot
+  # Excludes survival records with bad age_at_last_known_survival_status
+  # Excludes survival records associated with bad age_at_diagnosis
+  - index_name: km_plot_data
+    type: neo4j
+    mapping:
+      id: # Participant primary key
+        type: keyword
+      time: # Difference between participant's highest age_at_diagnosis and highest age_at_last_known_survival_status
+        type: integer
+      event: # 1 if participant is dead, and 0 if participant is alive
+        type: integer
+    cypher_query: >
+      MATCH (p:participant)
+      OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
+      WITH p, COLLECT(d) AS diagnoses
+
+      OPTIONAL MATCH (p)<-[:of_survival]-(sur:survival)
+      WITH p, diagnoses, COLLECT(sur) AS survivals
+
+      WITH
+        p,
+        diagnoses,
+        survivals,
+        [diagnosis IN diagnoses
+          WHERE diagnosis.age_at_diagnosis IS NOT NULL |
+          diagnosis.age_at_diagnosis] AS diag_ages,
+        [survival IN survivals
+          WHERE survival.age_at_last_known_survival_status IS NOT NULL |
+          survival.age_at_last_known_survival_status] AS surv_ages
+
+      WHERE
+        NOT ANY(a IN diag_ages WHERE a = -999) AND
+        NOT ANY(a IN surv_ages WHERE a = -999) AND
+        SIZE(diag_ages) > 0 AND
+        SIZE(surv_ages) > 0
+
+      WITH
+        p,
+        diagnoses,
+        survivals,
+        REDUCE(
+          m = NULL,
+          a IN diag_ages |
+            CASE
+              WHEN m IS NULL OR a > m THEN a
+              ELSE m
+            END
+        ) AS max_diag_age,
+        REDUCE(
+          m = null,
+          a IN surv_ages |
+            CASE
+              WHEN m IS NULL OR a > m THEN a
+              ELSE m
+            END
+        ) AS max_surv_age
+
+      WHERE max_diag_age <= max_surv_age
+
+      WITH
+        p,
+        max_diag_age,
+        max_surv_age,
+        [survival IN survivals
+          WHERE survival.age_at_last_known_survival_status = max_surv_age][0] AS max_surv
+
+      RETURN
+        p.id AS id,
+        max_surv_age - max_diag_age AS time,
+        CASE
+          WHEN max_surv.last_known_survival_status = "Dead" THEN 1
+          ELSE 0
+        END AS event;
+
   - index_name: participant_ids_lists
     type: neo4j
     mapping:
@@ -1366,44 +1441,6 @@ Indices:
           })
           ELSE []
         END) AS treatment_responses;
-
-  # Survivals for KM plot and risk table
-  # Excludes survival records with bad age_at_last_known_survival_status
-  # Excludes survival records associated with bad age_at_diagnosis
-  - index_name: survivals_km
-    type: neo4j
-    mapping:
-      # Participant fields
-      participant_pk:
-        type: keyword
-      # Survival fields
-      id: # Primary key
-        type: keyword
-      age_at_last_known_survival_status:
-        type: integer
-      last_known_survival_status:
-        type: keyword
-      survival_id:
-        type: keyword
-    cypher_query: >
-      MATCH (p:participant)<-[:of_survival]-(sur:survival)
-      OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
-      OPTIONAL MATCH (p)<-[:of_survival]-(allSur:survival)
-      WITH
-        p,
-        sur,
-        [a IN collect(d.age_at_diagnosis) WHERE a IS NOT NULL] AS diag_ages,
-        [a IN collect(allSur.age_at_last_known_survival_status) WHERE a IS NOT NULL] AS surv_ages
-      WHERE
-        NOT any(a IN diag_ages WHERE a = -999) AND
-        NOT any(s IN surv_ages WHERE s = -999) AND
-        NOT any(dAge IN diag_ages WHERE any(sAge IN surv_ages WHERE dAge > sAge))
-      RETURN
-        p.id AS participant_pk,
-        sur.id AS id,
-        sur.age_at_last_known_survival_status AS age_at_last_known_survival_status,
-        sur.last_known_survival_status AS last_known_survival_status,
-        sur.survival_id AS survival_id;
 
   - index_name: treatments
     type: neo4j
