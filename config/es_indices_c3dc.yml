@@ -911,7 +911,7 @@ Indices:
         max_diag_age,
         max_surv_age,
         [survival IN survivals
-          WHERE survival.age_at_last_known_survival_status = max_surv_age][0] AS max_surv
+          WHERE survival.age_at_last_known_survival_status = max_surv_age] AS max_survs
 
       RETURN
         p.id AS id,
