@@ -891,10 +891,10 @@ Indices:
           m = NULL,
           a IN diag_ages |
             CASE
-              WHEN m IS NULL OR a > m THEN a
+              WHEN m IS NULL OR a < m THEN a
               ELSE m
             END
-        ) AS max_diag_age,
+        ) AS min_diag_age,
         REDUCE(
           m = null,
           a IN surv_ages |
@@ -904,18 +904,18 @@ Indices:
             END
         ) AS max_surv_age
 
-      WHERE max_diag_age <= max_surv_age
+      WHERE min_diag_age <= max_surv_age
 
       WITH
         p,
-        max_diag_age,
+        min_diag_age,
         max_surv_age,
         [survival IN survivals
           WHERE survival.age_at_last_known_survival_status = max_surv_age] AS max_survs
 
       RETURN
         p.id AS id,
-        max_surv_age - max_diag_age AS time,
+        max_surv_age - min_diag_age AS time,
         CASE
           WHEN ANY(surv IN max_survs WHERE surv.last_known_survival_status = "Dead") THEN 1
           ELSE 0
