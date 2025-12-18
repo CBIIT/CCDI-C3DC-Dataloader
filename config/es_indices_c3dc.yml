@@ -921,40 +921,6 @@ Indices:
           ELSE 0
         END AS event;
 
-  - index_name: participant_ids_lists
-    type: neo4j
-    mapping:
-      # Participant fields
-      participant_ids:
-        type: keyword
-        normalizer: lowercase
-      # Synonym fields
-      associated_ids:
-        type: nested
-        properties:
-          associated_id:
-            type: keyword
-            normalizer: lowercase
-          participant_id:
-            type: keyword
-            normalizer: lowercase
-    # Make sure Neo4j has APOC plugin installed
-    cypher_query: >
-      MATCH (p:participant)
-      WITH p ORDER BY p.participant_id ASC
-      WITH COLLECT(p.participant_id) AS participant_ids
-      MATCH (syn:synonym)-[:of_synonym]->(p:participant)
-      WITH p, participant_ids, syn ORDER BY syn.associated_id
-      WITH
-        participant_ids,
-        COLLECT(DISTINCT {
-          associated_id: syn.associated_id,
-          participant_id: p.participant_id
-        }) AS associated_ids
-      RETURN
-        participant_ids,
-        associated_ids;
-
   - index_name: participants
     type: neo4j
     mapping:
