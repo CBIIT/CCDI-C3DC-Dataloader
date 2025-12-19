@@ -564,6 +564,63 @@ Indices:
           ELSE []
         END) AS treatment_responses;
 
+  - index_name: diagnoses_cohort_manifest
+    type: neo4j
+    mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      # Participant fields
+      participant_pk:
+        type: keyword
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          sex_at_birth:
+            type: keyword
+      # Diagnosis fields
+      id: # Primary key
+        type: keyword
+      diagnosis:
+        type: keyword
+    cypher_query: >
+      MATCH (d:diagnosis)-[:of_diagnosis]->(p:participant),
+        (stu:study)<-[:of_consent_group]-(cg:consent_group)<-[:of_participant]-(p)
+      WITH
+        stu.dbgap_accession AS dbgap_accession,
+        p,
+        d.diagnosis AS diagnosis,
+        COLLECT(d.id) AS ids,
+        COLLECT(p.id) AS participant_pk
+      WITH
+        // Study fields
+        dbgap_accession,
+
+        // Participant fields
+        participant_pk,
+        {
+          id: participant_pk[0],
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
+        // Diagnosis fields
+        ids[0] AS id,
+        diagnosis
+      RETURN DISTINCT
+        dbgap_accession,
+        participant_pk,
+        participant,
+        id,
+        diagnosis;
+
   - index_name: genetic_analyses
     mapping:
       # Study fields
