@@ -1,0 +1,83 @@
+Properties:
+  domain: icdc.nci.nih.gov
+  rel_prop_delimiter: "$"
+
+  plurals:
+    adverse_event: adverse_events
+    agent: agents
+    agent_administration: agent_administrations
+    case: cases
+    cohort: cohorts
+    cycle: cycles
+    demographic: demographics
+    diagnosis: diagnoses
+    enrollment: enrollments
+    file: files
+    follow_up: follow_ups
+    off_study: off_studies
+    off_treatment: off_treatments
+    physical_exam: physical_exams
+    principal_investigator: principal_investigators
+    prior_surgery: prior_surgeries
+    prior_therapy: prior_therapies
+    program: programs
+    sample: samples
+    study: studies
+    study_arm: study_arms
+    study_site: study_sites
+    visit: visits
+    vital_signs: vital_signs
+
+  type_mapping:
+    string: String
+    number: Float
+    integer: Int
+    boolean: Boolean
+    array: Array
+    object: Object
+    datetime: DateTime
+    date: Date
+    TBD: String
+
+  # This section is used to specify the id fields of each node
+  # An index is automatically created for each of these
+  id_fields:
+    adverse_event: uuid
+    agent: uuid
+    agent_administration: uuid
+    case: case_id
+    cohort: cohort_id
+    cycle: uuid
+    demographic: uuid
+    diagnosis: uuid
+    enrollment: uuid
+    file: uuid
+    follow_up: uuid
+    off_study: uuid
+    off_treatment: uuid
+    physical_exam: uuid
+    principal_investigator: uuid
+    prior_surgery: uuid
+    prior_therapy: uuid
+    program: program_acronym
+    sample: sample_id
+    study: clinical_study_designation
+    study_arm: arm
+    study_site: uuid
+    visit: uuid
+    vital_signs: uuid
+
+  # This section is used to specify non-id field indexes
+  indexes:
+    - program: program_name
+    - study: clinical_study_id
+    - case: patient_id
+  
+  # This section specifies nodes that should save parent IDs
+  save_parent_id:
+    - case
+    - sample
+    - file
+    - demographic
+    - diagnosis
+
