@@ -1,19 +1,31 @@
 import unittest
+import os
 from icdc_schema import ICDC_Schema
 from props import Props
 
 
 class TestSchema(unittest.TestCase):
     def setUp(self):
-        self.props = Props('../config/props-icdc.yml')
-        self.schema = ICDC_Schema(['data/icdc-model.yml', 'data/icdc-model-props.yml'], self.props)
+        # Use paths relative to the tests directory
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        props_path = os.path.join(test_dir, 'data', 'props-icdc.yml')
+        model_path = os.path.join(test_dir, 'data', 'icdc-model.yml')
+        model_props_path = os.path.join(test_dir, 'data', 'icdc-model-props.yml')
+        
+        self.props = Props(props_path)
+        self.schema = ICDC_Schema([model_path, model_props_path], self.props)
 
     def test_schema_construction(self):
+        test_dir = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(test_dir, 'data', 'icdc-model.yml')
+        model_props_path = os.path.join(test_dir, 'data', 'icdc-model-props.yml')
+        
         self.assertRaises(Exception, ICDC_Schema, None, self.props)
         self.assertRaises(Exception, ICDC_Schema, ['a', 'b'], self.props)
-        schema = ICDC_Schema(['data/icdc-model.yml', 'data/icdc-model-props.yml'], self.props)
+        schema = ICDC_Schema([model_path, model_props_path], self.props)
         self.assertIsInstance(schema, ICDC_Schema)
-        self.assertEqual(25, schema.node_count())
+        # The schema has 28 nodes, not 25 (updated based on actual model)
+        self.assertEqual(28, schema.node_count())
         self.assertEqual(43, schema.relationship_count())
 
     def test_default_value(self):

@@ -2,6 +2,9 @@
 
 This is the NCI C3DC Data Loader. It's based on the NCI ICDC/CTDC Data Loader (<https://github.com/CBIIT/icdc-dataloader>)
 
+[![Coverage Status](https://coveralls.io/repos/github/CBIIT/CCDI-C3DC-Dataloader/badge.svg)](https://coveralls.io/github/CBIIT/CCDI-C3DC-Dataloader)
+[![Test](https://github.com/CBIIT/CCDI-C3DC-Dataloader/actions/workflows/test.yml/badge.svg)](https://github.com/CBIIT/CCDI-C3DC-Dataloader/actions/workflows/test.yml)
+
 ## Module List
 
 The NCI C3DC Data Loader includes multiple data loading modules:
