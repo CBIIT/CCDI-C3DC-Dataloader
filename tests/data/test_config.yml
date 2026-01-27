@@ -1,0 +1,3 @@
+Config:
+  s3_bucket: test-bucket
+  temp_folder: /tmp
