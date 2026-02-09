@@ -58,6 +58,8 @@ Indices:
     type: neo4j
     mapping:
       # Study fields
+      study_id:
+        type: keyword
       dbgap_accession:
         type: keyword
       # Consent Group fields
@@ -173,22 +175,6 @@ Indices:
             type: keyword
           last_known_survival_status:
             type: keyword
-      # Synonym fields
-      synonyms:
-        type: nested
-        properties:
-          id:
-            type: keyword
-          associated_id:
-            type: keyword
-          data_location:
-            type: keyword
-          domain_category:
-            type: keyword
-          domain_description:
-            type: keyword
-          repository_of_synonym_id:
-            type: keyword
       # Treatment records
       treatments:
         type: nested
@@ -226,7 +212,6 @@ Indices:
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
-      OPTIONAL MATCH (syn:synonym)-[:of_synonym]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       WITH
@@ -248,6 +233,7 @@ Indices:
             END]
         END AS gene_symbol_arr
       RETURN
+        stu.study_id AS study_id,
         stu.dbgap_accession AS dbgap_accession,
         cg.consent_group_name AS consent_group_name,
         cg.consent_group_number AS consent_group_number,
@@ -320,19 +306,6 @@ Indices:
           })
           ELSE []
         END) AS survivals,
-
-        // Synonym records
-        (CASE
-          WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
-            id: syn.id,
-            associated_id: syn.associated_id,
-            data_location: CASE WHEN syn.data_location='Not Reported' THEN NULL ELSE syn.data_location END,
-            domain_category: CASE WHEN syn.domain_category='Not Reported' THEN NULL ELSE syn.domain_category END,
-            domain_description: CASE WHEN syn.domain_description='Not Reported' THEN NULL ELSE syn.domain_description END,
-            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id='Not Reported' THEN NULL ELSE syn.repository_of_synonym_id END
-          })
-          ELSE []
-        END) AS synonyms,
 
         // Treatment records
         (CASE
@@ -590,6 +563,63 @@ Indices:
           })
           ELSE []
         END) AS treatment_responses;
+
+  - index_name: diagnoses_cohort_manifest
+    type: neo4j
+    mapping:
+      # Study fields
+      dbgap_accession:
+        type: keyword
+      # Participant fields
+      participant_pk:
+        type: keyword
+      participant:
+        type: nested
+        properties:
+          id:
+            type: keyword
+          participant_id:
+            type: keyword
+          race: # list
+            type: keyword
+          sex_at_birth:
+            type: keyword
+      # Diagnosis fields
+      id: # Primary key
+        type: keyword
+      diagnosis:
+        type: keyword
+    cypher_query: >
+      MATCH (d:diagnosis)-[:of_diagnosis]->(p:participant),
+        (stu:study)<-[:of_consent_group]-(cg:consent_group)<-[:of_participant]-(p)
+      WITH
+        stu.dbgap_accession AS dbgap_accession,
+        p,
+        d.diagnosis AS diagnosis,
+        COLLECT(d.id) AS ids,
+        COLLECT(p.id) AS participant_pk
+      WITH
+        // Study fields
+        dbgap_accession,
+
+        // Participant fields
+        participant_pk,
+        {
+          id: participant_pk[0],
+          participant_id: p.participant_id,
+          race: apoc.text.split(p.race, ';'),
+          sex_at_birth: p.sex_at_birth
+        } AS participant,
+
+        // Diagnosis fields
+        ids[0] AS id,
+        diagnosis
+      RETURN DISTINCT
+        dbgap_accession,
+        participant_pk,
+        participant,
+        id,
+        diagnosis;
 
   - index_name: genetic_analyses
     mapping:
@@ -875,39 +905,78 @@ Indices:
         // Treatment Response fields
         treatment_responses;
 
-  - index_name: participant_ids_lists
+  # Data points for KM plot
+  # Excludes survival records with bad age_at_last_known_survival_status
+  # Excludes survival records associated with bad age_at_diagnosis
+  - index_name: km_plot_data
     type: neo4j
     mapping:
-      # Participant fields
-      participant_ids:
+      id: # Participant primary key
         type: keyword
-        normalizer: lowercase
-      # Synonym fields
-      associated_ids:
-        type: nested
-        properties:
-          associated_id:
-            type: keyword
-            normalizer: lowercase
-          participant_id:
-            type: keyword
-            normalizer: lowercase
-    # Make sure Neo4j has APOC plugin installed
+      time: # Difference between participant's highest age_at_diagnosis and highest age_at_last_known_survival_status
+        type: integer
+      event: # 1 if participant is dead, and 0 if participant is alive
+        type: integer
     cypher_query: >
       MATCH (p:participant)
-      WITH p ORDER BY p.participant_id ASC
-      WITH COLLECT(p.participant_id) AS participant_ids
-      MATCH (syn:synonym)-[:of_synonym]->(p:participant)
-      WITH p, participant_ids, syn ORDER BY syn.associated_id
+      OPTIONAL MATCH (p)<-[:of_diagnosis]-(d:diagnosis)
+      OPTIONAL MATCH (p)<-[:of_survival]-(sur:survival)
+      WITH p, COLLECT(d) AS diagnoses, COLLECT(sur) AS survivals
+
       WITH
-        participant_ids,
-        COLLECT(DISTINCT {
-          associated_id: syn.associated_id,
-          participant_id: p.participant_id
-        }) AS associated_ids
+        p,
+        diagnoses,
+        survivals,
+        [diagnosis IN diagnoses
+          WHERE diagnosis.age_at_diagnosis IS NOT NULL |
+          diagnosis.age_at_diagnosis] AS diag_ages,
+        [survival IN survivals
+          WHERE survival.age_at_last_known_survival_status IS NOT NULL |
+          survival.age_at_last_known_survival_status] AS surv_ages
+
+      WHERE
+        NOT ANY(a IN diag_ages WHERE a = -999) AND
+        NOT ANY(a IN surv_ages WHERE a = -999) AND
+        SIZE(diag_ages) > 0 AND
+        SIZE(surv_ages) > 0
+
+      WITH
+        p,
+        diagnoses,
+        survivals,
+        REDUCE(
+          m = NULL,
+          a IN diag_ages |
+            CASE
+              WHEN m IS NULL OR a < m THEN a
+              ELSE m
+            END
+        ) AS min_diag_age,
+        REDUCE(
+          m = null,
+          a IN surv_ages |
+            CASE
+              WHEN m IS NULL OR a > m THEN a
+              ELSE m
+            END
+        ) AS max_surv_age
+
+      WHERE min_diag_age <= max_surv_age
+
+      WITH
+        p,
+        min_diag_age,
+        max_surv_age,
+        [survival IN survivals
+          WHERE survival.age_at_last_known_survival_status = max_surv_age] AS max_survs
+
       RETURN
-        participant_ids,
-        associated_ids;
+        p.id AS id,
+        max_surv_age - min_diag_age AS time,
+        CASE
+          WHEN ANY(surv IN max_survs WHERE surv.last_known_survival_status = "Dead") THEN 1
+          ELSE 0
+        END AS event;
 
   - index_name: participants
     type: neo4j
@@ -977,20 +1046,6 @@ Indices:
             type: keyword
           last_known_survival_status:
             type: keyword
-      # Synonym fields
-      cpi_data:
-        type: nested
-        properties:
-          associated_id:
-            type: keyword
-          data_location:
-            type: keyword
-          domain_category:
-            type: keyword
-          domain_description:
-            type: keyword
-          repository_of_synonym_id:
-            type: keyword
       # Treatment records
       treatments:
         type: nested
@@ -1025,7 +1080,6 @@ Indices:
       OPTIONAL MATCH (d:diagnosis)-[:of_diagnosis]->(p)
       OPTIONAL MATCH (ga:genetic_analysis)-[:of_genetic_analysis]->(p)
       OPTIONAL MATCH (sur:survival)-[:of_survival]->(p)
-      OPTIONAL MATCH (syn:synonym)-[:of_synonym]->(p)
       OPTIONAL MATCH (t:treatment)-[:of_treatment]->(p)
       OPTIONAL MATCH (tresp:treatment_response)-[:of_treatment_response]->(p)
       WITH
@@ -1097,19 +1151,6 @@ Indices:
           ELSE []
         END) AS survivals,
 
-        // Synonym records
-        (CASE
-          WHEN COUNT(DISTINCT syn) > 0 THEN COLLECT(DISTINCT {
-            associated_id: syn.associated_id,
-            data_location: CASE WHEN syn.data_location='Not Reported' THEN NULL ELSE syn.data_location END,
-            data_type: "external",
-            domain_category: CASE WHEN syn.domain_category='Not Reported' THEN NULL ELSE syn.domain_category END,
-            domain_description: CASE WHEN syn.domain_description='Not Reported' THEN NULL ELSE syn.domain_description END,
-            repository_of_synonym_id: CASE WHEN syn.repository_of_synonym_id='Not Reported' THEN NULL ELSE syn.repository_of_synonym_id END
-          })
-          ELSE []
-        END) AS cpi_data,
-
         // Treatment records
         (CASE
           WHEN COUNT(DISTINCT t) > 0 THEN COLLECT(DISTINCT {
@@ -1154,9 +1195,6 @@ Indices:
 
         // Survival records
         survivals,
-
-        // Synonym records
-        cpi_data,
 
         // Treatment records
         treatments,
@@ -1424,34 +1462,6 @@ Indices:
           })
           ELSE []
         END) AS treatment_responses;
-
-  - index_name: synonyms
-    type: neo4j
-    mapping:
-      # Synonym fields
-      id: # Primary key
-        type: keyword
-      associated_id:
-        type: keyword
-      # Participant fields
-      participant_id:
-        type: keyword
-    cypher_query: >
-      MATCH (syn:synonym)-[:of_synonym]->(p:participant)
-      WITH
-        // Synonym fields
-        syn.id AS id,
-        syn.associated_id AS associated_id,
-
-        // Participant fields
-        p.participant_id AS participant_id
-      RETURN
-        // Synonym fields
-        id,
-        associated_id,
-
-        // Participant fields
-        participant_id;
 
   - index_name: treatments
     type: neo4j
